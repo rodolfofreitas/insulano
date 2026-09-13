@@ -1,0 +1,15 @@
+[
+  { "hour": 0.0,  "color": "#0d1130", "label": "madrugada" },
+  { "hour": 4.0,  "color": "#1a1a3e", "label": "madrugada" },
+  { "hour": 5.5,  "color": "#2e2255", "label": "aurora" },
+  { "hour": 6.5,  "color": "#c4623a", "label": "nascer do sol" },
+  { "hour": 7.5,  "color": "#e8a05a", "label": "manha cedo" },
+  { "hour": 9.0,  "color": "#f5d090", "label": "manha" },
+  { "hour": 12.0, "color": "#f7e8b8", "label": "meio-dia" },
+  { "hour": 15.0, "color": "#f0d080", "label": "tarde" },
+  { "hour": 17.5, "color": "#e07040", "label": "fim da tarde" },
+  { "hour": 18.5, "color": "#b04020", "label": "por-do-sol" },
+  { "hour": 19.5, "color": "#602040", "label": "crepusculo" },
+  { "hour": 20.5, "color": "#1e1040", "label": "noite" },
+  { "hour": 22.0, "color": "#0d1130", "label": "noite" }
+]

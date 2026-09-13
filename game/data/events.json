@@ -1,0 +1,86 @@
+{
+  "_schema_version": 1,
+  "_comment": "Eventos avulsos (sem arco). Arcos estao em arc_definitions.json. Campos: id, kind, weight, min_interval_s, duration_s, requires_condition, arc_id (null = avulso).",
+  "events": [
+    {
+      "id":               "seagull_pass",
+      "kind":             "seagull",
+      "weight":           15,
+      "min_interval_s":   300,
+      "duration_s":       8,
+      "requires_condition": null,
+      "arc_id":           null,
+      "phrase_action":    "ver uma gaivota a passar"
+    },
+    {
+      "id":               "distant_ship",
+      "kind":             "ship",
+      "weight":           8,
+      "min_interval_s":   600,
+      "duration_s":       12,
+      "requires_condition": null,
+      "arc_id":           null,
+      "phrase_action":    "ver um barco ao longe"
+    },
+    {
+      "id":               "turtle_visit",
+      "kind":             "turtle",
+      "weight":           5,
+      "min_interval_s":   900,
+      "duration_s":       20,
+      "requires_condition": "is_day",
+      "arc_id":           null,
+      "phrase_action":    "observar uma tartaruga na praia"
+    },
+    {
+      "id":               "bottle_found",
+      "kind":             "bottle",
+      "weight":           4,
+      "min_interval_s":   1800,
+      "duration_s":       15,
+      "requires_condition": null,
+      "arc_id":           null,
+      "phrase_action":    "encontrar uma garrafa na praia"
+    },
+    {
+      "id":               "shooting_star",
+      "kind":             "shooting_star",
+      "weight":           6,
+      "min_interval_s":   600,
+      "duration_s":       5,
+      "requires_condition": "is_night",
+      "arc_id":           null,
+      "phrase_action":    "ver uma estrela cadente"
+    },
+    {
+      "id":               "dolphin_jump",
+      "kind":             "dolphin",
+      "weight":           7,
+      "min_interval_s":   900,
+      "duration_s":       10,
+      "requires_condition": "is_day",
+      "arc_id":           null,
+      "phrase_action":    "ver um golfinho a saltar"
+    },
+    {
+      "id":               "airplane_pass",
+      "kind":             "airplane",
+      "weight":           6,
+      "min_interval_s":   600,
+      "duration_s":       8,
+      "requires_condition": "is_day",
+      "arc_id":           null,
+      "phrase_action":    "ver um aviao a passar"
+    },
+    {
+      "id":               "heavy_rain_start",
+      "kind":             "rain",
+      "weight":           10,
+      "min_interval_s":   1800,
+      "duration_s":       120,
+      "requires_condition": "weather_rain",
+      "arc_id":           null,
+      "phrase_action":    "apanhar chuva forte"
+    }
+  ]
+}
