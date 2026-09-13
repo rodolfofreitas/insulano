@@ -141,3 +141,32 @@ tarefa `em-curso`). Máximo 3 ciclos por tarefa antes de `bloqueado`.
 
 **Consequências.** O histórico do git mostra a evolução do estado. Paralelizar tarefas exige
 worktrees e uma decisão nova.
+
+## ADR-011: `class_name` antes de `extends`; supressão de `class-variable-name` por linha em `guy/direction.gd`
+
+Data: 2026-09-14 · Estado: aceite (revista em 2026-09-14 após bloqueio do `insulano-reviewer`:
+a primeira versão usava um `.gdlintrc` de projecto, que relaxava a regra para todo o repositório;
+substituído por supressão por linha, que só se aplica às 5 linhas em causa)
+
+**Contexto.** A T-002 exigia `lint PASSOU` (não `AVISOS`) nos 21 ficheiros herdados. O
+`agent_docs/code_patterns.md` (versão anterior) documentava a ordem `extends`, `class_name`,
+docstring, mas o `class-definitions-order` do gdtoolkit 4 (config por defeito, sem ficheiro de
+configuração no repositório) exige `class_name` **antes** de `extends`; a ordem antiga falhava
+sempre o portão, mesmo em código novo e bem escrito (confirmado a testar o próprio exemplo do
+documento). Por outro lado, `guy/direction.gd` tem quatro singletons imutáveis
+(`Direction.UP/RIGHT/DOWN/LEFT` e `ALL_DIRECTIONS`) em MAIÚSCULAS, ao estilo de constante; não
+podem ser `const` porque o valor vem de `Direction.new(...)` (chamada a construtor, não expressão
+constante), e o `class-variable-name` por defeito só aceita `snake_case`. Renomeá-los para
+`snake_case` melhoraria o lint mas obrigaria a mudar `game/tests/unit/test_direction.gd`, e a
+T-002 proíbe alterar ficheiros de teste existentes.
+
+**Decisão.** (1) `code_patterns.md` passa a documentar e exemplificar `class_name` antes de
+`extends` em todo o GDScript novo. (2) `guy/direction.gd` usa a supressão por linha do gdtoolkit
+4.5+ (`# gdlint:disable=class-variable-name` antes das 5 declarações, `# gdlint:enable=...`
+depois), sem nenhum ficheiro de configuração global: a regra `class-variable-name` continua
+`snake_case` em todo o resto do repositório, sem excepção, presente ou futura.
+
+**Consequências.** Qualquer `.gd` novo segue a ordem `class_name`/`extends`; o `insulano-reviewer`
+deve rejeitar a ordem antiga. Um nome em MAIÚSCULAS fora de `guy/direction.gd` continua a falhar o
+lint: alargar a supressão a outro ficheiro exige a mesma justificação (singleton imutável, não
+renomeável por causa de testes) e uma decisão nova, nunca um `.gdlintrc` de projecto.

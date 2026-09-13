@@ -87,27 +87,27 @@ Estado a 2026-09-13: existem a cena principal e a behavior tree herdadas; os aut
 <!-- gerado:componentes:inicio -->
 | Ficheiro (game/) | class_name | extends | Responsabilidade (1.ª linha ##) |
 |---|---|---|---|
-| `beehave/action_using_delta.gd` | ActionUsingDelta | ActionLeaf | (herdado da base, sem doc: ver T-002) |
-| `beehave/find_group_spot_condition.gd` | FindGroupSpotCondition | ConditionLeaf | (herdado da base, sem doc: ver T-002) |
-| `beehave/find_random_spot_condition.gd` | FindRandomSpotCondition | ConditionLeaf | (herdado da base, sem doc: ver T-002) |
-| `beehave/find_usable_for_need_condition.gd` | FundUsableForNeedCondition | ConditionLeaf | (herdado da base, sem doc: ver T-002) |
-| `beehave/fishing_action.gd` | FishingAction | ActionUsingDelta | (herdado da base, sem doc: ver T-002) |
-| `beehave/go_to_usable_action.gd` | GoToUsableAction | ActionLeaf | (herdado da base, sem doc: ver T-002) |
-| `beehave/need_low_condition.gd` | NeedLowCondition | ConditionLeaf | (herdado da base, sem doc: ver T-002) |
-| `beehave/set_delta_on_blackboard.gd` | SetDeltaOnBlackboardAction | ActionLeaf | (herdado da base, sem doc: ver T-002) |
-| `beehave/talk_action.gd` | TalkAction | ActionLeaf | (herdado da base, sem doc: ver T-002) |
-| `beehave/use_usable_action.gd` | UseUsableAction | ActionUsingDelta | (herdado da base, sem doc: ver T-002) |
-| `beehave/watch_ocean_action.gd` | WatchOceanAction | ActionUsingDelta | (herdado da base, sem doc: ver T-002) |
-| `character/character.gd` | Character | CharacterBody2D | (herdado da base, sem doc: ver T-002) |
-| `character/need.gd` | Need | Resource | (herdado da base, sem doc: ver T-002) |
-| `fishing_spot.gd` | - | Node2D | (herdado da base, sem doc: ver T-002) |
-| `guy/direction.gd` | Direction | Object | (herdado da base, sem doc: ver T-002) |
-| `guy/guy.gd` | Guy | Character | (herdado da base, sem doc: ver T-002) |
-| `need_bar.gd` | NeedBar | ProgressBar | (herdado da base, sem doc: ver T-002) |
-| `object/general_usable_object.gd` | GeneralUsableObject | UsableObject | (herdado da base, sem doc: ver T-002) |
-| `object/need_replentishing_unsable.gd` | NeedReplentishingUsable | GeneralUsableObject | (herdado da base, sem doc: ver T-002) |
-| `object/usable_object.gd` | UsableObject | Node2D | (herdado da base, sem doc: ver T-002) |
-| `object/usable_object_container.gd` | UsableObjectContainer | UsableObject | (herdado da base, sem doc: ver T-002) |
+| `beehave/action_using_delta.gd` | ActionUsingDelta | ActionLeaf | Base para acções do Beehave que precisam do delta do frame corrente. |
+| `beehave/find_group_spot_condition.gd` | FindGroupSpotCondition | ConditionLeaf | Escolhe ao acaso um nó do grupo `group_name` e grava a posição no blackboard. |
+| `beehave/find_random_spot_condition.gd` | FindRandomSpotCondition | ConditionLeaf | Escolhe um ponto aleatório navegável do `NavigationServer2D` e grava-o no blackboard. |
+| `beehave/find_usable_for_need_condition.gd` | FundUsableForNeedCondition | ConditionLeaf | Encontra, entre os objectos utilizáveis dentro de `search_area`, o que melhor |
+| `beehave/fishing_action.gd` | FishingAction | ActionUsingDelta | Acção de pescar: mostra a cana, espera um tempo aleatório e faz nascer um peixe. |
+| `beehave/go_to_usable_action.gd` | GoToUsableAction | ActionLeaf | Move o actor até à posição em `blackboard_key`, usando o `NavigationAgent2D` do Character. |
+| `beehave/need_low_condition.gd` | NeedLowCondition | ConditionLeaf | Sorteia, para cada necessidade do actor, se está baixa o suficiente para tratar agora. |
+| `beehave/set_delta_on_blackboard.gd` | SetDeltaOnBlackboardAction | ActionLeaf | Escreve o delta do frame corrente no blackboard, para outras folhas o lerem. |
+| `beehave/talk_action.gd` | TalkAction | ActionLeaf | Escolhe ao acaso uma frase de `texts` e escreve-a em `character.talking_text`. |
+| `beehave/use_usable_action.gd` | UseUsableAction | ActionUsingDelta | Usa o objecto em `object_blackboard_key` enquanto a necessidade associada não estiver satisfeita. |
+| `beehave/watch_ocean_action.gd` | WatchOceanAction | ActionUsingDelta | Faz o actor "olhar o mar" durante um tempo aleatório entre os dois limites. |
+| `character/character.gd` | Character | CharacterBody2D | Personagem base: necessidades, navegação, animação por direcção e balão de fala. |
+| `character/need.gd` | Need | Resource | Um recurso de necessidade (fome, energia, ...) com valor actual e máximo. |
+| `fishing_spot.gd` | - | Node2D | Marcador visual de um ponto de pesca: desenha um círculo vermelho na cena. |
+| `guy/direction.gd` | Direction | Object | Uma das quatro direcções cardinais, usada para escolher animação (walk_up, |
+| `guy/guy.gd` | Guy | Character | O náufrago jogável: um Character que perde fome com o tempo. |
+| `need_bar.gd` | NeedBar | ProgressBar | Barra de progresso que reflecte uma necessidade (`need_name`) de `target`. |
+| `object/general_usable_object.gd` | GeneralUsableObject | UsableObject | Objecto utilizável que declara, em `satisfying_needs`, quais necessidades trata. |
+| `object/need_replentishing_unsable.gd` | NeedReplentishingUsable | GeneralUsableObject | Objecto que repõe uma necessidade enquanto durar (ex.: o peixe apanhado). |
+| `object/usable_object.gd` | UsableObject | Node2D | Base de qualquer objecto que a behavior tree pode usar para satisfazer necessidades. |
+| `object/usable_object_container.gd` | UsableObjectContainer | UsableObject | Agrupa vários objectos utilizáveis num só nó (ex.: uma prateleira com comida). |
 | `tools/boot_smoke.gd` | - | SceneTree | Smoke de arranque: carrega a cena principal, simula tempo de jogo e verifica |
 | `tools/capture.gd` | - | SceneTree | Captura de prova visual: carrega uma cena com renderização real dentro de um |
 <!-- gerado:componentes:fim -->
@@ -156,14 +156,13 @@ sequenceDiagram
 
 ## 7. Decisões
 
-Registo completo em [`decisions.md`](decisions.md): ADR-001 a ADR-010.
+Registo completo em [`decisions.md`](decisions.md): ADR-001 a ADR-011.
 
 ## 8. Riscos e dívida técnica
 
 | Item | Tipo | Plano |
 |---|---|---|
-| Código herdado sem lint nem docstrings (21 ficheiros) | dívida | T-002 |
-| Bugs latentes da base (sinal trocado, `FAILED`, índice -1, print por tick) | dívida | T-003 |
+| Bugs latentes da base (sinal trocado, `FAILED`, índice -1, print por tick, `.name` sobre `Array[String]` em `need_replentishing_unsable.gd`, `else` morto em `go_to_usable_action.gd`) | dívida | T-003 |
 | Frases fixas da base em inglês | dívida | T-106 |
 | Ollama só em CPU (p50 2,82 s) | risco de desempenho | aceitável com fallback; GPU é decisão do Rodolfo |
 | Ollama publicado em `0.0.0.0:11434` | risco de segurança | `threat_model-propostas.md` P-01 |

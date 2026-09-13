@@ -81,7 +81,10 @@ for f in "${ALL_GD[@]}"; do
 done
 if "${GDTOOLKIT[@]}" gdlint "${OWN_GD[@]}" > reports/gdlint.log 2>&1 \
    && "${GDTOOLKIT[@]}" gdformat --check "${OWN_GD[@]}" >> reports/gdlint.log 2>&1; then
-  inherited=$("${GDTOOLKIT[@]}" gdlint "${BASELINE[@]}" 2>&1 | grep -c 'Error:' || true)
+  inherited=0
+  if [ "${#BASELINE[@]}" -gt 0 ]; then
+    inherited=$("${GDTOOLKIT[@]}" gdlint "${BASELINE[@]}" 2>&1 | grep -c 'Error:' || true)
+  fi
   if [ "${inherited:-0}" -gt 0 ]; then
     record lint AVISOS "${#OWN_GD[@]} ficheiros próprios limpos; $inherited problemas herdados na baseline (T-002)"
   else

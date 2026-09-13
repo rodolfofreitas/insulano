@@ -12,8 +12,23 @@ Ler antes de escrever GDScript. O `scripts/verify.sh` aplica mecanicamente o que
 - `snake_case` em variáveis, funções e ficheiros; `PascalCase` em `class_name` e nós; `UPPER_CASE` em constantes.
 - Membros privados começam por `_`.
 - Formatação `gdformat` e lint `gdlint` com as regras por defeito do gdtoolkit 4 (linha até 100) **(portão)**.
-- Ordem num ficheiro: `extends`, `class_name`, docstring `##`, `signal`, `enum`, `const`, `@export`,
-  `var` públicas, `var` privadas, `_init`/`_ready`/`_process`, funções públicas, funções privadas.
+- Ordem num ficheiro, a que o `class-definitions-order` do gdlint obriga (corrigido na T-002; o
+  gdtoolkit 4 exige `class_name` **antes** de `extends`, ao contrário do que a versão anterior
+  deste documento dizia): `@tool` (se houver), `class_name`, `extends`, docstring `##`, `signal`,
+  `enum`, `const`, `static var`, `@export`, `var` públicas, `var` privadas, `@onready` públicas,
+  `@onready` privadas, resto (`_init`/`_ready`/`_process`, funções). Uma variável pública sem
+  `@export` (ex. `var fish_scene = preload(...)`) conta como "pubvars" e tem de vir **depois** de
+  todos os `@export`, nunca antes.
+- Excepção de nomenclatura para singletons imutáveis que não podem ser `const` (ex.
+  `guy/direction.gd`: `Direction.UP/RIGHT/DOWN/LEFT/ALL_DIRECTIONS`, cujos nomes são usados pelos
+  testes GUT e não podem ser renomeados sem alterar ficheiros de teste): suprimir
+  `class-variable-name` só nas linhas em causa, com `# gdlint:disable=class-variable-name` antes e
+  `# gdlint:enable=class-variable-name` depois (gdtoolkit 4.5+, supressão por linha). Nunca um
+  `.gdlintrc` de projecto: isso relaxaria a regra para o repositório inteiro, presente e futuro. Ver
+  ADR-011.
+- Parâmetro de função não usado (comum nas folhas do Beehave, que recebem `actor`/`blackboard` por
+  contrato mesmo quando não precisam de um dos dois): prefixar com `_` (`_actor`), nunca remover o
+  parâmetro (quebraria a assinatura que o Beehave chama por posição).
 
 ## 2. Documentação dentro do código
 
@@ -27,8 +42,8 @@ a um ano, sozinho.
 - Constantes mágicas têm comentário com a origem do valor.
 
 ```gdscript
-extends RefCounted
 class_name PhraseFilter
+extends RefCounted
 ## Aceita ou rejeita frases geradas pelo LLM segundo game/data/phrase_rules.json.
 ##
 ## Usado pelo LLMBridge antes de emitir phrase_ready. Não chama a rede nem escolhe
@@ -67,8 +82,8 @@ game/
 
 ```gdscript
 @tool
-extends ActionLeaf
 class_name SleepAction
+extends ActionLeaf
 ## Faz o personagem dormir até a energia recuperar ou deixar de ser noite.
 
 

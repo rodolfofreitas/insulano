@@ -1,20 +1,24 @@
 @tool
-extends ActionUsingDelta
-
 class_name UseUsableAction
-
-var last_time: float = 0
+extends ActionUsingDelta
+## Usa o objecto em `object_blackboard_key` enquanto a necessidade associada não estiver satisfeita.
+##
+## Chama `UsableObject.use` a cada tick; devolve `SUCCESS` quando a necessidade
+## passa dos 98% (não 100%, porque atingir exactamente 100 quase nunca acontece)
+## ou o objecto deixou de ser válido (ex.: consumido e libertado).
 
 @export var object_blackboard_key: StringName = "usable"
 
+var last_time: float = 0
+
+
+## Usa o objecto do blackboard até a necessidade associada estar quase satisfeita.
 func tick(actor: Node, blackboard: Blackboard) -> int:
 	var usable: UsableObject = blackboard.get_value(object_blackboard_key)
 	var need: Need = blackboard.get_value("need")
 	var delta = get_delta()
-	
-	# If need over 99.5, stop it. (99 instead of 100, because >= 100 almost never happens
+
 	if need.get_percentage() < 98 && is_instance_valid(usable):
 		usable.use(actor, delta)
 		return RUNNING
-	else:
-		return SUCCESS
+	return SUCCESS

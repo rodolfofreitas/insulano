@@ -287,10 +287,10 @@ bg_color = Color(0.969137, 0.969137, 0.969137, 1)
 [sub_resource type="CircleShape2D" id="CircleShape2D_6ukov"]
 radius = 700.0
 
-[node name="Guy" type="CharacterBody2D" node_paths=PackedStringArray("navigationAgent", "animated_sprite", "speech_bubble")]
+[node name="Guy" type="CharacterBody2D" node_paths=PackedStringArray("navigation_agent", "animated_sprite", "speech_bubble")]
 script = ExtResource("1_87sjq")
 needs = Array[ExtResource("2_kijpv")]([SubResource("Resource_6ukov")])
-navigationAgent = NodePath("NavigationAgent2D")
+navigation_agent = NodePath("NavigationAgent2D")
 animated_sprite = NodePath("AnimatedSprite2D")
 speech_bubble = NodePath("SpeechBubble")
 
@@ -352,10 +352,10 @@ metadata/_custom_type_script = "uid://bqxgkfgggm606"
 [node name="NeedLowCondition" type="Node" parent="BeehaveTree/SelectorComposite/NeedFulfillingComposite"]
 script = ExtResource("4_ow4m6")
 
-[node name="FindUsableForNeedCondition" type="Node" parent="BeehaveTree/SelectorComposite/NeedFulfillingComposite" node_paths=PackedStringArray("searchArea")]
+[node name="FindUsableForNeedCondition" type="Node" parent="BeehaveTree/SelectorComposite/NeedFulfillingComposite" node_paths=PackedStringArray("search_area")]
 script = ExtResource("5_ujrd8")
 usable_objects_group = &"usableObjects"
-searchArea = NodePath("../../../../UsableObjectsArea")
+search_area = NodePath("../../../../UsableObjectsArea")
 
 [node name="GoToUsableAction" type="Node" parent="BeehaveTree/SelectorComposite/NeedFulfillingComposite"]
 script = ExtResource("6_a17s0")
@@ -429,9 +429,9 @@ script = ExtResource("16_xaydb")
 texts = PackedStringArray("Nice day for fishing, ain\'t it? Hua ha!", "Come heeere, fishy fishy!", "Hm hm hm...", "")
 metadata/_custom_type_script = "uid://rfhhjdwsrqra"
 
-[node name="FishingAction" type="Node" parent="BeehaveTree/SelectorComposite/IdleActionComposite/GoFishingSequence" node_paths=PackedStringArray("fishingRod")]
+[node name="FishingAction" type="Node" parent="BeehaveTree/SelectorComposite/IdleActionComposite/GoFishingSequence" node_paths=PackedStringArray("fishing_rod")]
 script = ExtResource("16_gumv8")
-fishingRod = NodePath("../../../../../Fishingrod")
+fishing_rod = NodePath("../../../../../Fishingrod")
 use_physics_process_delta = true
 metadata/_custom_type_script = "uid://c78ixkheqb01m"
 

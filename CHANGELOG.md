@@ -21,3 +21,7 @@ Entradas em linguagem de utilizador, não de commit. Cada tarefa acrescenta a su
 
 ### Corrigido
 - Documentação que indicava modelos, versões e endpoints que não correspondiam à máquina real.
+- Lint, formatação e documentação dos 21 ficheiros de GDScript herdados do Guy on Island
+  (`scripts/gd_baseline.txt` fica vazia): cabeçalhos e docstrings novos, variáveis exportadas
+  `fishingRod`, `searchArea` e `navigationAgent` renomeadas para `snake_case` (cenas actualizadas),
+  sem alterar o comportamento do jogo.
