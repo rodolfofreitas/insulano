@@ -1,0 +1,36 @@
+[gd_scene load_steps=5 format=3 uid="uid://c4qo45qy8a5mi"]
+
+[ext_resource type="Texture2D" uid="uid://k7a7cyhoiu8g" path="res://object/raw_fish.png" id="1_envs1"]
+[ext_resource type="Script" uid="uid://b83fl8x1b1uvw" path="res://object/need_replentishing_unsable.gd" id="1_unkcw"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_rs052"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_envs1")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_envs1"]
+radius = 4.01521
+height = 17.9664
+
+[node name="RawFish" type="RigidBody2D" groups=["usableObjects"]]
+collision_layer = 2
+collision_mask = 2
+script = ExtResource("1_unkcw")
+max_replentish_value = 80
+need_name = "hunger"
+satisfying_needs = Array[String](["hunger"])
+
+[node name="RawFish" type="AnimatedSprite2D" parent="."]
+position = Vector2(-1, 0)
+scale = Vector2(0.5, 0.5)
+sprite_frames = SubResource("SpriteFrames_rs052")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+rotation = -1.55509
+shape = SubResource("CapsuleShape2D_envs1")

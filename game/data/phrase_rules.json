@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "notes": "Fonte única das regras de aceitação de frases geradas. Lida pelo PhraseFilter (GDScript) e pelo scripts/llm_eval.py. Padrões regex: sem \\b nem \\w, porque o RegEx do Godot (PCRE2 sem UCP) trata letras acentuadas como não-palavra; usar (?i) inline para ignorar maiúsculas. Ordem de verificação: empty, english, ptbr, forbidden, too_short, too_long.",
+  "min_words": 2,
+  "max_words": 15,
+  "max_chars": 120,
+  "strip_chars": "\"'`*«»“”",
+  "english_patterns": [
+    "(?i)(^|[^a-z])(the|and|you|is|are|with|my|i'm|what|this)($|[^a-z])"
+  ],
+  "ptbr_patterns": [
+    "(?i)(^|[^a-z])vocês?($|[^a-zà-ú])",
+    "(?i)(^|[^a-z])(estou|está|estás|estava|fico|vou|vai|ando) [^ ]+ndo($|[^a-z])",
+    "(?i)(^|[^a-z])(galera|tô|pra)($|[^a-z])"
+  ],
+  "forbidden_substrings": ["merda", "caralho", "foda", "puta", "cabrão", "suicid", "matar-me"],
+  "timeout_s": 8.0,
+  "eval": {
+    "samples_per_case": 3,
+    "pass_rate_min": 0.9,
+    "latency_p50_max_s": 4.0,
+    "latency_p95_max_s": 8.0
+  }
+}

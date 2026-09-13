@@ -1,0 +1,440 @@
+[gd_scene load_steps=50 format=3 uid="uid://dhul5qg3kw2mv"]
+
+[ext_resource type="Script" uid="uid://c20axtmekspvh" path="res://guy/guy.gd" id="1_87sjq"]
+[ext_resource type="Script" uid="uid://c1g7dcgt3qos4" path="res://addons/beehave/nodes/beehave_tree.gd" id="2_3o360"]
+[ext_resource type="Script" uid="uid://bl18dw6qsoh5k" path="res://character/need.gd" id="2_kijpv"]
+[ext_resource type="Script" uid="uid://bqxgkfgggm606" path="res://addons/beehave/nodes/composites/sequence.gd" id="3_jtfwu"]
+[ext_resource type="Texture2D" uid="uid://c5sv2acuj1opv" path="res://character/human_base.png" id="3_ovcs7"]
+[ext_resource type="Script" uid="uid://c0kor0yidskdh" path="res://addons/beehave/blackboard.gd" id="4_7styy"]
+[ext_resource type="Texture2D" uid="uid://bqtrvj6muk1me" path="res://character/fishingrod.png" id="4_m8j3q"]
+[ext_resource type="Script" uid="uid://b8gfcd4s5foyc" path="res://beehave/need_low_condition.gd" id="4_ow4m6"]
+[ext_resource type="Script" uid="uid://ba45c5rh3cgij" path="res://beehave/find_usable_for_need_condition.gd" id="5_ujrd8"]
+[ext_resource type="Script" uid="uid://0ttvdp350u7a" path="res://addons/beehave/nodes/composites/selector.gd" id="6_0epj7"]
+[ext_resource type="Script" uid="uid://hygx6hac2ukq" path="res://beehave/go_to_usable_action.gd" id="6_a17s0"]
+[ext_resource type="Script" uid="uid://dw8dh2c0cfef7" path="res://beehave/use_usable_action.gd" id="9_kijpv"]
+[ext_resource type="Script" uid="uid://crds3afygsvdw" path="res://addons/beehave/nodes/composites/selector_random.gd" id="13_ovcs7"]
+[ext_resource type="Script" uid="uid://l61blqinab2t" path="res://beehave/find_random_spot_condition.gd" id="14_k6rot"]
+[ext_resource type="Script" uid="uid://bipjobdk7cdu" path="res://beehave/watch_ocean_action.gd" id="14_ovcs7"]
+[ext_resource type="Script" uid="uid://cui7xuic46e2g" path="res://beehave/find_group_spot_condition.gd" id="15_k6rot"]
+[ext_resource type="Script" uid="uid://c78ixkheqb01m" path="res://beehave/fishing_action.gd" id="16_gumv8"]
+[ext_resource type="Script" uid="uid://rfhhjdwsrqra" path="res://beehave/talk_action.gd" id="16_xaydb"]
+
+[sub_resource type="Resource" id="Resource_6ukov"]
+script = ExtResource("2_kijpv")
+name = "hunger"
+max_value = 100
+current_value = 100.0
+metadata/_custom_type_script = "uid://bl18dw6qsoh5k"
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_k6rot"]
+radius = 8.0
+height = 24.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eh4s8"]
+atlas = ExtResource("3_ovcs7")
+region = Rect2(64, 36, 16, 18)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s01kd"]
+atlas = ExtResource("3_ovcs7")
+region = Rect2(48, 36, 16, 18)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qhcea"]
+atlas = ExtResource("3_ovcs7")
+region = Rect2(128, 54, 16, 18)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_b5srx"]
+atlas = ExtResource("3_ovcs7")
+region = Rect2(48, 54, 16, 18)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_h2b1g"]
+atlas = ExtResource("3_ovcs7")
+region = Rect2(64, 18, 16, 18)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mvyn4"]
+atlas = ExtResource("3_ovcs7")
+region = Rect2(48, 18, 16, 18)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8yuy8"]
+atlas = ExtResource("3_ovcs7")
+region = Rect2(64, 0, 16, 18)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7rxbo"]
+atlas = ExtResource("3_ovcs7")
+region = Rect2(48, 0, 16, 18)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lywnf"]
+atlas = ExtResource("3_ovcs7")
+region = Rect2(48, 36, 16, 18)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_e8jc5"]
+atlas = ExtResource("3_ovcs7")
+region = Rect2(48, 54, 16, 18)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2eqte"]
+atlas = ExtResource("3_ovcs7")
+region = Rect2(48, 18, 16, 18)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_any1m"]
+atlas = ExtResource("3_ovcs7")
+region = Rect2(48, 0, 16, 18)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ovcs7"]
+atlas = ExtResource("3_ovcs7")
+region = Rect2(0, 36, 16, 18)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_es5k0"]
+atlas = ExtResource("3_ovcs7")
+region = Rect2(16, 36, 16, 18)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7g3ne"]
+atlas = ExtResource("3_ovcs7")
+region = Rect2(32, 36, 16, 18)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bk3op"]
+atlas = ExtResource("3_ovcs7")
+region = Rect2(0, 54, 16, 18)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m26ch"]
+atlas = ExtResource("3_ovcs7")
+region = Rect2(16, 54, 16, 18)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6f338"]
+atlas = ExtResource("3_ovcs7")
+region = Rect2(32, 54, 16, 18)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o0js0"]
+atlas = ExtResource("3_ovcs7")
+region = Rect2(0, 18, 16, 18)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8ere7"]
+atlas = ExtResource("3_ovcs7")
+region = Rect2(16, 18, 16, 18)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t2tq7"]
+atlas = ExtResource("3_ovcs7")
+region = Rect2(32, 18, 16, 18)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o1shg"]
+atlas = ExtResource("3_ovcs7")
+region = Rect2(16, 18, 16, 18)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k6rot"]
+atlas = ExtResource("3_ovcs7")
+region = Rect2(0, 0, 16, 18)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gumv8"]
+atlas = ExtResource("3_ovcs7")
+region = Rect2(16, 0, 16, 18)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xaydb"]
+atlas = ExtResource("3_ovcs7")
+region = Rect2(32, 0, 16, 18)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m8j3q"]
+atlas = ExtResource("3_ovcs7")
+region = Rect2(64, 0, 16, 18)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_m26ch"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eh4s8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_s01kd")
+}],
+"loop": true,
+"name": &"eat_down",
+"speed": 2.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qhcea")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_b5srx")
+}],
+"loop": true,
+"name": &"eat_left",
+"speed": 2.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_h2b1g")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mvyn4")
+}],
+"loop": true,
+"name": &"eat_right",
+"speed": 2.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8yuy8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7rxbo")
+}],
+"loop": true,
+"name": &"eat_up",
+"speed": 2.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lywnf")
+}],
+"loop": true,
+"name": &"fishing_down",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_e8jc5")
+}],
+"loop": true,
+"name": &"fishing_left",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2eqte")
+}],
+"loop": true,
+"name": &"fishing_right",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_any1m")
+}],
+"loop": true,
+"name": &"fishing_up",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ovcs7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_es5k0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7g3ne")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_es5k0")
+}],
+"loop": true,
+"name": &"walk_down",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bk3op")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m26ch")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6f338")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m26ch")
+}],
+"loop": true,
+"name": &"walk_left",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o0js0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8ere7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t2tq7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o1shg")
+}],
+"loop": true,
+"name": &"walk_right",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_k6rot")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gumv8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xaydb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m8j3q")
+}],
+"loop": true,
+"name": &"walk_up",
+"speed": 5.0
+}]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gumv8"]
+bg_color = Color(0.969137, 0.969137, 0.969137, 1)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_6ukov"]
+radius = 700.0
+
+[node name="Guy" type="CharacterBody2D" node_paths=PackedStringArray("navigationAgent", "animated_sprite", "speech_bubble")]
+script = ExtResource("1_87sjq")
+needs = Array[ExtResource("2_kijpv")]([SubResource("Resource_6ukov")])
+navigationAgent = NodePath("NavigationAgent2D")
+animated_sprite = NodePath("AnimatedSprite2D")
+speech_bubble = NodePath("SpeechBubble")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CapsuleShape2D_k6rot")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_m26ch")
+animation = &"walk_down"
+frame = 1
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+
+[node name="Fishingrod" type="Sprite2D" parent="."]
+visible = false
+texture = ExtResource("4_m8j3q")
+centered = false
+
+[node name="SpeechBubble" type="Label" parent="."]
+visible = false
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -7.0
+offset_top = -32.0
+offset_right = 7.0
+offset_bottom = -16.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 11
+theme_override_styles/normal = SubResource("StyleBoxFlat_gumv8")
+horizontal_alignment = 1
+
+[node name="UsableObjectsArea" type="Area2D" parent="."]
+collision_layer = 3
+collision_mask = 3
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="UsableObjectsArea"]
+shape = SubResource("CircleShape2D_6ukov")
+
+[node name="Blackboard" type="Node" parent="."]
+script = ExtResource("4_7styy")
+metadata/_custom_type_script = "uid://c0kor0yidskdh"
+
+[node name="BeehaveTree" type="Node" parent="." node_paths=PackedStringArray("blackboard", "actor")]
+script = ExtResource("2_3o360")
+actor_node_path = NodePath("..")
+blackboard = NodePath("../Blackboard")
+actor = NodePath("..")
+
+[node name="SelectorComposite" type="Node" parent="BeehaveTree"]
+script = ExtResource("6_0epj7")
+metadata/_custom_type_script = "uid://0ttvdp350u7a"
+
+[node name="NeedFulfillingComposite" type="Node" parent="BeehaveTree/SelectorComposite"]
+script = ExtResource("3_jtfwu")
+metadata/_custom_type_script = "uid://bqxgkfgggm606"
+
+[node name="NeedLowCondition" type="Node" parent="BeehaveTree/SelectorComposite/NeedFulfillingComposite"]
+script = ExtResource("4_ow4m6")
+
+[node name="FindUsableForNeedCondition" type="Node" parent="BeehaveTree/SelectorComposite/NeedFulfillingComposite" node_paths=PackedStringArray("searchArea")]
+script = ExtResource("5_ujrd8")
+usable_objects_group = &"usableObjects"
+searchArea = NodePath("../../../../UsableObjectsArea")
+
+[node name="GoToUsableAction" type="Node" parent="BeehaveTree/SelectorComposite/NeedFulfillingComposite"]
+script = ExtResource("6_a17s0")
+distance_threshold = 25.0
+metadata/_custom_type_script = "uid://hygx6hac2ukq"
+
+[node name="TalkAction" type="Node" parent="BeehaveTree/SelectorComposite/NeedFulfillingComposite"]
+script = ExtResource("16_xaydb")
+texts = PackedStringArray("Yummy!", "I like fish!", "Munch munch", "Why are there no coconuts here?", "")
+metadata/_custom_type_script = "uid://rfhhjdwsrqra"
+
+[node name="UseUsableAction" type="Node" parent="BeehaveTree/SelectorComposite/NeedFulfillingComposite"]
+script = ExtResource("9_kijpv")
+use_physics_process_delta = true
+metadata/_custom_type_script = "uid://dw8dh2c0cfef7"
+
+[node name="TalkAction2" type="Node" parent="BeehaveTree/SelectorComposite/NeedFulfillingComposite"]
+script = ExtResource("16_xaydb")
+metadata/_custom_type_script = "uid://rfhhjdwsrqra"
+
+[node name="IdleActionComposite" type="Node" parent="BeehaveTree/SelectorComposite"]
+script = ExtResource("13_ovcs7")
+metadata/_custom_type_script = "uid://crds3afygsvdw"
+
+[node name="LookAtRandomLocationSequence" type="Node" parent="BeehaveTree/SelectorComposite/IdleActionComposite"]
+script = ExtResource("3_jtfwu")
+metadata/_custom_type_script = "uid://bqxgkfgggm606"
+
+[node name="FindRandomSpotCondition" type="Node" parent="BeehaveTree/SelectorComposite/IdleActionComposite/LookAtRandomLocationSequence"]
+script = ExtResource("14_k6rot")
+metadata/_custom_type_script = "uid://l61blqinab2t"
+
+[node name="GoToUsableAction" type="Node" parent="BeehaveTree/SelectorComposite/IdleActionComposite/LookAtRandomLocationSequence"]
+script = ExtResource("6_a17s0")
+distance_threshold = 10.0
+metadata/_custom_type_script = "uid://hygx6hac2ukq"
+
+[node name="TalkAction" type="Node" parent="BeehaveTree/SelectorComposite/IdleActionComposite/LookAtRandomLocationSequence"]
+script = ExtResource("16_xaydb")
+texts = PackedStringArray("Hm...", "It\'s hot here.", "I wonder, where Wilson is.", "WILSOOON!", "I wonder...", "...", "HELP!", "No ships in sight.", "I feel lonely.")
+metadata/_custom_type_script = "uid://rfhhjdwsrqra"
+
+[node name="WatchOceanAction" type="Node" parent="BeehaveTree/SelectorComposite/IdleActionComposite/LookAtRandomLocationSequence"]
+script = ExtResource("14_ovcs7")
+min_watch_time_seconds = 2.0
+max_watch_time_seconds = 5.0
+use_physics_process_delta = true
+metadata/_custom_type_script = "uid://bipjobdk7cdu"
+
+[node name="TalkAction2" type="Node" parent="BeehaveTree/SelectorComposite/IdleActionComposite/LookAtRandomLocationSequence"]
+script = ExtResource("16_xaydb")
+metadata/_custom_type_script = "uid://rfhhjdwsrqra"
+
+[node name="GoFishingSequence" type="Node" parent="BeehaveTree/SelectorComposite/IdleActionComposite"]
+script = ExtResource("3_jtfwu")
+metadata/_custom_type_script = "uid://bqxgkfgggm606"
+
+[node name="FindGroupSpotCondition" type="Node" parent="BeehaveTree/SelectorComposite/IdleActionComposite/GoFishingSequence"]
+script = ExtResource("15_k6rot")
+group_name = &"fishingSpot"
+node_blackboard_key = &"usable_spot"
+metadata/_custom_type_script = "uid://cui7xuic46e2g"
+
+[node name="GoToUsableAction" type="Node" parent="BeehaveTree/SelectorComposite/IdleActionComposite/GoFishingSequence"]
+script = ExtResource("6_a17s0")
+distance_threshold = 25.0
+metadata/_custom_type_script = "uid://hygx6hac2ukq"
+
+[node name="TalkAction" type="Node" parent="BeehaveTree/SelectorComposite/IdleActionComposite/GoFishingSequence"]
+script = ExtResource("16_xaydb")
+texts = PackedStringArray("Nice day for fishing, ain\'t it? Hua ha!", "Come heeere, fishy fishy!", "Hm hm hm...", "")
+metadata/_custom_type_script = "uid://rfhhjdwsrqra"
+
+[node name="FishingAction" type="Node" parent="BeehaveTree/SelectorComposite/IdleActionComposite/GoFishingSequence" node_paths=PackedStringArray("fishingRod")]
+script = ExtResource("16_gumv8")
+fishingRod = NodePath("../../../../../Fishingrod")
+use_physics_process_delta = true
+metadata/_custom_type_script = "uid://c78ixkheqb01m"
+
+[node name="TalkAction2" type="Node" parent="BeehaveTree/SelectorComposite/IdleActionComposite/GoFishingSequence"]
+script = ExtResource("16_xaydb")
+metadata/_custom_type_script = "uid://rfhhjdwsrqra"

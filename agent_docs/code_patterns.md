@@ -1,166 +1,152 @@
-# Padrões de Código — Insulano
+# Padrões de código: Insulano
 
-Ler antes de escrever qualquer GDScript neste projecto.
+Ler antes de escrever GDScript. O `scripts/verify.sh` aplica mecanicamente o que está marcado com
+**(portão)**; o resto é revisto pelo `insulano-reviewer`.
 
 ---
 
-## 1. Linguagem e estilo
+## 1. Estilo
 
-- GDScript exclusivamente (não C#, não GDScript 1.x legado)
-- Type hints obrigatórios em todas as funções públicas
-- snake_case para variáveis e funções
-- UPPER_CASE para constantes
-- PascalCase para nomes de nós e classes
+- GDScript 2 tipado: tipos em variáveis, parâmetros e retornos de tudo o que é novo. Inferência `:=`
+  só quando o tipo é óbvio pelo lado direito.
+- `snake_case` em variáveis, funções e ficheiros; `PascalCase` em `class_name` e nós; `UPPER_CASE` em constantes.
+- Membros privados começam por `_`.
+- Formatação `gdformat` e lint `gdlint` com as regras por defeito do gdtoolkit 4 (linha até 100) **(portão)**.
+- Ordem num ficheiro: `extends`, `class_name`, docstring `##`, `signal`, `enum`, `const`, `@export`,
+  `var` públicas, `var` privadas, `_init`/`_ready`/`_process`, funções públicas, funções privadas.
 
-Exemplo correcto:
-```gdscript
-const HUNGER_DECAY_RATE: float = 0.1
+## 2. Documentação dentro do código
 
-var current_hunger: float = 1.0
+Critério da fábrica para código de produto: um humano que nunca viu o código consegue corrigi-lo daqui
+a um ano, sozinho.
 
-func decrease_hunger(delta: float) -> void:
-    current_hunger = clamp(current_hunger - HUNGER_DECAY_RATE * delta, 0.0, 1.0)
-```
-
-## 2. Estrutura de ficheiros
-
-```
-insulano/                   # projecto Godot (a criar)
-├── project.godot
-├── addons/beehave/         # plugin behavior trees
-├── scenes/
-│   ├── world.tscn          # cena principal
-│   ├── character.tscn      # personagem
-│   └── ui/                 # HUD (mínimo)
-├── scripts/
-│   ├── character/
-│   │   ├── character.gd         # controlador principal
-│   │   ├── needs.gd             # sistema de necessidades
-│   │   └── behaviors/           # nós behavior tree
-│   │       ├── go_fish.gd
-│   │       ├── walk_random.gd
-│   │       └── say_phrase.gd
-│   ├── world/
-│   │   ├── world.gd             # controlador da ilha
-│   │   ├── day_night.gd         # ciclo dia/noite (Fase 2)
-│   │   └── weather.gd           # clima (Fase 3)
-│   └── llm/
-│       └── llm_bridge.gd        # ponte Ollama
-├── assets/
-│   ├── tilesets/
-│   ├── characters/
-│   └── sounds/
-└── data/
-    ├── phrases_fallback.json    # frases fixas para fallback
-    └── holidays.yaml            # feriados (Fase 4)
-```
-
-## 3. Padrão LLM Bridge
-
-O ficheiro `llm_bridge.gd` é o único ponto de contacto com o Ollama.
-Nenhum outro script faz chamadas HTTP directas.
-
-Interface pública:
-```gdscript
-# Sinal emitido quando a resposta chega
-signal phrase_ready(text: String)
-
-# Pede uma frase ao LLM com contexto
-# context: dicionário com o estado actual (acção, hora, fome, etc.)
-func request_phrase(context: Dictionary) -> void:
-    pass
-```
-
-Contrato de comportamento:
-- Chamada assíncrona (nunca bloqueia o render loop)
-- Se Ollama não responder em 5s, emite signal com frase do fallback
-- Fallback: carregar phrases_fallback.json no _ready()
-- Nunca expor o URL do Ollama como constante pública — usar ProjectSettings
-
-## 4. Padrão de necessidades (Needs)
-
-Sistema de necessidades em `needs.gd`:
-```gdscript
-# Cada necessidade é um float 0.0 (crítico) a 1.0 (satisfeito)
-var hunger: float = 1.0
-var energy: float = 1.0  # Fase 2
-
-signal need_critical(need_name: String)  # emite quando < 0.2
-```
-
-Regra: a behavior tree lê os valores mas não os altera directamente.
-Só as Actions (go_fish, sleep, etc.) chamam métodos de needs.gd.
-
-## 5. Padrão Behavior Tree (Beehave)
-
-Cada Action é um nó Beehave separado em `scripts/character/behaviors/`.
-Cada Action herda de `BTAction` e implementa:
+- Todo o `.gd` começa (depois de `extends`/`class_name`) com um bloco `##`: responsabilidade, quem o usa,
+  e o que **não** faz **(portão)**.
+- Toda a função pública tem `##` imediatamente acima (anotações `@` podem ficar no meio) **(portão)**.
+- Comentários `#` para o porquê de decisões não óbvias, em português.
+- Constantes mágicas têm comentário com a origem do valor.
 
 ```gdscript
-extends BTAction
+extends RefCounted
+class_name PhraseFilter
+## Aceita ou rejeita frases geradas pelo LLM segundo game/data/phrase_rules.json.
+##
+## Usado pelo LLMBridge antes de emitir phrase_ready. Não chama a rede nem escolhe
+## frases de fallback. Tem paridade testada com scripts/llm_eval.py.
+
+## Máximo de palavras aceite; lido das regras, este valor só vale se o ficheiro faltar.
+const DEFAULT_MAX_WORDS: int = 15
+
+
+## Devolve "" se a frase é aceite; senão o motivo (empty, english, ptbr, ...).
+func rejection_reason(text: String) -> String:
+	...
+```
+
+## 3. Estrutura de pastas (por funcionalidade)
+
+A base organiza por funcionalidade e mantemos isso. Não criar `scripts/` nem `scenes/` genéricos dentro de `game/`.
+
+```
+game/
+├── beehave/      folhas da behavior tree (ActionLeaf, ConditionLeaf)
+├── character/    Character, Need, sprites do personagem
+├── guy/          cena e script do náufrago, Direction
+├── object/       objectos utilizáveis (peixe, contentores)
+├── world/        ilha, tileset, GameClock, DayNight, WeatherService, HolidayCalendar
+├── llm/          LLMSettings, PhraseContext, PromptBuilder, PhraseFilter, FallbackPhrases, LLMBridge
+├── events/       EventDirector, gaivota, barco
+├── ui/           SpeechBubble, créditos
+├── app/          ScreensaverMode
+├── data/         JSON e prompts (fonte única)
+├── tests/        unit/, integration/, live/, fixtures/
+└── tools/        boot_smoke.gd, capture.gd
+```
+
+## 4. Behavior tree (Beehave 2.x)
+
+```gdscript
+@tool
+extends ActionLeaf
+class_name SleepAction
+## Faz o personagem dormir até a energia recuperar ou deixar de ser noite.
+
 
 func tick(actor: Node, blackboard: Blackboard) -> int:
-    # Lógica da acção
-    # Retorna: SUCCESS, FAILURE, ou RUNNING
-    return SUCCESS
+	var character := actor as Character
+	if character == null:
+		return FAILURE
+	blackboard.set_value("current_action", "dormir")
+	...
+	return RUNNING
 ```
 
-O blackboard partilha estado entre nós:
-- `blackboard.set_value("target_position", pos)`
-- `blackboard.get_value("current_action", "")`
+- Usar `SUCCESS`, `FAILURE`, `RUNNING` (nunca `FAILED`, que é a constante global de erro).
+- A árvore **lê** necessidades; só as acções as alteram através de métodos de `Need`.
+- Estado temporário de uma acção vive no blackboard com chaves prefixadas pelo nome da acção
+  (ex. `sleep_started_at`) e é apagado com `erase_value` quando a acção termina.
+- Cada acção escreve `current_action` (verbo em pt-PT) para o contexto do LLM.
 
-## 6. Sinais em vez de chamadas directas
+## 5. Comunicação entre sistemas
 
-Preferir sinais para comunicação entre camadas:
+- Sinais para baixo-para-cima e entre sistemas; chamadas directas só para dentro do próprio subsistema.
+- Autoloads (`LLM`, `Clock`, `Events`, `Weather`, `Screensaver`) são as únicas dependências globais.
+- Para testar, qualquer nó que usa um autoload aceita uma referência injectada:
+
 ```gdscript
-# BOM: character emite sinal, world responde
-character.fishing_started.emit()
+## Ponte a usar; em testes injecta-se uma falsa, em jogo fica o autoload.
+var bridge: Node = null
 
-# MAU: character chama directamente o world
-world.show_fishing_effect(character.position)
+
+func _get_bridge() -> Node:
+	return bridge if bridge != null else get_node("/root/LLM")
 ```
 
-## 7. Comentários
+## 6. Rede
 
-Comentários em português quando explicam PORQUÊ (decisão de negócio):
+Só `LLMBridge` e `WeatherService` criam `HTTPRequest` **(revisão)**. Padrão:
+
 ```gdscript
-# O personagem só fala a cada 30s para não ser intrusivo durante o trabalho
-const MIN_PHRASE_INTERVAL: float = 30.0
+var _http := HTTPRequest.new()
+_http.timeout = settings.timeout_s
+add_child(_http)
+_http.request_completed.connect(_on_request_completed)
+var err := _http.request(url, ["Content-Type: application/json"], HTTPClient.METHOD_POST, JSON.stringify(payload))
+if err != OK:
+	_emit_fallback(request_id, "request_error_%d" % err)
 ```
 
-Sem comentários óbvios:
+- URL sempre `127.0.0.1`, nunca `localhost`.
+- Toda a falha tem um caminho de fallback e emite o sinal exactamente uma vez.
+
+## 7. Dados
+
 ```gdscript
-# MAU: incrementa o contador  ← óbvio pelo código
-count += 1
+static func _load_json(path: String) -> Dictionary:
+	var text := FileAccess.get_file_as_string(path)
+	var data: Variant = JSON.parse_string(text)
+	if typeof(data) != TYPE_DICTIONARY:
+		push_error("[Insulano/data] JSON inválido: %s" % path)
+		return {}
+	return data
 ```
 
-## 8. Dados externos em JSON/YAML
+- O `JSON` do Godot devolve números como `float`: `int(rule["month"])`.
+- Ficheiros de dados em `res://data/`; preferências do utilizador em `user://settings.cfg`.
+- Nunca caminhos absolutos.
 
-Frases fixas, feriados e configurações ficam em `data/`, não hard-coded no GDScript.
-Carregar no `_ready()` com `FileAccess.open()`.
+## 8. Logging e erros
 
-Exemplo de phrases_fallback.json:
-```json
-{
-  "idle": [
-    "Mais um dia nesta ilha...",
-    "O oceano parece calmo hoje.",
-    "Quando será que passa um barco?"
-  ],
-  "fishing": [
-    "Vamos ver o que o mar tem para oferecer.",
-    "Paciência. O peixe aparece."
-  ],
-  "eating": [
-    "Hoje o jantar foi servido.",
-    "Não é requintado, mas é nutritivo."
-  ]
-}
-```
+- Prefixo por subsistema: `[Insulano/LLM]`, `[Insulano/Weather]`, `[Insulano/data]`.
+- `push_error` para estados que não deviam acontecer; `print` só para eventos úteis (latência, fallback).
+- Nada de `print` dentro de `tick` ou `_process` (inunda o log; ver T-003).
 
-## 9. Exportação e portabilidade
+## 9. Testes
 
-- Nunca usar caminhos absolutos — sempre `res://` ou `user://`
-- `user://` para dados persistentes (configurações do utilizador)
-- `res://` para assets e dados do jogo
-- Testar export Linux antes de fechar qualquer fase
+- Teste primeiro. Nomes `test_<comportamento_esperado>`; regressões `test_regression_<bug>`.
+- Lógica pura em `static func` ou `RefCounted` e testada em `tests/unit`.
+- Cenas e sinais em `tests/integration`, com `add_child_autofree`.
+- Nunca rede em `tests/unit` ou `tests/integration`: fixtures em `tests/fixtures/`.
+- Aleatoriedade com seed fixa. Nada de "correr outra vez até passar".
+
+Detalhe: [`testing.md`](testing.md).

@@ -1,91 +1,182 @@
-# AGENTS.md — Insulano
+# AGENTS.md: Insulano
 
-Plano mestre para qualquer agente (Hermes, Claude Code, Codex) que opere neste projecto.
-Ler ANTES de tocar em qualquer ficheiro.
+Plano mestre para qualquer agente (Hermes, Claude Code, Codex) que trabalhe neste
+repositório. É a fonte de verdade sobre **como se trabalha aqui**. O que o produto
+é vive no PRD; como está construído vive na arquitectura; o que falta fazer vive
+no backlog.
 
 ---
 
-## 1. O que é este projecto
+## 0. Em 30 segundos
 
-Insulano é um protetor de ecrã com personagem autónomo numa ilha tropical.
-Inspirado no Johnny Castaway (Sierra, 1992). Comportamento dirigido por LLM local (Ollama).
-Motor: Godot 4. Licença: MIT. 100% local, sem cloud, sem API keys externas.
+- **O que é:** protector de ecrã em Godot 4 com um náufrago autónomo numa ilha;
+  frases geradas por um LLM local (Ollama), com fallback para frases fixas.
+- **Onde está o jogo:** [`game/`](game/project.godot). O submódulo
+  `base-guy-on-island/` é só referência upstream: nunca se edita.
+- **O que fazer a seguir:** `python3 scripts/backlog.py next`.
+- **Como saber se está bem:** `scripts/verify.sh` (portão único). Nada está feito
+  sem ele verde e sem a prova que a tarefa exige.
 
-## 2. Leitura obrigatória antes de trabalhar
+## 1. Leitura obrigatória, por ordem
 
-Ordem de leitura:
+1. Este ficheiro.
+2. [`agent_docs/project_brief.md`](agent_docs/project_brief.md): o produto numa página.
+3. [`agent_docs/prd.md`](agent_docs/prd.md): requisitos e critérios de sucesso.
+4. [`agent_docs/tech_design.md`](agent_docs/tech_design.md): contratos de cada componente (nomes, sinais, settings).
+5. [`agent_docs/code_patterns.md`](agent_docs/code_patterns.md): como se escreve GDScript aqui.
+6. [`agent_docs/testing.md`](agent_docs/testing.md): pirâmide de testes e o que cada portão prova.
+7. A tarefa em curso em [`backlog/`](backlog/README.md) e os ficheiros da secção "Ler antes".
 
-    1. AGENTS.md                         (este ficheiro — contexto global)
-    2. CLAUDE.md                         (contexto para Claude Code)
-    3. agent_docs/prd.md                 (o que o produto faz e para quem)
-    4. agent_docs/tech_stack.md          (stack e dependências)
-    5. agent_docs/code_patterns.md       (padrões a seguir)
-    6. base-guy-on-island/               (código base — ler antes de escrever)
+Referência sob demanda: [`docs/architecture.md`](docs/architecture.md),
+[`docs/decisions.md`](docs/decisions.md), [`docs/api-ollama.md`](docs/api-ollama.md),
+[`docs/runbook.md`](docs/runbook.md), [`docs/assets-licencas.md`](docs/assets-licencas.md).
 
-## 3. Regras invariantes
+## 2. O loop autónomo
 
-- NUNCA usar assets da Sierra/Activision — risco legal. Ver docs/threat_model.md.
-- TODO código novo vai em GDScript (Godot 4), não C# nem GDScript 1.
-- Ollama sempre com fallback para frases fixas quando indisponível.
-- Commits: tipo: descrição em inglês (feat/fix/docs/chore/refactor).
-- Código em inglês. Comentários em português quando justificam decisão de negócio.
-- Testes manuais: Export Linux .x86_64 deve correr antes de fechar qualquer fase.
+Desenhado como loop de quatro peças (doutrina da fábrica):
 
-## 4. Arquitectura em 3 camadas
+| Peça | Neste projecto |
+|---|---|
+| Gatilho | uma sessão arranca com `/insulano-loop`, ou o Hermes despacha uma tarefa |
+| Acção | executar UMA tarefa do backlog de ponta a ponta (passos abaixo) |
+| Condição de paragem | `verify.sh` sem FALHOU e todos os critérios da tarefa provados |
+| Estado | o frontmatter e a secção Relatório de cada `backlog/**/T-*.md`, mais o git |
 
-    [World / Ilha]        — tileset, ambiente, ciclo dia/noite, clima
-         ↓
-    [Character / Guy]     — behavior tree (Beehave), necessidades, animações
-         ↓
-    [LLM Bridge]          — HTTP request ao Ollama, fallback, contexto de prompt
+### Passos por tarefa
 
-Cada camada é independente. Alterações numa não devem quebrar as outras.
+1. `python3 scripts/backlog.py next`. Exit 3 significa que não há nada executável: parar e reportar.
+2. Mudar `estado: em-curso` na tarefa. Ler "Ler antes" e os contratos em `tech_design.md`.
+3. **Testes primeiro.** Escrever o teste GUT (ou pytest, para scripts) e vê-lo falhar pelo motivo certo.
+4. Implementar o mínimo que o faz passar, seguindo `code_patterns.md`.
+5. Correr `scripts/verify.sh`, mais `--visual` se `tipo: visual`, mais `--llm` se tocou em prompt, regras ou LLMBridge.
+6. Se falhar: corrigir a causa, não o sintoma, e repetir o passo 5. No máximo **3 ciclos completos**;
+   ao terceiro, `estado: bloqueado`, escrever no Relatório o que se tentou e o erro exacto, e passar à tarefa seguinte.
+7. Documentação no mesmo commit: `python3 scripts/check_docs.py --fix` se criou ou renomeou `.gd`;
+   actualizar `tech_design.md` se um contrato mudou; entrada em `CHANGELOG.md` na secção `[Não lançado]`;
+   ADR novo em `docs/decisions.md` se tomou uma decisão que outro agente poderia tomar ao contrário.
+8. Tarefas visuais: copiar a captura para `docs/proof/T-NNN-descricao.png` e **abrir a imagem** para confirmar o que se vê.
+9. Preencher o Relatório (o que mudou, comandos corridos e resultado, desvios, o que ficou por verificar).
+   Pedir o veredicto ao `insulano-verifier` (quem implementou não se julga). Só com PASSOU:
+   `estado: feito` e commit `feat(T-NNN): descrição` (ou fix/docs/chore/test).
+10. Voltar ao passo 1.
 
-## 5. Quando delegar vs. executar directamente
+### Quando o loop pára sozinho
 
-Fazer directamente (Hermes):
-- Editar docs (README, AGENTS.md, CLAUDE.md, roadmap)
-- Configs (export_presets.cfg, project.godot)
-- Fixes triviais (typo, ajuste de constante)
-- Pesquisa e análise
+- `backlog.py next` devolve exit 3 (só restam tarefas `humano` ou `bloqueado`).
+- Duas tarefas seguidas ficaram `bloqueado`: há um problema de fundo, parar e reportar.
+- `verify.sh` falha numa verificação **que a tarefa não tocou** (regressão prévia): criar tarefa nova
+  `fix` com a evidência, marcá-la como dependência da actual e parar.
+- O turno ou o contexto está a esgotar: escrever no Relatório o estado exacto e o que falta,
+  deixar `em-curso`, **não** marcar feito.
 
-Delegar ao Claude Code:
-- Qualquer feature nova (≥ 2 ficheiros .gd envolvidos)
-- Integração Ollama (LLMBridge.gd)
-- Ciclo dia/noite (WorldEnvironment, shader)
-- Novos eventos (gaivota, barco, chuva)
-- Qualquer alteração ao behavior tree
+## 3. Definition of Done por tipo de tarefa
 
-## 6. Portões de qualidade antes de fechar fase
+| Tipo | Obrigatório antes de `estado: feito` |
+|---|---|
+| `codigo` | teste novo que falhava e agora passa; `verify.sh` sem FALHOU; docstrings `##`; CHANGELOG |
+| `visual` | tudo o de `codigo`, mais `verify.sh --visual` e PNG em `docs/proof/` inspeccionado |
+| `infra` | comando real corrido com o output no Relatório (ex.: `scripts/export.sh` a PASSOU) |
+| `docs` | `check_docs.py` a PASSOU; nenhum comando descrito que não tenha sido corrido |
 
-Fase 1 (LLM):
-- [ ] Jogo corre no Omarchy (Linux/Wayland) sem erro
-- [ ] Ollama responde com frase em < 3s
-- [ ] Fallback activa quando Ollama está offline
-- [ ] Export .x86_64 funcional
+Fecho de fase: `scripts/verify.sh --full` sem FALHOU (INDETERMINADO só com motivo escrito e aceite
+numa tarefa `humano`), export Linux a arrancar e `CHANGELOG` com a versão.
 
-Fase 2+ (adicionar portões equivalentes no roadmap)
+## 4. Fronteiras de autonomia
 
-## 7. Contexto de ambiente
+**Pode fazer sozinho:** tudo dentro de `game/`, `scripts/`, `evals/`, `backlog/`, `agent_docs/`,
+`docs/` (excepto o ficheiro protegido abaixo), testes, commits locais, instalar ferramentas de
+utilizador via `mise` ou `uvx`.
 
-- Máquina: lenovo-omarchy, Arch Linux, Hyprland/Wayland
-- Ollama porta: 11434 (já instalado, já a correr)
-- Godot 4: verificar instalação antes de começar
-- Path do projecto: ~/Programacao/Kaeto/Insulano/
-- Base de código: base-guy-on-island/ (submodulo git, MIT)
+**Nunca sem o Rodolfo** (a tarefa nasce ou passa a `estado: humano`):
 
-## 8. Ficheiros que não tocar sem discussão
+- assets de terceiros novos (imagem, som, fonte): licença verificada e registada por ele;
+- qualquer funcionalidade que envie dados para a rede **ligada por defeito**;
+- editar `~/.config/` (hypridle, Hyprland) ou qualquer coisa fora do repositório;
+- `ollama pull` de modelos, alterar o contentor Docker do Ollama, `sudo`;
+- publicar (itch.io, GitHub, qualquer destino externo), `git push`;
+- alterar `docs/threat_model.md`, `.gitmodules` ou o submódulo `base-guy-on-island/`;
+- decisões de licença do próprio Insulano.
 
-- base-guy-on-island/ — submodulo, alterações vão para o repo próprio do projecto
-- docs/threat_model.md — só o Rodolfo altera
-- .gitmodules — só alterar com instrução explícita
+## 5. Mapa do repositório
 
-## 9. Referências
+| Caminho | Conteúdo |
+|---|---|
+| `game/` | projecto Godot (`project.godot`), código, cenas, dados e testes |
+| `game/data/` | JSON de dados e o template do prompt (fonte única, partilhada com o eval) |
+| `game/tests/unit`, `game/tests/integration` | testes GUT; `game/tests/fixtures` com casos partilhados |
+| `game/tools/` | `boot_smoke.gd` (smoke headless) e `capture.gd` (screenshot) |
+| `scripts/` | `verify.sh`, `check_docs.py`, `backlog.py`, `llm_eval.py`, `export.sh` e os seus testes |
+| `evals/` | contextos de avaliação das frases do LLM |
+| `backlog/` | tarefas por fase, estado do loop |
+| `agent_docs/` | harness para agentes: brief, PRD, tech design, padrões, testes |
+| `docs/` | artefactos para humanos: arquitectura, ADRs, API Ollama, runbook, licenças, provas |
+| `.claude/` | agentes e skills do Claude Code específicos deste projecto |
+| `base-guy-on-island/` | submódulo upstream (MIT), só leitura |
 
-- PRD completo: agent_docs/prd.md
-- Tech stack: agent_docs/tech_stack.md
-- Padrões de código: agent_docs/code_patterns.md
-- Decisões de arquitectura: docs/decisions.md
-- Roadmap: docs/roadmap.md
-- Runbook: docs/runbook.md
-- Threat model: docs/threat_model.md
+## 6. Regras invariantes de código
+
+1. GDScript tipado em tudo o que é novo. Nada de C#.
+2. `LLMBridge` é o único sítio que fala com o Ollama; `WeatherService` o único que fala com o wttr.in.
+3. Nenhuma chamada de rede bloqueia um frame. Toda a chamada tem timeout e fallback.
+4. O jogo corre completo sem Ollama e sem internet.
+5. Prompt, regras de filtro, feriados, frases de fallback e paletas vivem em `game/data/`, nunca no código.
+   O `scripts/llm_eval.py` lê os mesmos ficheiros: se divergirem, o eval mente.
+6. Tempo, clima e aleatoriedade têm costuras de teste (`INSULANO_FAKE_TIME`, `INSULANO_FAKE_WEATHER`, seeds).
+7. Caminhos só `res://` e `user://`.
+8. Nenhum asset da Sierra ou Activision, nem "inspirado ao pixel". Todo o asset em `docs/assets-licencas.md`.
+9. Todo o `.gd` novo com cabeçalho `##` e `##` em cada função pública (o `check_docs.py` falha sem isso).
+10. Texto visível ao utilizador em português de Portugal. Sem travessões em lado nenhum.
+
+## 7. Agentes e skills do projecto
+
+| Nome | Tipo | Para quê |
+|---|---|---|
+| `/insulano-loop` | skill | corre o loop da secção 2 até uma condição de paragem |
+| `/insulano-task` | skill | executa uma única tarefa (passos 2 a 9) |
+| `/insulano-verify` | skill | corre e interpreta os portões, sem falsos verdes |
+| `/insulano-docs-sync` | skill | scan, generate, check da documentação contra o código |
+| `/insulano-new-task` | skill | escreve tarefas novas com critérios binários |
+| `/insulano-asset` | skill | adiciona um asset com licença registada (ou marca `humano`) |
+| `insulano-builder` | agente | implementa uma tarefa em GDScript com testes primeiro |
+| `insulano-reviewer` | agente | revisão adversarial do diff contra contratos e regras invariantes |
+| `insulano-verifier` | agente | corre `verify.sh`, lê logs e imagens, devolve veredicto sem corrigir |
+| `insulano-docs-keeper` | agente | detecta e corrige deriva entre docs e código |
+| `insulano-llm-tuner` | agente | afina prompt e regras com o eval como métrica |
+
+O construtor não se julga: quem implementou não declara o próprio veredicto final; o
+`insulano-verifier` (ou o Hermes) confirma.
+
+## 8. Integração com a fábrica
+
+Quando o Hermes despacha uma célula S8 para este repositório, a célula executa uma tarefa
+do backlog pelos passos 2 a 9 e escreve o `RELATORIO.md` pedido pela fábrica com o mesmo
+conteúdo da secção Relatório da tarefa. A regra de fecho da fábrica aplica-se: o artefacto real
+tem de correr (export Linux ou `boot_smoke`) e a UI tem screenshot em `docs/proof/`.
+`BLOQUEADO_HUMANO` corresponde a `estado: humano`.
+
+## 9. Ambiente desta máquina
+
+- Godot 4.7.2 via mise (`mise.toml` na raiz). Binário: `mise which godot`.
+- gdtoolkit 4.x (gdlint, gdformat) e pytest via `uvx`, sem instalação global.
+- Ollama em Docker, **só CPU**, em `127.0.0.1:11434`. Modelo instalado e medido: `llama3.1:8b`.
+- Sessão Wayland (Hyprland): a captura visual abre uma janela durante uns segundos.
+
+## 10. Armadilhas conhecidas
+
+- O Godot sai com código 0 mesmo com `SCRIPT ERROR`: o `verify.sh` procura esses padrões nos logs.
+- O Beehave imprime `Can't send message. No active debugger` em headless: ruído conhecido, ignorar.
+- O Hyprland ignora `--resolution`: por isso o `capture.gd` renderiza num SubViewport fixo.
+- O GUT conta como erro uma pasta de testes configurada que não existe.
+- Uma `class_name` nova só é visível depois de `godot --headless --import` (o `verify.sh` já o faz).
+- Na base, `FAILED` (constante global de erro, vale 1) é usado onde devia ser `FAILURE`; funciona por coincidência.
+- O RegEx do Godot não trata letras acentuadas como letras em `\b` e `\w`: ver `game/data/phrase_rules.json`.
+- O JSON do Godot devolve números como `float`: converter com `int()` ao ler meses e dias.
+- `HTTPRequest` para `localhost` pode tentar IPv6: usar sempre `127.0.0.1`.
+- A behavior tree usa `randf()`: testes que dependem de comportamento fixam a seed. Mesmo assim,
+  `NavigationServer2D.map_get_random_point` não obedece ao `seed()`: asserções sobre posições usam limiares, nunca valores exactos.
+
+## 11. Ficheiros protegidos
+
+- `docs/threat_model.md`: só o Rodolfo altera. Propostas vão para `docs/threat_model-propostas.md`.
+- `base-guy-on-island/` e `.gitmodules`: referência upstream.
+- `scripts/gd_baseline.txt`: só pode perder linhas, nunca ganhar.

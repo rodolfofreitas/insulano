@@ -1,170 +1,97 @@
-# Runbook — Insulano
+# Runbook: Insulano
 
-Procedimentos operacionais para desenvolvimento e distribuição.
-
----
-
-## 1. Setup do ambiente de desenvolvimento
-
-### Pré-requisitos
-
-```bash
-# Verificar Ollama
-ollama list
-curl -s http://localhost:11434/api/tags | grep -c name
-
-# Verificar Godot 4 instalado
-godot --version   # deve ser 4.x
-
-# Se Godot não estiver instalado no Omarchy
-omarchy pkg add godot   # via pacman/AUR
-# ou: flatpak install flathub org.godotengine.Godot
-```
-
-### Abrir o projecto
-
-```bash
-cd ~/Programacao/Kaeto/Insulano
-
-# Inicializar submodulo (se clonado sem --recurse-submodules)
-git submodule update --init --recursive
-
-# Abrir base no Godot para referência
-godot base-guy-on-island/project.godot &
-
-# O projecto Insulano próprio (quando criado na Fase 1)
-godot insulano/project.godot &
-```
+Procedimentos operacionais. Cada comando tem a indicação de quando foi **executado** pela última vez;
+um comando sem data é proposto e ainda não foi provado.
 
 ---
 
-## 2. Fluxo de desenvolvimento por fase
+## Como correr
 
-### Fase 1 — LLM
+| Objectivo | Comando | Executado |
+|---|---|---|
+| Instalar o Godot fixado | `mise install` | 2026-09-13 |
+| Jogo em janela | `$(mise which godot) --path game` | 2026-09-13 (via captura) |
+| Editor | `$(mise which godot) -e --path game` | - |
+| Portão completo sem LLM nem export | `scripts/verify.sh --visual` | 2026-09-13 |
+| Eval do LLM | `python3 scripts/llm_eval.py --proof` | 2026-09-13 |
+| Próxima tarefa | `python3 scripts/backlog.py next` | 2026-09-13 |
+| Binário exportado | `dist/linux/insulano.x86_64` | - (T-004) |
+| Modo protector | `dist/linux/insulano.x86_64 --screensaver` | - (T-501) |
 
-```bash
-# 1. Certificar que Ollama está a correr
-ollama list
+## Variáveis de ambiente
 
-# 2. Instalar modelo se necessário
-ollama pull gemma3:4b
+Não há segredos. Variáveis de teste e diagnóstico (sem valores fixos):
 
-# 3. Testar frase manualmente
-ollama run gemma3:4b "Você é um náufrago numa ilha. Diga uma frase curta ao amanhecer."
+- `INSULANO_LLM_URL`: sobrepõe o URL do Ollama
+- `INSULANO_FAKE_TIME`: fixa o relógio (formato `AAAA-MM-DDTHH:MM`)
+- `INSULANO_FAKE_WEATHER`: força a condição de clima
 
-# 4. Desenvolver LLMBridge.gd no Godot Editor
+## Export templates
 
-# 5. Testar com Ollama offline (forçar fallback)
-# No terminal: killall ollama
-# Correr o jogo — deve usar frases fixas sem crash
-
-# 6. Export Linux
-# Godot Editor → Project → Export → Linux/X11 → Export Project
-# Testar: ./insulano.x86_64
-
-# 7. Commit
-git add . && git commit -m "feat: integrar LLM bridge com Ollama e fallback"
-```
-
----
-
-## 3. Export para distribuição
-
-### Linux (principal)
-```bash
-# No Godot Editor:
-# Project → Export → Add → Linux/X11
-# Definir output: dist/insulano-linux.x86_64
-# Clicar Export Project
-
-# Testar
-chmod +x dist/insulano-linux.x86_64
-./dist/insulano-linux.x86_64
-```
-
-### Windows
-```bash
-# Requer wine ou máquina Windows para testar
-# No Godot Editor: Add → Windows Desktop
-# Output: dist/insulano-windows.exe
-```
-
-### HTML5
-```bash
-# No Godot Editor: Add → Web
-# Output: dist/web/
-# Testar: python3 -m http.server 8080 --directory dist/web/
-# Abrir: http://localhost:8080
-```
-
----
-
-## 4. Publicar no itch.io
+Necessários para `scripts/export.sh`. Proposto, a executar e datar na T-004:
 
 ```bash
-# Criar conta em itch.io (se não existir)
-# Criar projecto: https://itch.io/game/new
-
-# Configuração recomendada:
-# Kind of project: HTML5 (para demo rápida) + Downloadable (Linux/Windows)
-# Visibility: Devlog (durante dev) → Public (ao lançar)
-# Pricing: No payments (free)
-# Licença: MIT
-
-# Upload dos ficheiros:
-# - insulano-linux.tar.gz (binário + assets)
-# - insulano-windows.zip
-# - Web player (pasta web/)
-
-# Créditos obrigatórios na descrição (CC-BY):
-# "Character sprites by Antifarea & Clint Bellanger / OpenGameArt.org (CC-BY)"
+V=4.7.2
+DEST="$HOME/.local/share/godot/export_templates/${V}.stable"
+TMP="$(mktemp -d)"
+curl -L -o "$TMP/templates.tpz" \
+  "https://github.com/godotengine/godot-builds/releases/download/${V}-stable/Godot_v${V}-stable_export_templates.tpz"
+unzip -q "$TMP/templates.tpz" -d "$TMP"
+mkdir -p "$DEST" && mv "$TMP"/templates/* "$DEST"/
+scripts/export.sh
 ```
 
----
+## Monitorização
 
-## 5. Troubleshooting
+Aplicação local, sem telemetria. Onde olhar:
 
-### Ollama não responde
-```bash
-# Verificar se está a correr
-ps aux | grep ollama
+- Última verificação: `reports/verify-last.txt`
+- Logs das corridas: `reports/*.log`
+- Log do jogo em execução: saída padrão do processo (prefixos `[Insulano/...]`)
+- Estado do Ollama: `docker ps --filter name=ollama` e `docker exec ollama ollama ps`
 
-# Iniciar manualmente
-ollama serve &
+## Procedimentos de incidente
 
-# Verificar porta
-curl http://localhost:11434/api/tags
-```
+### O personagem só diz frases de fallback
+- Causa provável: Ollama parado, modelo errado ou timeout.
+- Diagnóstico: `curl -s http://127.0.0.1:11434/api/tags`; procurar `[Insulano/LLM]` e o motivo no log.
+- Correcção: `docker start ollama` se estiver parado; confirmar `insulano/llm/model` contra a lista de modelos.
 
-### Jogo não arranca no Omarchy (Wayland)
-```bash
-# Forçar X11 se necessário
-DISPLAY=:0 ./insulano.x86_64
+### `verify.sh` diz `godot FALHOU: Godot não encontrado`
+- Causa: mise sem a ferramenta instalada neste clone.
+- Correcção: `mise install` na raiz do repositório.
 
-# Ou via XWayland (deve funcionar automaticamente no Hyprland)
-```
+### `visual INDETERMINADO` ou captura falha
+- Causa: sessão sem ecrã (SSH, contentor) ou driver OpenGL indisponível.
+- Diagnóstico: `echo $WAYLAND_DISPLAY $DISPLAY`; ver `reports/capture.log`.
+- Correcção: correr numa sessão gráfica. Não marcar tarefas visuais como feitas sem imagem.
 
-### Modelo muito lento
-```bash
-# Usar modelo mais pequeno
-ollama pull gemma3:4b   # ~2.5GB, mais rápido que 7B
-# Alterar no ProjectSettings do Godot
-```
+### `gut FALHOU` com `GUT ERROR: The path [...] does not exist`
+- Causa: pasta configurada em `game/.gutconfig.json` que não existe.
+- Correcção: criar a pasta com pelo menos um teste, ou retirá-la da configuração.
 
-### Export falha por falta de templates
-```bash
-# No Godot: Editor → Manage Export Templates → Download
-# Escolher a versão correspondente ao Godot instalado
-```
+### `import FALHOU` com `SCRIPT ERROR` numa classe nova
+- Causa: erro de parse ou `class_name` duplicada.
+- Diagnóstico: `grep -n "SCRIPT ERROR" -A3 reports/import.log`.
 
----
+### `lint FALHOU`
+- Correcção: `uvx --from 'gdtoolkit==4.*' gdformat <ficheiro>` e corrigir o que o `gdlint` ainda reportar.
 
-## 6. Créditos obrigatórios (CC-BY)
+### `docs FALHOU` com `[componentes] desactualizado`
+- Correcção: `python3 scripts/check_docs.py --fix` e commit do `docs/architecture.md`.
 
-Incluir em ecrã de créditos do jogo e na página itch.io:
+## Rollback
 
-    Character sprites: Antifarea & Clint Bellanger / OpenGameArt.org
-    Licença CC-BY: https://creativecommons.org/licenses/by/3.0/
+- Código: `git revert <commit>` (histórico local, sem remoto). Nenhum rollback executado até à data.
+- Versões: tags locais `vX.Y.Z` a partir da T-109; binário anterior reconstruível com `git checkout vX.Y.Z && scripts/export.sh`.
 
-O tileset Tiny Islands é CC0 — atribuição não obrigatória mas apreciada:
-    Tileset: Majadroid / OpenGameArt.org
+## Backups e restauro
+
+- O repositório não tem remoto e `/home` não tem snapshots nesta máquina: **um disco avariado perde tudo**.
+  Proposta ao Rodolfo em `docs/threat_model-propostas.md` P-05.
+- Nada de dados de utilizador para salvaguardar além de `user://settings.cfg`.
+
+## Escalamento
+
+Rodolfo. Tarefas com `estado: humano` no backlog listam o que espera por ele:
+`python3 scripts/backlog.py list | grep humano`.

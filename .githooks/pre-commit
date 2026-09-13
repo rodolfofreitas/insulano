@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Portão rápido antes de cada commit: docs contra código, backlog, pytest e lint.
+# Activar uma vez por clone: git config core.hooksPath .githooks
+exec "$(git rev-parse --show-toplevel)/scripts/verify.sh" --quick

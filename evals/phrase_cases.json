@@ -1,0 +1,13 @@
+{
+  "notes": "Contextos usados pelo scripts/llm_eval.py. Cada caso preenche os campos do template game/data/prompts/phrase_prompt.txt. Acrescentar casos quando surgir uma situação nova no jogo (evento, feriado, clima).",
+  "cases": [
+    { "id": "manha-passear", "context": { "hour": 8, "period": "manhã", "action": "passear pela praia", "hunger": "satisfeito", "weather": "sol", "holiday": "nenhuma" } },
+    { "id": "tarde-pescar", "context": { "hour": 17, "period": "fim da tarde", "action": "pescar", "hunger": "com fome", "weather": "sol", "holiday": "nenhuma" } },
+    { "id": "comer", "context": { "hour": 13, "period": "tarde", "action": "comer um peixe", "hunger": "esfomeado", "weather": "nublado", "holiday": "nenhuma" } },
+    { "id": "noite-dormir", "context": { "hour": 23, "period": "noite", "action": "preparar-se para dormir", "hunger": "satisfeito", "weather": "céu limpo", "holiday": "nenhuma" } },
+    { "id": "chuva", "context": { "hour": 11, "period": "manhã", "action": "abrigar-se da chuva", "hunger": "satisfeito", "weather": "chuva forte", "holiday": "nenhuma" } },
+    { "id": "natal", "context": { "hour": 20, "period": "noite", "action": "olhar para o mar", "hunger": "satisfeito", "weather": "vento", "holiday": "Natal" } },
+    { "id": "gaivota", "context": { "hour": 10, "period": "manhã", "action": "ver uma gaivota a passar", "hunger": "com fome", "weather": "sol", "holiday": "nenhuma" } },
+    { "id": "barco", "context": { "hour": 15, "period": "tarde", "action": "ver um barco ao longe", "hunger": "satisfeito", "weather": "sol", "holiday": "nenhuma" } }
+  ]
+}

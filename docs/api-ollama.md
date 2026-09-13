@@ -1,109 +1,77 @@
-# API Ollama — Referência para o Insulano
+# API Ollama: referência para o Insulano
 
-Documentação da integração com o Ollama local.
+Referência da integração. O contrato de comportamento da ponte (fallback, concorrência, sinais) está em
+[`../agent_docs/tech_design.md`](../agent_docs/tech_design.md) §4.5; o texto do prompt vive em
+`game/data/prompts/phrase_prompt.txt` e **não se copia para aqui** (ADR-008).
 
-## Endpoint usado
+## Onde está o Ollama nesta máquina
 
-POST http://localhost:11434/api/generate
+- Contentor Docker `ollama`, só CPU, porta publicada 11434.
+- O CLI `ollama` não existe no host: usar `docker exec ollama ollama <comando>`.
+- URL a usar no jogo e nos scripts: `http://127.0.0.1:11434` (nunca `localhost`, evita tentativas IPv6).
+- Modelo configurado: `llama3.1:8b`.
 
-## Request
+## Endpoint
+
+`POST http://127.0.0.1:11434/api/generate`
+
+### Pedido
 
 ```json
 {
-  "model": "gemma3:4b",
-  "prompt": "<prompt construído pelo LLMBridge>",
+  "model": "llama3.1:8b",
+  "prompt": "<phrase_prompt.txt preenchido pelo PromptBuilder>",
   "stream": false,
-  "options": {
-    "num_predict": 50,
-    "temperature": 0.8,
-    "top_p": 0.9
-  }
+  "keep_alive": "10m",
+  "options": { "temperature": 0.8, "top_p": 0.9, "num_predict": 40 }
 }
 ```
 
-Campos:
-- `model`: modelo instalado no Ollama. Verificar com `ollama list`.
-- `stream: false`: resposta única (não streaming). Mais simples para Godot.
-- `num_predict: 50`: limitar tokens (~50 palavras). Frases curtas são melhores.
-- `temperature: 0.8`: alguma criatividade sem ser caótico.
+- `stream: false`: uma resposta única, mais simples de tratar com `HTTPRequest`.
+- `keep_alive: "10m"`: mantém o modelo carregado entre frases (carregar custa segundos).
+- `num_predict: 40`: chega para 15 palavras; corta respostas que se alongam.
 
-## Response
+### Resposta (campos usados)
 
 ```json
-{
-  "model": "gemma3:4b",
-  "created_at": "2026-09-13T10:00:00Z",
-  "response": "O oceano está calmo hoje, mas meu estômago não está.",
-  "done": true,
-  "total_duration": 1234000000,
-  "eval_count": 15
-}
+{ "model": "llama3.1:8b", "response": "Parece que até o Natal estou sozinho.", "done": true, "total_duration": 2003000000 }
 ```
 
-Campo relevante: `response` — a frase gerada.
+Só `response` é usado. `total_duration` (nanossegundos) pode ir para o log de latência.
 
-## Construção do prompt em GDScript
+### Erros e o que a ponte faz
 
-```gdscript
-func _build_prompt(context: Dictionary) -> String:
-    var action: String = context.get("action", "descansando")
-    var hour: int = Time.get_datetime_dict_from_system().hour
-    var period: String = "manhã" if hour < 12 else ("tarde" if hour < 18 else "noite")
+| Situação | `HTTPRequest` | Acção |
+|---|---|---|
+| Ollama parado | `result != RESULT_SUCCESS` | fallback |
+| Modelo não instalado | código 404 | fallback, log com o nome do modelo |
+| Timeout (8 s) | `RESULT_TIMEOUT` | fallback |
+| JSON inválido ou `response` vazio | parse falha | fallback |
+| Frase rejeitada pelo `PhraseFilter` | - | fallback, log com o motivo |
 
-    return (
-        "Você é um náufrago numa ilha deserta há meses. "
-        + "Diga uma frase curta (máximo 12 palavras), na perspectiva do náufrago. "
-        + "Agora está " + action + " de " + period + ". "
-        + "Responda apenas com a frase, sem aspas, sem explicação."
-    )
-```
-
-## Tratamento de erros em GDScript
-
-```gdscript
-func _on_request_completed(result: int, response_code: int,
-                           headers: PackedStringArray, body: PackedByteArray) -> void:
-    if result != HTTPRequest.RESULT_SUCCESS or response_code != 200:
-        # Fallback automático
-        phrase_ready.emit(_get_fallback_phrase())
-        return
-
-    var json = JSON.new()
-    if json.parse(body.get_string_from_utf8()) != OK:
-        phrase_ready.emit(_get_fallback_phrase())
-        return
-
-    var text: String = json.data.get("response", "").strip_edges()
-    if text.is_empty():
-        phrase_ready.emit(_get_fallback_phrase())
-        return
-
-    phrase_ready.emit(text)
-```
-
-## Verificar se Ollama está disponível
+## Verificar à mão
 
 ```bash
-# Terminal — verificar se Ollama responde
-curl -s http://localhost:11434/api/tags | python3 -m json.tool | grep name
+# Está a responder? Que modelos há?
+curl -s http://127.0.0.1:11434/api/tags | python3 -c 'import sys,json; [print(m["name"]) for m in json.load(sys.stdin)["models"]]'
 
-# Listar modelos instalados
-ollama list
+# Onde corre o modelo (CPU ou GPU)?
+docker exec ollama ollama ps
 
-# Testar frase manualmente
-ollama run gemma3:4b "Você é um náufrago. Diga uma frase curta de manhã."
+# Uma frase
+curl -s http://127.0.0.1:11434/api/generate -d '{"model":"llama3.1:8b","prompt":"Diz uma frase curta de náufrago em português de Portugal.","stream":false}' \
+  | python3 -c 'import sys,json; print(json.load(sys.stdin)["response"])'
+
+# Eval completo com os contextos e regras do jogo
+python3 scripts/llm_eval.py
 ```
 
-## Timeout
+## Modelos medidos
 
-HTTPRequest do Godot: `set_timeout(5.0)` — se não responder em 5s, usa fallback.
+| Modelo | Instalado | Aceitação | p50 | p95 | Data | Relatório |
+|---|---|---|---|---|---|---|
+| `llama3.1:8b` (CPU) | sim | 95,8% | 2,82 s | 4,42 s | 2026-09-13 | `docs/proof/llm-eval-llama3.1_8b-2026-09-13.json` |
+| `gemma3:4b` | não | - | - | - | - | instalar é decisão do Rodolfo |
+| `llama3.2:3b` | não | - | - | - | - | instalar é decisão do Rodolfo |
 
-## Modelos testados
-
-| Modelo | Latência típica | Qualidade | Instalado? |
-|--------|----------------|-----------|------------|
-| gemma3:4b | ~1-2s | Boa para frases curtas | Verificar |
-| llama3.2:3b | ~1-3s | Similar | Verificar |
-| mistral:7b | ~3-5s | Melhor mas mais lento | Verificar |
-
-Para instalar: `ollama pull gemma3:4b`
+Um modelo só entra nesta tabela com um eval corrido. Mudar o defeito exige actualizar a ADR-006.

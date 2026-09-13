@@ -1,74 +1,46 @@
-# Insulano — Contexto para Claude Code
+# Insulano: contexto para Claude Code
 
-## O que é
+Protector de ecrã em Godot 4 com um náufrago autónomo numa ilha tropical, frases por
+LLM local (Ollama) e fallback fixo. Inspirado no Johnny Castaway (Sierra, 1992), com
+código e assets legalmente limpos. Projecto interno Kaeto.
 
-Protetor de ecrã com personagem autónomo numa ilha tropical. Inspirado no Johnny Castaway
-(Sierra, 1992). Comportamento dirigido por LLM local (Ollama). Sem cloud, sem API keys.
+## Antes de qualquer coisa
 
-## Stack
+**Lê [`AGENTS.md`](AGENTS.md).** É o plano mestre: loop autónomo, Definition of Done,
+fronteiras de autonomia, mapa do repositório, regras invariantes e armadilhas desta
+máquina. Este ficheiro só acrescenta o que é específico do Claude Code.
 
-- Godot 4 + GDScript
-- Plugin Beehave (behavior trees)
-- Ollama HTTP API (localhost:11434) para frases e decisões
-- Tileset CC0 (Tiny Islands), sprites CC-BY (Character Base Template)
+## Comandos que importam
 
-## Base de código
+```bash
+python3 scripts/backlog.py next      # próxima tarefa executável
+scripts/verify.sh                    # portão único (--quick, --visual, --llm, --export, --full)
+python3 scripts/check_docs.py --fix  # regenera o mapa de componentes da arquitectura
+python3 scripts/llm_eval.py          # eval das frases contra o Ollama
+```
 
-A pasta `base-guy-on-island/` contém o fork do Guy on Island (MIT, Doubi/Codeberg).
-É a referência — ler antes de escrever código novo.
+## Skills e agentes deste projecto
 
-Estrutura relevante do original:
-- `guy/` — lógica do personagem e behavior tree
-- `world/` — ilha, spots de pesca
-- `character/` — sprites e animações
-- `beehave/` — plugin behavior trees
-- `fishing_spot.gd` — lógica de pesca
-- `need_bar.gd` — sistema de necessidades (fome)
+- `/insulano-loop` para trabalhar autonomamente pelo backlog; `/insulano-task` para uma tarefa.
+- `/insulano-verify` antes de afirmar que algo funciona.
+- `/insulano-docs-sync` quando mexeres em contratos, ficheiros `.gd` ou comandos documentados.
+- `/insulano-new-task` para acrescentar trabalho ao backlog; `/insulano-asset` para qualquer asset.
+- Subagentes: `insulano-builder` (implementa), `insulano-reviewer` (revê adversarialmente),
+  `insulano-verifier` (confirma o veredicto), `insulano-docs-keeper`, `insulano-llm-tuner`.
+- Genéricos úteis do arsenal: `game-dev` (Godot), `prompt-engineer`, `ai-evals-engineer`.
 
-## O que está feito (herdado do Guy on Island)
+## Regras que valem sempre aqui
 
-- Personagem que anda, pesca, come, diz frases (lista fixa)
-- Sistema de necessidades: fome diminui, pesca repõe
-- Behavior tree com Beehave
-- Export Linux/Windows/HTML5 configurado
-
-## O que falta construir (roadmap Insulano)
-
-### Fase 1 — LLM local (mínimo viável)
-- Substituir frases fixas por chamadas HTTP ao Ollama
-- Endpoint: GET http://localhost:11434/api/generate
-- O personagem diz coisas geradas pelo modelo baseadas no contexto (hora, acção, necessidades)
-- Fallback: frases fixas se Ollama não responder
-
-### Fase 2 — Ciclo dia/noite
-- Paleta de cores muda com a hora do sistema
-- Personagem vai dormir à noite
-- Efeitos visuais: pôr do sol, estrelas, lua
-
-### Fase 3 — Eventos e visitantes
-- Gaivota passa
-- Barco ao longe
-- Chuva (ligada à API de clima real, ex: wttr.in)
-- Personagem reage ao evento com frase gerada pelo LLM
-
-### Fase 4 — Feriados e contexto temporal
-- Datas especiais (Natal, Ano Novo, etc.) mudam cenas
-- Estrutura YAML de feriados (inspirada no Hunter Davis)
-
-## Convenções
-
-- Código em inglês (GDScript)
-- Comentários em português quando explicam decisão de negócio
-- Commits: tipo: descrição (feat/fix/docs/chore)
-- Sem assets Sierra — projecto 100% legalmente limpo
-
-## Modelos Ollama recomendados (já instalado localmente)
-
-- gemma3:4b — rápido, frases curtas
-- llama3.2:3b — alternativa leve
-- Para produção: testar latência com `ollama run gemma3:4b "frase curta de um náufrago"`
+- Estado real antes de afirmar: correr o comando, ler o log, abrir a imagem.
+- Português de Portugal na UI, nos docs e no chat; código e identificadores em inglês.
+- Sem travessões nem meias-riscas em ficheiro nenhum (o `check_docs.py` falha).
+- Dentro do código de produto (`game/`), documentação `##` suficiente para um humano corrigir
+  o código daqui a um ano sem ajuda (revogação de âmbito limitado da fábrica, 2026-07-27).
+- Commits `tipo(T-NNN): descrição` em inglês ou português, um por tarefa, com o pre-commit activo
+  (`git config core.hooksPath .githooks`).
 
 ## Legal
 
-MIT (base) + CC0 (tileset) + CC-BY (sprites — crédito obrigatório no jogo)
-Projecto Kaeto — desenvolvimento interno Rodolfo
+Código base MIT (Doubi, `game/LICENSE-guy-on-island.md`), tileset Tiny Islands CC0, sprites
+Character Base CC-BY (crédito obrigatório no jogo), Beehave e GUT MIT. Registo completo em
+[`docs/assets-licencas.md`](docs/assets-licencas.md).

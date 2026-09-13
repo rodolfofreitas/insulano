@@ -1,0 +1,24 @@
+# Ficheiros .gd herdados da base (Guy on Island) ainda sem lint limpo nem docstrings.
+# Caminhos relativos a game/. O check_docs.py garante que só entram ficheiros que
+# existem na base upstream: esta lista só pode DIMINUIR. A T-002 esvazia-a.
+beehave/action_using_delta.gd
+beehave/find_group_spot_condition.gd
+beehave/find_random_spot_condition.gd
+beehave/find_usable_for_need_condition.gd
+beehave/fishing_action.gd
+beehave/go_to_usable_action.gd
+beehave/need_low_condition.gd
+beehave/set_delta_on_blackboard.gd
+beehave/talk_action.gd
+beehave/use_usable_action.gd
+beehave/watch_ocean_action.gd
+character/character.gd
+character/need.gd
+fishing_spot.gd
+guy/direction.gd
+guy/guy.gd
+need_bar.gd
+object/general_usable_object.gd
+object/need_replentishing_unsable.gd
+object/usable_object.gd
+object/usable_object_container.gd

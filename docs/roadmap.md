@@ -1,36 +1,15 @@
-# Insulano — Roadmap
+# Insulano: roadmap
 
-## Fase 1 — Fundação (mínimo viável)
+Visão por fases. O estado vivo de cada tarefa **não** está aqui (ficaria desactualizado):
+`python3 scripts/backlog.py list`. As tarefas estão em [`../backlog/`](../backlog/README.md).
 
-Objectivo: protetor de ecrã funcional com LLM
+| Fase | Objectivo | Tarefas | Fecho |
+|---|---|---|---|
+| 0 · Fundação | projecto jogável, harness verificado, dívida da base paga, export provado | T-001 a T-005 | `verify.sh --full` sem FALHOU |
+| 1 · Voz | o náufrago fala pt-PT gerado localmente, com fallback | T-101 a T-109 | versão 0.1.0 (T-109) |
+| 2 · Tempo | dia e noite pela hora real, sono, céu nocturno | T-201 a T-204 | screenshots a 4 horas do dia |
+| 3 · Mundo | gaivota, barco, clima real opcional, chuva | T-301 a T-306 | eventos reprodutíveis por seed |
+| 4 · Calendário | feriados fixos e móveis, cenas de Natal e Ano Novo | T-401, T-402 | Páscoa correcta de 2026 a 2030 |
+| 5 · Produto | modo protector, hypridle, créditos, sons, Windows, publicação | T-501 a T-507 | uso real pelo Rodolfo e publicação |
 
-- [ ] Abrir o projecto base (base-guy-on-island/) no Godot 4
-- [ ] Verificar que corre no Omarchy (Linux/Wayland)
-- [ ] Integrar chamada HTTP ao Ollama para frases dinâmicas
-- [ ] Fallback para frases fixas quando Ollama não responde
-- [ ] Export Linux .x86_64 funcional
-
-## Fase 2 — Ciclo temporal
-
-- [ ] Ciclo dia/noite com paleta de cores
-- [ ] Personagem dorme à noite
-- [ ] Efeitos: pôr do sol, estrelas, lua
-
-## Fase 3 — Eventos
-
-- [ ] Gaivota passa
-- [ ] Barco ao longe
-- [ ] Chuva via wttr.in API
-- [ ] LLM comenta eventos
-
-## Fase 4 — Feriados e sazonalidade
-
-- [ ] YAML de feriados (Natal, Ano Novo, etc.)
-- [ ] Cenas especiais por data
-
-## Fase 5 — Polimento e publicação
-
-- [ ] Sprites personalizados gerados com ComfyUI
-- [ ] Sons ambiente (freesound.org CC0)
-- [ ] Ecrã de créditos
-- [ ] Publicar no itch.io
+Tarefas com `estado: humano` (decisões e acções do Rodolfo): T-306, T-502, T-504, T-505, T-506.

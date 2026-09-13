@@ -1,0 +1,13 @@
+# Cache do editor Godot (regenera com --import)
+game/.godot/
+*.translation
+
+# Artefactos de build e relatórios locais
+dist/
+reports/
+
+# Índices e caches de ferramentas
+graphify-out/
+__pycache__/
+.pytest_cache/
+*.tmp

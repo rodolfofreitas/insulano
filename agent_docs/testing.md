@@ -1,75 +1,85 @@
-# Testing — Insulano
+# Testes: Insulano
 
-## Estratégia geral
+Um protector de ecrã tem muita lógica testável (quando falar, o que dizer, que cor tem o céu às 19h,
+quando é a Páscoa) e uma parte que só se vê. Os dois lados são verificados; nenhum é "subjectivo demais
+para testar" sem que isso fique escrito e com revisão definida.
 
-Protetor de ecrã não tem testes unitários convencionais (não há lógica de negócio crítica).
-O foco é em testes manuais por fase + smoke tests automatizados onde possível.
+## 1. Pirâmide
 
----
+| Nível | Ferramenta | Onde | Prova | Corre em |
+|---|---|---|---|---|
+| Scripts do harness | pytest | `scripts/tests/` | que o próprio portão não mente | `verify.sh --quick` |
+| Unitário | GUT | `game/tests/unit/` | lógica pura: filtro, prompt, cores, datas | `verify.sh` |
+| Integração | GUT | `game/tests/integration/` | cenas instanciam, sinais, fallback com rede inacessível | `verify.sh` |
+| Smoke de arranque | `game/tools/boot_smoke.gd` | headless, 30 s simulados | o jogo vive: fome desce, personagem mexe-se, sem SCRIPT ERROR | `verify.sh` |
+| Visual | `game/tools/capture.gd` | PNG 1280x720 | o que um humano veria; o agente abre a imagem | `verify.sh --visual` |
+| LLM | `scripts/llm_eval.py` | contra o Ollama | latência, pt-PT, comprimento, conteúdo | `verify.sh --llm` |
+| Ao vivo | GUT | `game/tests/live/` | ponte real contra o Ollama (a partir da T-105) | `verify.sh --llm` |
+| Export | `scripts/export.sh` | `dist/linux/` | o binário real arranca | `verify.sh --export` |
+| Documentação | `scripts/check_docs.py` | todo o repositório | links, travessões, docstrings, mapa de componentes | `verify.sh --quick` |
 
-## Testes manuais por fase
+## 2. Comandos
 
-### Fase 1 — Fundação LLM
+```bash
+scripts/verify.sh --quick                      # antes de cada commit (pre-commit)
+scripts/verify.sh                              # antes de marcar uma tarefa feita
+scripts/verify.sh --visual                     # tarefas visuais
+scripts/verify.sh --llm                        # tarefas que tocam prompt, regras ou ponte
+scripts/verify.sh --full                       # fecho de fase
 
-| Teste | Critério de sucesso | Como testar |
-|-------|---------------------|-------------|
-| Arranque sem Ollama | Jogo corre, usa frases fixas | Parar Ollama, correr o jogo |
-| Arranque com Ollama | Frase gerada em < 3s | Correr Ollama, observar log |
-| Personagem anda | Movimento fluido, sem jank | Observar 2 minutos |
-| Pesca funciona | Personagem vai ao spot, aguarda, come | Observar ciclo completo |
-| Export Linux | Binário .x86_64 executa no Omarchy | Export → correr binário |
-| Wayland compatível | Sem crash, sem artefactos visuais | Correr em sessão Hyprland |
+# Um só ficheiro GUT
+$(mise which godot) --headless --path game -s res://addons/gut/gut_cmdln.gd \
+  -gconfig=res://.gutconfig.json -gtest=res://tests/unit/test_need.gd
 
-### Fase 2 — Ciclo dia/noite
+# Um só teste GUT
+... -gtest=res://tests/unit/test_need.gd -gunit_test_name=test_percentage_is_relative_to_max_value
 
-| Teste | Critério de sucesso |
-|-------|---------------------|
-| Dia detectado correctamente | Paleta diurna entre 06:00-20:00 |
-| Noite detectada correctamente | Paleta nocturna entre 20:00-06:00 |
-| Personagem dorme à noite | Animação sleep activa após 21:00 |
-| Transição suave | Sem corte abrupto de paleta |
+# Captura a uma hora concreta (a partir da T-201)
+INSULANO_FAKE_TIME=2026-12-25T21:30 $(mise which godot) --rendering-driver opengl3 --fixed-fps 60 \
+  --path game -s res://tools/capture.gd -- --out=$PWD/docs/proof/natal.png --frames=300
+```
 
-### Fase 3 — Clima e eventos
+Relatórios em `reports/` (ignorado pelo git): `verify-last.txt`, `gut.log`, `gut-junit.xml`, `boot.log`,
+`verify-latest.png`, `llm-eval-*.json`.
 
-| Teste | Critério de sucesso |
-|-------|---------------------|
-| API wttr.in disponível | Clima actualiza ao arranque |
-| API indisponível | Fallback para sol sem crash |
-| Chuva visual | Partículas de chuva visíveis quando condição = chuva |
-| Gaivota aparece | Evento aleatório visível em < 5 min |
+## 3. Como escrever um teste GUT
 
----
+```gdscript
+extends GutTest
+## Testes do PhraseFilter contra a fixture partilhada com o eval em Python.
 
-## Smoke tests automatizados (GDScript)
+var _filter: PhraseFilter
 
-Criar em `tests/` (executados com `godot --headless --script`):
 
-### smoke_llm_bridge.gd
-Testa que o LLMBridge:
-1. Retorna frase do fallback quando Ollama offline
-2. Não bloqueia mais de 5s
-3. Emite signal `phrase_ready`
+func before_each() -> void:
+	_filter = PhraseFilter.from_rules_file()
 
-### smoke_needs.gd
-Testa que:
-1. `hunger` começa em 1.0
-2. Decai com o tempo (simular delta)
-3. Signal `need_critical` emite quando < 0.2
-4. Não vai abaixo de 0.0
 
----
+func test_rejects_brazilian_voce() -> void:
+	assert_eq(_filter.rejection_reason("Você viu o barco?"), "ptbr")
+```
 
-## Critérios de regressão
+- Asserções mais usadas: `assert_eq`, `assert_ne`, `assert_true`, `assert_null`, `assert_not_null`,
+  `assert_almost_eq`, `assert_signal_emitted`, `watch_signals`.
+- Esperar por um sinal: `await wait_for_signal(obj.sinal, 10)`.
+- Nós criados no teste: `add_child_autofree(no)`.
+- Variáveis de ambiente mudadas no teste (`OS.set_environment`) repõem-se em `after_each`.
 
-Antes de fechar qualquer fase, verificar que as fases anteriores não partiram:
-- [ ] Jogo ainda arranca sem Ollama
-- [ ] Personagem ainda anda e pesca
-- [ ] Export Linux ainda funciona
+## 4. Regras
 
----
+1. **Teste primeiro, a falhar pelo motivo certo.** Um teste que passa antes da implementação não prova nada.
+2. **Sem rede** em unit e integration. Respostas gravadas em `game/tests/fixtures/`.
+3. **Determinismo.** `seed()` fixa, `INSULANO_FAKE_TIME`, `--fixed-fps 60`. Um teste intermitente é um bug:
+   corrige-se a causa, nunca se repete até passar.
+4. **Paridade.** Regras usadas pelo jogo e pelo eval testam-se contra a mesma fixture nos dois lados.
+5. **O Godot sai com 0 com erros de script.** Nunca confiar só no código de saída: o `verify.sh` lê os logs.
+6. **Regressão.** Cada defeito corrigido ganha `test_regression_<bug>`.
 
-## O que NÃO testar
+## 5. O que não é automático, e quem decide
 
-- Qualidade das frases geradas pelo LLM — é subjectivo, não testável
-- Performance do Ollama — depende do hardware do utilizador
-- Visual dos sprites — validação humana por screenshots
+| Aspecto | Porque não é automático | Como se verifica |
+|---|---|---|
+| Graça e coerência das frases | juízo humano | revisão amostral de 20 frases por um agente que não escreveu o prompt (T-108); o Rodolfo no fecho de fase |
+| Beleza da paleta e dos efeitos | juízo visual | screenshots em `docs/proof/` inspeccionados; o Rodolfo aprova no fecho de fase |
+| Uso prolongado (horas) | custo de tempo | corrida de 10 minutos no fecho de fase (T-109); horas de uso real pelo Rodolfo (Fase 5) |
+| Integração com o hypridle | vive fora do repositório | T-502, manual |

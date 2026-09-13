@@ -1,0 +1,21 @@
+{
+  "notes": "Casos partilhados entre scripts/tests/test_llm_eval.py (Python) e o futuro teste GUT do PhraseFilter (GDScript). As duas implementações têm de dar o mesmo resultado em todos os casos: é isto que impede que o eval e o jogo divirjam.",
+  "cases": [
+    { "raw": "\"O mar está calmo hoje.\"", "clean": "O mar está calmo hoje.", "reason": null },
+    { "raw": "  «Mais um dia nesta ilha.»  ", "clean": "Mais um dia nesta ilha.", "reason": null },
+    { "raw": "Mais um dia.\nE outro amanhã.", "clean": "Mais um dia.", "reason": null },
+    { "raw": "Estou a pescar o jantar de hoje.", "clean": "Estou a pescar o jantar de hoje.", "reason": null },
+    { "raw": "Quando é que passa um barco?", "clean": "Quando é que passa um barco?", "reason": null },
+    { "raw": "   ", "clean": "", "reason": "empty" },
+    { "raw": "The ocean is calm today.", "clean": "The ocean is calm today.", "reason": "english" },
+    { "raw": "Você viu o barco?", "clean": "Você viu o barco?", "reason": "ptbr" },
+    { "raw": "Estou pescando o jantar.", "clean": "Estou pescando o jantar.", "reason": "ptbr" },
+    { "raw": "Que merda de dia.", "clean": "Que merda de dia.", "reason": "forbidden" },
+    { "raw": "Sim.", "clean": "Sim.", "reason": "too_short" },
+    {
+      "raw": "Hoje acordei cedo e fui ver o mar e depois voltei e fiquei a pensar na vida toda outra vez.",
+      "clean": "Hoje acordei cedo e fui ver o mar e depois voltei e fiquei a pensar na vida toda outra vez.",
+      "reason": "too_long"
+    }
+  ]
+}

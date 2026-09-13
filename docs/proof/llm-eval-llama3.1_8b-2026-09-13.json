@@ -1,0 +1,184 @@
+{
+  "model": "llama3.1:8b",
+  "date": "2026-09-13T02:20:01",
+  "summary": {
+    "samples": 24,
+    "pass_rate": 0.9583,
+    "latency_p50_s": 2.82,
+    "latency_p95_s": 4.42,
+    "rejections": {
+      "too_long": 1
+    },
+    "verdict": "PASSOU"
+  },
+  "results": [
+    {
+      "case": "manha-passear",
+      "latency_s": 5.83,
+      "raw": "Finalmente encontrei um ovo de frango na praia que não está estragado.",
+      "clean": "Finalmente encontrei um ovo de frango na praia que não está estragado.",
+      "reason": null
+    },
+    {
+      "case": "manha-passear",
+      "latency_s": 2.36,
+      "raw": "Estou à espera do sol de hoje não ser o último que vejo.",
+      "clean": "Estou à espera do sol de hoje não ser o último que vejo.",
+      "reason": null
+    },
+    {
+      "case": "manha-passear",
+      "latency_s": 2.68,
+      "raw": "Acabou de me apear com um coelho que estava a ver o mar.",
+      "clean": "Acabou de me apear com um coelho que estava a ver o mar.",
+      "reason": null
+    },
+    {
+      "case": "tarde-pescar",
+      "latency_s": 4.38,
+      "raw": "Acho que a fome começa a ganhar um pouco mais que o peixe aqui.",
+      "clean": "Acho que a fome começa a ganhar um pouco mais que o peixe aqui.",
+      "reason": null
+    },
+    {
+      "case": "tarde-pescar",
+      "latency_s": 3.05,
+      "raw": "Ainda estou a pescar, mas estou cada vez mais para além da fome.",
+      "clean": "Ainda estou a pescar, mas estou cada vez mais para além da fome.",
+      "reason": null
+    },
+    {
+      "case": "tarde-pescar",
+      "latency_s": 3.14,
+      "raw": "Que fome que vou sentir amanhã a noite, se não pescar nada hoje.",
+      "clean": "Que fome que vou sentir amanhã a noite, se não pescar nada hoje.",
+      "reason": null
+    },
+    {
+      "case": "comer",
+      "latency_s": 3.87,
+      "raw": "Vou ter que continuar a comer peixe para não morrer aqui sozinho.",
+      "clean": "Vou ter que continuar a comer peixe para não morrer aqui sozinho.",
+      "reason": null
+    },
+    {
+      "case": "comer",
+      "latency_s": 2.63,
+      "raw": "Acho que já fiquei a comer peixe todos os dias há cinco anos.",
+      "clean": "Acho que já fiquei a comer peixe todos os dias há cinco anos.",
+      "reason": null
+    },
+    {
+      "case": "comer",
+      "latency_s": 2.82,
+      "raw": "Ainda é possível cozinhar um peixe decente à uma da tarde.",
+      "clean": "Ainda é possível cozinhar um peixe decente à uma da tarde.",
+      "reason": null
+    },
+    {
+      "case": "noite-dormir",
+      "latency_s": 4.33,
+      "raw": "Aqui estou eu, sozinho, a dormir debaixo de estrelas.",
+      "clean": "Aqui estou eu, sozinho, a dormir debaixo de estrelas.",
+      "reason": null
+    },
+    {
+      "case": "noite-dormir",
+      "latency_s": 2.68,
+      "raw": "Aqui que estou, a dormir de novo, sozinho como sempre.",
+      "clean": "Aqui que estou, a dormir de novo, sozinho como sempre.",
+      "reason": null
+    },
+    {
+      "case": "noite-dormir",
+      "latency_s": 2.65,
+      "raw": "Ainda é de esperar que amanhã seja um dia como outro qualquer.",
+      "clean": "Ainda é de esperar que amanhã seja um dia como outro qualquer.",
+      "reason": null
+    },
+    {
+      "case": "chuva",
+      "latency_s": 4.24,
+      "raw": "Devo continuar a sobreviver aqui até que a chuva pare de cair.",
+      "clean": "Devo continuar a sobreviver aqui até que a chuva pare de cair.",
+      "reason": null
+    },
+    {
+      "case": "chuva",
+      "latency_s": 2.37,
+      "raw": "A chuva é um convite para tomar um chá quente.",
+      "clean": "A chuva é um convite para tomar um chá quente.",
+      "reason": null
+    },
+    {
+      "case": "chuva",
+      "latency_s": 2.73,
+      "raw": "Vou continuar a limpar a chuva que vai sujar a minha casa novamente.",
+      "clean": "Vou continuar a limpar a chuva que vai sujar a minha casa novamente.",
+      "reason": null
+    },
+    {
+      "case": "natal",
+      "latency_s": 4.27,
+      "raw": "Hoje à noite, sinto-me sozinho no meu Natal de vento.",
+      "clean": "Hoje à noite, sinto-me sozinho no meu Natal de vento.",
+      "reason": null
+    },
+    {
+      "case": "natal",
+      "latency_s": 2.0,
+      "raw": "Parece que até o Natal estou sozinho.",
+      "clean": "Parece que até o Natal estou sozinho.",
+      "reason": null
+    },
+    {
+      "case": "natal",
+      "latency_s": 3.44,
+      "raw": "Sinto-me como um rei em minha ilha, mas já está na altura de um Natal decente.",
+      "clean": "Sinto-me como um rei em minha ilha, mas já está na altura de um Natal decente.",
+      "reason": "too_long"
+    },
+    {
+      "case": "gaivota",
+      "latency_s": 4.42,
+      "raw": "Ainda não encontrei o barco que me levar a uma refeição decente.",
+      "clean": "Ainda não encontrei o barco que me levar a uma refeição decente.",
+      "reason": null
+    },
+    {
+      "case": "gaivota",
+      "latency_s": 2.63,
+      "raw": "Mais uma gaivota a passar e eu ainda sem desjejou.",
+      "clean": "Mais uma gaivota a passar e eu ainda sem desjejou.",
+      "reason": null
+    },
+    {
+      "case": "gaivota",
+      "latency_s": 1.41,
+      "raw": "É mais um dia de fome.",
+      "clean": "É mais um dia de fome.",
+      "reason": null
+    },
+    {
+      "case": "barco",
+      "latency_s": 4.29,
+      "raw": "Finalmente alguém para me falar sobre a minha cozinha apodrecida.",
+      "clean": "Finalmente alguém para me falar sobre a minha cozinha apodrecida.",
+      "reason": null
+    },
+    {
+      "case": "barco",
+      "latency_s": 3.12,
+      "raw": "Parece que finalmente alguém pode me ajudar a sair desta ilha.",
+      "clean": "Parece que finalmente alguém pode me ajudar a sair desta ilha.",
+      "reason": null
+    },
+    {
+      "case": "barco",
+      "latency_s": 2.71,
+      "raw": "Acho que isto é o que vou ver no resto do meu dia.",
+      "clean": "Acho que isto é o que vou ver no resto do meu dia.",
+      "reason": null
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+[gd_scene load_steps=4 format=3 uid="uid://ck2revp4l5l0h"]
+
+[ext_resource type="Script" uid="uid://dbuuonbv02pfo" path="res://object/general_usable_object.gd" id="1_54fje"]
+[ext_resource type="Texture2D" uid="uid://dl5ersgahkmgq" path="res://object/dummy_object.png" id="1_vo5ew"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_vo5ew"]
+size = Vector2(16, 32)
+
+[node name="DummyObject" type="StaticBody2D"]
+script = ExtResource("1_54fje")
+satisfying_needs = Array[String](["hunger"])
+
+[node name="Sprite" type="Sprite2D" parent="."]
+texture = ExtResource("1_vo5ew")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_vo5ew")
