@@ -1,0 +1,44 @@
+{
+  "idle": [
+    "Mais um dia nesta ilha...",
+    "O oceano parece calmo hoje.",
+    "Quando será que passa um barco?",
+    "Já perdi a conta dos dias aqui.",
+    "O silêncio tem um som próprio.",
+    "A palmeira está a crescer. Ou sou eu que encolhi?",
+    "Hoje o céu está especialmente azul.",
+    "Nada como uma ilha deserta para pensar."
+  ],
+  "fishing": [
+    "Vamos ver o que o mar tem para oferecer.",
+    "Paciência. O peixe aparece.",
+    "A pesca é meditação com recompensa.",
+    "Hoje sinto que vou ter sorte.",
+    "O peixe de ontem era melhor."
+  ],
+  "eating": [
+    "Hoje o jantar foi servido.",
+    "Não é requintado, mas é nutritivo.",
+    "O chef sou eu, o crítico também.",
+    "Peixe grelhado ao sol. Clássico.",
+    "Melhor do que nada. Muito melhor."
+  ],
+  "morning": [
+    "Bom dia, oceano.",
+    "Outro amanhecer. Ainda estou aqui.",
+    "A manhã cheira a sal e esperança.",
+    "O sol nasceu. As minhas esperanças, idem."
+  ],
+  "night": [
+    "As estrelas são a minha bússola.",
+    "Noite de novo. Pelo menos é consistente.",
+    "O escuro tem as suas vantagens.",
+    "Dormir sob as estrelas não é mau."
+  ],
+  "rain": [
+    "Água doce. Isso é bom.",
+    "A ilha aprecia a chuva. Eu menos.",
+    "Pelo menos não tenho de me preocupar com a sede.",
+    "A chuva lava tudo. Incluindo os planos."
+  ]
+}
