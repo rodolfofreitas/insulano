@@ -1,0 +1,3 @@
+[submodule "base-guy-on-island"]
+	path = base-guy-on-island
+	url = https://codeberg.org/Doubi/guy-on-island.git
