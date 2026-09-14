@@ -104,6 +104,8 @@ Estado a 2026-09-13: existem a cena principal e a behavior tree herdadas; os aut
 | `guy/direction.gd` | Direction | Object | Uma das quatro direcções cardinais, usada para escolher animação (walk_up, |
 | `guy/guy.gd` | Guy | Character | O náufrago jogável: um Character que perde fome com o tempo. |
 | `llm/llm_settings.gd` | LLMSettings | RefCounted | Configuração da camada LLM: se está activa, URL, modelo, timeout e intervalo |
+| `llm/phrase_context.gd` | PhraseContext | RefCounted | Contexto tipado que descreve a situação do náufrago num dado momento. |
+| `llm/prompt_builder.gd` | PromptBuilder | RefCounted | Monta o prompt enviado ao Ollama a partir do template partilhado |
 | `need_bar.gd` | NeedBar | ProgressBar | Barra de progresso que reflecte uma necessidade (`need_name`) de `target`. |
 | `object/general_usable_object.gd` | GeneralUsableObject | UsableObject | Objecto utilizável que declara, em `satisfying_needs`, quais necessidades trata. |
 | `object/need_replentishing_unsable.gd` | NeedReplentishingUsable | GeneralUsableObject | Objecto que repõe uma necessidade enquanto durar (ex.: o peixe apanhado). |

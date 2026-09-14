@@ -22,6 +22,11 @@ Entradas em linguagem de utilizador, não de commit. Cada tarefa acrescenta a su
 - `LLMSettings` (T-101): leitura única das chaves `insulano/llm/*` (activo, URL, modelo, timeout,
   intervalo mínimo), com defeitos em `project.godot`, sobreposição por `user://settings.cfg` e,
   só para o URL, pela variável de ambiente de teste `INSULANO_LLM_URL`.
+- `PhraseContext` e `PromptBuilder` (T-102): contexto tipado da situação do náufrago e montagem do
+  prompt a partir de `game/data/prompts/phrase_prompt.txt`, com paridade carácter a carácter provada
+  contra `scripts/llm_eval.py` (fixture `game/tests/fixtures/prompt_tarde_pescar.txt`, gerada pelo
+  Python real). Contexto incompleto nunca produz um prompt com `{campo}` por preencher: devolve `""`
+  e regista erro.
 
 ### Alterado
 - Renderer passa a Compatibility (OpenGL 3): mais leve para um protector de ecrã 2D.
