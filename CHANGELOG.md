@@ -24,6 +24,9 @@ Entradas em linguagem de utilizador, não de commit. Cada tarefa acrescenta a su
 - Renderer passa a Compatibility (OpenGL 3): mais leve para um protector de ecrã 2D.
 - Feriados passam de YAML para JSON, com Carnaval e Páscoa calculados a partir da data da Páscoa.
 - Modelo por defeito passa a `llama3.1:8b`, o único instalado, com limiares de latência medidos.
+- Addon Beehave actualizado de 2.8.3 para 2.9.3 (código de `gh release download v2.9.3 -R bitbrain/beehave`):
+  correcções internas de interrupção de árvore e sanitização do blackboard para o depurador, sem
+  mudança de comportamento visível nem de contrato para as folhas próprias em `game/beehave/`.
 
 ### Corrigido
 - Documentação que indicava modelos, versões e endpoints que não correspondiam à máquina real.

@@ -1,10 +1,9 @@
-@tool
-@icon("../../icons/sequence_random.svg")
-class_name SequenceRandomComposite extends RandomizedComposite
-
 ## This node will attempt to execute all of its children just like a
 ## [code]SequenceStar[/code] would, with the exception that the children
 ## will be executed in a random order.
+@tool
+@icon("../../icons/sequence_random.svg")
+class_name SequenceRandomComposite extends RandomizedComposite
 
 # Emitted whenever the children are shuffled.
 signal reset(new_order: Array[Node])
@@ -36,7 +35,7 @@ func tick(actor: Node, blackboard: Blackboard) -> int:
 		if c != running_child:
 			c.before_run(actor, blackboard)
 
-		var response: int = c.tick(actor, blackboard)
+		var response: int = c._safe_tick(actor, blackboard)
 		if can_send_message(blackboard):
 			BeehaveDebuggerMessages.process_tick(c.get_instance_id(), response, blackboard.get_debug_data())
 
@@ -72,6 +71,9 @@ func after_run(actor: Node, blackboard: Blackboard) -> void:
 
 func interrupt(actor: Node, blackboard: Blackboard) -> void:
 	if not resume_on_interrupt:
+		if running_child != null:
+			running_child.interrupt(actor, blackboard)
+			running_child = null
 		_reset()
 	super(actor, blackboard)
 

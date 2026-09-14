@@ -1,8 +1,7 @@
+## A Failer node will always return a `FAILURE` status code.
 @tool
 @icon("../../icons/failer.svg")
 class_name AlwaysFailDecorator extends Decorator
-
-## A Failer node will always return a `FAILURE` status code.
 
 
 func tick(actor: Node, blackboard: Blackboard) -> int:
@@ -11,7 +10,7 @@ func tick(actor: Node, blackboard: Blackboard) -> int:
 	if c != running_child:
 		c.before_run(actor, blackboard)
 
-	var response: int = c.tick(actor, blackboard)
+	var response: int = c._safe_tick(actor, blackboard)
 	if can_send_message(blackboard):
 		BeehaveDebuggerMessages.process_tick(c.get_instance_id(), response, blackboard.get_debug_data())
 

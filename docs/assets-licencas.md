@@ -24,7 +24,7 @@ Inventário feito a 2026-09-13 com
 | Componente | Versão | Autor | Licença | Ficheiro de licença | Integridade |
 |---|---|---|---|---|---|
 | Guy on Island (base) | commit `37e5f2d` | Doubi | MIT | `game/LICENSE-guy-on-island.md` | submódulo git |
-| Beehave | 2.8.3 | bitbrain | MIT | `game/addons/beehave/LICENSE` | por registar (T-005) |
+| Beehave | 2.9.3 | bitbrain | MIT | `game/addons/beehave/LICENSE` | SHA-256 do conteúdo (ficheiros ordenados, sem `.uid`/`.import`): `753d8b44b326633e48e962e01151bf4ea7cbb26c23250421b4b07a4283702a71` |
 | GUT | 9.7.1 | Tom "Butch" Wesley | MIT | `game/addons/gut/LICENSE.md` | SHA-256 do tar.gz da release: `6da99c4e9228d9bec3fb4bd1730a487770a989f0f511dac82a2897a964613385` |
 
 ## Créditos obrigatórios (texto para o ecrã de créditos e para a página de publicação)

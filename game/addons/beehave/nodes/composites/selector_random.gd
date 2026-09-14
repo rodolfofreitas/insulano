@@ -1,10 +1,9 @@
-@tool
-@icon("../../icons/selector_random.svg")
-class_name SelectorRandomComposite extends RandomizedComposite
-
 ## This node will attempt to execute all of its children just like a
 ## [code]SelectorStar[/code] would, with the exception that the children
 ## will be executed in a random order.
+@tool
+@icon("../../icons/selector_random.svg")
+class_name SelectorRandomComposite extends RandomizedComposite
 
 ## A shuffled list of the children that will be executed in reverse order.
 var _children_bag: Array[Node] = []
@@ -28,7 +27,7 @@ func tick(actor: Node, blackboard: Blackboard) -> int:
 		if c != running_child:
 			c.before_run(actor, blackboard)
 
-		var response: int = c.tick(actor, blackboard)
+		var response: int = c._safe_tick(actor, blackboard)
 		if can_send_message(blackboard):
 			BeehaveDebuggerMessages.process_tick(c.get_instance_id(), response, blackboard.get_debug_data())
 
@@ -45,7 +44,10 @@ func tick(actor: Node, blackboard: Blackboard) -> int:
 				_children_bag.erase(c)
 				c.after_run(actor, blackboard)
 			RUNNING:
-				running_child = c
+				if c != running_child:
+					if running_child != null:
+						running_child.interrupt(actor, blackboard)
+					running_child = c
 				if c is ActionLeaf:
 					blackboard.set_value("running_action", c, str(actor.get_instance_id()))
 				return RUNNING

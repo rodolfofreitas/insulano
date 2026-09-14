@@ -1,7 +1,3 @@
-@tool
-@icon("../../icons/simple_parallel.svg")
-class_name SimpleParallelComposite extends Composite
-
 ## Simple Parallel nodes will attampt to execute all chidren at same time and
 ## can only have exactly two children. First child as primary node, second
 ## child as secondary node.
@@ -12,6 +8,9 @@ class_name SimpleParallelComposite extends Composite
 ## secondary node and return primary node's result.
 ## If this node is running under delay mode, it will wait seconday node
 ## finish its action after primary node terminates.
+@tool
+@icon("../../icons/simple_parallel.svg")
+class_name SimpleParallelComposite extends Composite
 
 #how many times should secondary node repeat, zero means loop forever
 @export var secondary_node_repeat_count: int = 0
@@ -31,20 +30,17 @@ func _get_configuration_warnings() -> PackedStringArray:
 	if get_child_count() != 2:
 		warnings.append("SimpleParallel should have exactly two child nodes.")
 
-	if not get_child(0) is ActionLeaf:
-		warnings.append("SimpleParallel should have an action leaf node as first child node.")
-
 	return warnings
 
 
-func tick(actor, blackboard: Blackboard):
+func tick(actor: Node, blackboard: Blackboard) -> int:
 	for c in get_children():
 		var node_index: int = c.get_index()
 		if node_index == 0 and not main_task_finished:
 			if c != running_child:
 				c.before_run(actor, blackboard)
 
-			var response: int = c.tick(actor, blackboard)
+			var response: int = c._safe_tick(actor, blackboard)
 			if can_send_message(blackboard):
 				BeehaveDebuggerMessages.process_tick(c.get_instance_id(), response, blackboard.get_debug_data())
 
@@ -68,7 +64,7 @@ func tick(actor, blackboard: Blackboard):
 			if secondary_node_repeat_count == 0 or secondary_node_repeat_left > 0:
 				if not secondary_node_running:
 					c.before_run(actor, blackboard)
-				var subtree_response = c.tick(actor, blackboard)
+				var subtree_response = c._safe_tick(actor, blackboard)
 				if subtree_response != RUNNING:
 					secondary_node_running = false
 					c.after_run(actor, blackboard)

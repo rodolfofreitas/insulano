@@ -1,6 +1,6 @@
 # Tech Stack: Insulano
 
-Versões verificadas nesta máquina a 2026-09-13. Mudar uma versão exige correr `scripts/verify.sh --full`
+Versões verificadas nesta máquina a 2026-09-14. Mudar uma versão exige correr `scripts/verify.sh --full`
 e actualizar esta tabela no mesmo commit.
 
 ## Tabela de versões
@@ -10,7 +10,7 @@ e actualizar esta tabela no mesmo commit.
 | Godot Engine | 4.7.2 stable | `mise.toml` | `mise install` |
 | GDScript | 2.0 (Godot 4) | - | - |
 | Renderer | Compatibility (OpenGL 3.3) | `game/project.godot` | ADR-007 |
-| Beehave (behavior trees) | 2.8.3 (2.9.3 na T-005) | `game/addons/beehave/plugin.cfg` | vendorizado da base |
+| Beehave (behavior trees) | 2.9.3 | `game/addons/beehave/plugin.cfg` | `gh release download v2.9.3 -R bitbrain/beehave --archive tar.gz` |
 | GUT (testes) | 9.7.1 | `game/addons/gut/` | `gh release download v9.7.1 -R bitwes/Gut` |
 | gdtoolkit (gdlint, gdformat) | 4.5.0 | `scripts/verify.sh` (`gdtoolkit==4.*`) | `uvx` |
 | Python (scripts do harness) | 3.11+ (testado em 3.14) | - | sistema |

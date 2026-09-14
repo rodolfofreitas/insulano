@@ -1,11 +1,10 @@
+## The UntilFail Decorator will return `RUNNING` if its child returns
+## `SUCCESS` or `RUNNING` or it will return `SUCCESS` if its child returns
+## `FAILURE`
 @tool
 @icon("../../icons/until_fail.svg")
 class_name UntilFailDecorator
 extends Decorator
-
-## The UntilFail Decorator will return `RUNNING` if its child returns
-## `SUCCESS` or `RUNNING` or it will return `SUCCESS` if its child returns
-## `FAILURE`
 
 
 func tick(actor: Node, blackboard: Blackboard) -> int:
@@ -14,7 +13,7 @@ func tick(actor: Node, blackboard: Blackboard) -> int:
 	if c != running_child:
 		c.before_run(actor, blackboard)
 
-	var response: int = c.tick(actor, blackboard)
+	var response: int = c._safe_tick(actor, blackboard)
 	if can_send_message(blackboard):
 		BeehaveDebuggerMessages.process_tick(c.get_instance_id(), response, blackboard.get_debug_data())
 
@@ -28,6 +27,8 @@ func tick(actor: Node, blackboard: Blackboard) -> int:
 			blackboard.set_value("running_action", c, str(actor.get_instance_id()))
 		return RUNNING
 	if response == SUCCESS:
+		c.after_run(actor, blackboard)
 		return RUNNING
 
+	c.after_run(actor, blackboard)
 	return SUCCESS
