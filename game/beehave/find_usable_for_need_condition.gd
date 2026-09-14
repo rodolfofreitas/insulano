@@ -86,5 +86,15 @@ func _body_entered_area(body: Node2D) -> void:
 		objects_in_area.append(body)
 
 
+## Só remove `body` de `objects_in_area` quando é do tipo esperado
+## (Array[UsableObject] tipado): chamar erase() com outro tipo dispara um
+## ERROR de motor ("Attempted to erase an object into a TypedArray"), porque
+## um corpo que nunca é UsableObject também nunca entrou na lista em
+## _body_entered_area (ver a guarda `if body is UsableObject` nessa função).
+## Não repetimos a
+## condição de grupo de _body_entered_area aqui de propósito: um objecto que
+## saiu do grupo mas continua a ser UsableObject válido dentro da área deve
+## poder ser removido da lista quando sai fisicamente da área.
 func _body_exited_area(body: Node2D) -> void:
-	objects_in_area.erase(body)
+	if body is UsableObject:
+		objects_in_area.erase(body)

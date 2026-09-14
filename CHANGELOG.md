@@ -42,3 +42,8 @@ Entradas em linguagem de utilizador, não de commit. Cada tarefa acrescenta a su
   cada tick; `FishingAction.spawn_fish` usava um índice `-1` que apanhava o filho errado quando
   o personagem era o primeiro filho do pai; `fishing_spot.gd` desenhava o círculo de debug
   também fora do editor.
+- Erro de motor `TypedArray`/`erase` (T-006): `FundUsableForNeedCondition._body_exited_area`
+  chamava `objects_in_area.erase(body)` sem confirmar `body is UsableObject`, o que disparava
+  `ERROR: Attempted to erase an object into a TypedArray` sempre que um corpo qualquer (não
+  `UsableObject`) saía da área de busca. Regressão exposta pela T-004 depois da T-003 ligar o
+  sinal correcto; corrigida com a mesma guarda de tipo que `_body_entered_area` já usava.
