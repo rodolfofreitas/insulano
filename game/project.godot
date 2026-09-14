@@ -29,6 +29,14 @@ enabled=PackedStringArray("res://addons/beehave/plugin.cfg", "res://addons/gut/p
 usableObjects=""
 fishingSpot=""
 
+[insulano]
+
+llm/enabled=true
+llm/url="http://127.0.0.1:11434"
+llm/model="llama3.1:8b"
+llm/timeout_s=8.0
+llm/min_interval_s=30.0
+
 [physics]
 
 2d/default_gravity=0.0

@@ -19,6 +19,9 @@ Entradas em linguagem de utilizador, não de commit. Cada tarefa acrescenta a su
 - Eval das frases do LLM local (latência, português de Portugal, comprimento, conteúdo proibido).
 - Backlog de 33 tarefas em 6 fases, com critérios de aceitação verificáveis.
 - Harness para agentes: AGENTS.md, tech design com contratos, agentes e skills do Claude Code.
+- `LLMSettings` (T-101): leitura única das chaves `insulano/llm/*` (activo, URL, modelo, timeout,
+  intervalo mínimo), com defeitos em `project.godot`, sobreposição por `user://settings.cfg` e,
+  só para o URL, pela variável de ambiente de teste `INSULANO_LLM_URL`.
 
 ### Alterado
 - Renderer passa a Compatibility (OpenGL 3): mais leve para um protector de ecrã 2D.
