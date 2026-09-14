@@ -15,7 +15,7 @@ um comando sem data é proposto e ainda não foi provado.
 | Portão completo sem LLM nem export | `scripts/verify.sh --visual` | 2026-09-13 |
 | Eval do LLM | `python3 scripts/llm_eval.py --proof` | 2026-09-13 |
 | Próxima tarefa | `python3 scripts/backlog.py next` | 2026-09-13 |
-| Binário exportado | `dist/linux/insulano.x86_64` | - (T-004) |
+| Binário exportado | `dist/linux/insulano.x86_64` | 2026-09-14 (T-004) |
 | Modo protector | `dist/linux/insulano.x86_64 --screensaver` | - (T-501) |
 
 ## Variáveis de ambiente
@@ -28,7 +28,7 @@ Não há segredos. Variáveis de teste e diagnóstico (sem valores fixos):
 
 ## Export templates
 
-Necessários para `scripts/export.sh`. Proposto, a executar e datar na T-004:
+Necessários para `scripts/export.sh`. Executado e provado em 2026-09-14 (T-004):
 
 ```bash
 V=4.7.2
@@ -40,6 +40,12 @@ unzip -q "$TMP/templates.tpz" -d "$TMP"
 mkdir -p "$DEST" && mv "$TMP"/templates/* "$DEST"/
 scripts/export.sh
 ```
+
+Resultado (2026-09-14): download de 1,19 GB, `unzip` e `mv` sem erros, templates em
+`~/.local/share/godot/export_templates/4.7.2.stable/` (confirmado com `linux_release.x86_64`
+presente). `scripts/export.sh` saiu com 0 e imprimiu
+`PASSOU: dist/linux/insulano.x86_64 exportado e arrancou 600 frames sem erros de script`.
+Binário: `dist/linux/insulano.x86_64`, 73519416 bytes (~70 MiB).
 
 ## Monitorização
 

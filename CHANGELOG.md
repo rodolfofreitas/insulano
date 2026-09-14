@@ -8,6 +8,12 @@ Entradas em linguagem de utilizador, não de commit. Cada tarefa acrescenta a su
 ### Adicionado
 - Projecto jogável em `game/`, a partir do Guy on Island, a correr em Godot 4.7.2.
 - Portão de verificação único (`scripts/verify.sh`): documentação, backlog, lint, testes, arranque, imagem, LLM e export.
+- Export templates 4.7.2 instalados e export Linux provado: `scripts/export.sh` produz
+  `dist/linux/insulano.x86_64` e o binário arranca sem `SCRIPT ERROR`, `Parse Error` nem
+  `Failed to load script` (os três padrões vigiados pelo portão), tanto headless (600 frames)
+  como em modo janela real na sessão Hyprland (10 s, sem crash). Uma regressão latente exposta
+  por esta corrida (erro de motor `TypedArray`/`erase`, fora dos três padrões vigiados) ficou
+  registada na T-006, ainda não corrigida (fora do âmbito desta entrada).
 - Testes automáticos: 20 testes GUT, 40 testes dos scripts, smoke de arranque de 30 s simulados.
 - Captura de ecrã real de tamanho fixo, para provas visuais.
 - Eval das frases do LLM local (latência, português de Portugal, comprimento, conteúdo proibido).
