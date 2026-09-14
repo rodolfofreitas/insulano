@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "notes": "Fonte única das regras de aceitação de frases geradas. Lida pelo PhraseFilter (GDScript) e pelo scripts/llm_eval.py. Padrões regex: sem \\b nem \\w, porque o RegEx do Godot (PCRE2 sem UCP) trata letras acentuadas como não-palavra; usar (?i) inline para ignorar maiúsculas. Ressalva: em maiúsculas acentuadas (ex. VOCÊ, TÔ), o (?i) sozinho NÃO chega, porque a mesma ausência de UCP também tira o case-folding Unicode do (?i) no PCRE2 do Godot (mas não no Python, que já faz case-folding Unicode por defeito); o PhraseFilter (GDScript) compensa isto prefixando cada padrão com o verbo (*UCP) ao compilar (phrase_filter.gd, _compile_patterns) -- qualquer regra nova com acentos tem de contar com esse prefixo automático, nunca repeti-lo no próprio padrão. Ordem de verificação: empty, english, ptbr, forbidden, too_short, too_long.",
+  "notes": "Fonte única das regras de aceitação de frases geradas. Lida pelo PhraseFilter (GDScript) e pelo scripts/llm_eval.py. Padrões regex: sem \\b nem \\w, porque o RegEx do Godot (PCRE2 sem UCP) trata letras acentuadas como não-palavra; usar (?i) inline para ignorar maiúsculas. Ressalva: em maiúsculas acentuadas (ex. VOCÊ, TÔ), o (?i) sozinho NÃO chega, porque a mesma ausência de UCP também tira o case-folding Unicode do (?i) no PCRE2 do Godot (mas não no Python, que já faz case-folding Unicode por defeito); o PhraseFilter (GDScript) compensa isto prefixando cada padrão com o verbo (*UCP) ao compilar (phrase_filter.gd, _compile_patterns), qualquer regra nova com acentos tem de contar com esse prefixo automático, nunca repeti-lo no próprio padrão. Ordem de verificação: empty, english, ptbr, forbidden, too_short, too_long. O quarto padrão de ptbr_patterns apanha a próclise brasileira 'verbo modal + pronome + infinitivo' (ex. 'pode me ajudar', correcto em pt-PT seria 'pode ajudar-me'); a lista de verbos inclui as formas de 'ir' e os pretéritos imperfeitos usados como modal (vou, ia, ias, iam, podia, devia, queria), porque nas frases geradas 'vou' é a forma mais comum de próclise (ex. 'Vou me deitar cedo.', 'Já devia me ter habituado.'); não apanha 'que me' antes de um verbo (ex. 'o barco que me leve'), porque exige um verbo modal da lista imediatamente antes do pronome; o '(?!calhar)' a seguir ao pronome exclui a expressão fixa 'vai se calhar' / 'vai, se calhar' (ex. 'Hoje vai se calhar chover.'), que não é próclise, é a locução pt-PT 'se calhar'.",
   "min_words": 2,
   "max_words": 15,
   "max_chars": 120,
@@ -11,7 +11,8 @@
   "ptbr_patterns": [
     "(?i)(^|[^a-z])vocês?($|[^a-zà-ú])",
     "(?i)(^|[^a-z])(estou|está|estás|estava|fico|vou|vai|ando) [^ ]+ndo($|[^a-z])",
-    "(?i)(^|[^a-z])(galera|tô|pra)($|[^a-z])"
+    "(?i)(^|[^a-z])(galera|tô|pra)($|[^a-z])",
+    "(?i)(^|[^a-z])(pode|podes|podem|podemos|posso|deve|deves|devem|devemos|devo|quer|queres|querem|queremos|quero|vou|vai|vais|vão|vamos|ia|ias|iam|podia|devia|queria|consegue|consegues|conseguem|conseguimos|consigo) (me|te|nos|lhe|lhes|se) (?!calhar)[a-zà-ú]+(ar|er|ir)($|[^a-zà-ú])"
   ],
   "forbidden_substrings": ["merda", "caralho", "foda", "puta", "cabrão", "suicid", "matar-me"],
   "timeout_s": 8.0,

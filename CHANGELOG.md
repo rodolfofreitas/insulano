@@ -90,6 +90,12 @@ Entradas em linguagem de utilizador, não de commit. Cada tarefa acrescenta a su
   `docs/proof/T-107-balao-1080p.png` e `docs/proof/T-107-balao-1600p.png`.
 
 ### Alterado
+- Frases do náufrago afinadas (T-108): o filtro passa a rejeitar a próclise brasileira com verbos
+  como poder, dever, querer, ir e conseguir (ex. "pode me ajudar", "vou me deitar"), com casos de
+  teste para não rejeitar português de Portugal válido como "o barco que me leve" ou "vai se
+  calhar chover"; e o prompt passa a descrever o que existe numa ilha deserta, para reduzir
+  animais de quinta e objectos impossíveis nas frases. Eval de referência de 2026-09-14: 40
+  amostras, todas aceites pelo filtro, latência mediana de 3 s.
 - Renderer passa a Compatibility (OpenGL 3): mais leve para um protector de ecrã 2D.
 - Feriados passam de YAML para JSON, com Carnaval e Páscoa calculados a partir da data da Páscoa.
 - Modelo por defeito passa a `llama3.1:8b`, o único instalado, com limiares de latência medidos.

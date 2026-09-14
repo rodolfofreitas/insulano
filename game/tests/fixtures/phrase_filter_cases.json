@@ -20,6 +20,11 @@
     },
     { "raw": "You está fazendo isto.", "clean": "You está fazendo isto.", "reason": "english" },
     { "raw": "Merda.", "clean": "Merda.", "reason": "forbidden" },
-    { "raw": "Olá mundo", "clean": "Olá mundo", "reason": null }
+    { "raw": "Olá mundo", "clean": "Olá mundo", "reason": null },
+    { "raw": "Pode me ajudar com isto, por favor?", "clean": "Pode me ajudar com isto, por favor?", "reason": "ptbr" },
+    { "raw": "O barco que me leve para casa.", "clean": "O barco que me leve para casa.", "reason": null },
+    { "raw": "VÃO ME AJUDAR AMANHÃ CEDO.", "clean": "VÃO ME AJUDAR AMANHÃ CEDO.", "reason": "ptbr" },
+    { "raw": "Vou me deitar cedo.", "clean": "Vou me deitar cedo.", "reason": "ptbr" },
+    { "raw": "Hoje vai se calhar chover.", "clean": "Hoje vai se calhar chover.", "reason": null }
   ]
 }
