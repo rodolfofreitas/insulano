@@ -11,12 +11,19 @@ para testar" sem que isso fique escrito e com revisão definida.
 | Scripts do harness | pytest | `scripts/tests/` | que o próprio portão não mente | `verify.sh --quick` |
 | Unitário | GUT | `game/tests/unit/` | lógica pura: filtro, prompt, cores, datas | `verify.sh` |
 | Integração | GUT | `game/tests/integration/` | cenas instanciam, sinais, fallback com rede inacessível | `verify.sh` |
-| Smoke de arranque | `game/tools/boot_smoke.gd` | headless, 30 s simulados | o jogo vive: fome desce, personagem mexe-se, sem SCRIPT ERROR | `verify.sh` |
+| Smoke de arranque | `game/tools/boot_smoke.gd` | headless, 90 s simulados | o jogo vive: fome desce, personagem mexe-se, sem SCRIPT ERROR, e (desde a T-106) o personagem diz pelo menos uma frase de `phrases_fallback.json` com `INSULANO_LLM_URL` numa porta morta | `verify.sh` |
 | Visual | `game/tools/capture.gd` | PNG 1280x720 | o que um humano veria; o agente abre a imagem | `verify.sh --visual` |
 | LLM | `scripts/llm_eval.py` | contra o Ollama | latência, pt-PT, comprimento, conteúdo | `verify.sh --llm` |
 | Ao vivo | GUT | `game/tests/live/` | ponte real contra o Ollama (a partir da T-105) | `verify.sh --llm` |
 | Export | `scripts/export.sh` | `dist/linux/` | o binário real arranca | `verify.sh --export` |
 | Documentação | `scripts/check_docs.py` | todo o repositório | links, travessões, docstrings, mapa de componentes | `verify.sh --quick` |
+
+**Buraco conhecido:** nenhum destes portões exercita a árvore de comportamento inteira a falar
+contra um Ollama real ao mesmo tempo ("árvore mais HTTP real"). O `llm_live` (linha "Ao vivo") só
+testa a ponte (`LLMBridge`) isolada; o boot smoke fala com uma porta morta de propósito
+(determinístico, sempre fallback); e o `llm_eval.py` testa o `PromptBuilder`/`PhraseFilter` fora da
+árvore. A verificação de que a `SayGeneratedAction` na árvore real fala coerentemente com um Ollama
+a responder é manual (captura visual + inspecção, T-106).
 
 ## 2. Comandos
 

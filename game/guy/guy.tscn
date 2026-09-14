@@ -17,7 +17,7 @@
 [ext_resource type="Script" uid="uid://bipjobdk7cdu" path="res://beehave/watch_ocean_action.gd" id="14_ovcs7"]
 [ext_resource type="Script" uid="uid://cui7xuic46e2g" path="res://beehave/find_group_spot_condition.gd" id="15_k6rot"]
 [ext_resource type="Script" uid="uid://c78ixkheqb01m" path="res://beehave/fishing_action.gd" id="16_gumv8"]
-[ext_resource type="Script" uid="uid://rfhhjdwsrqra" path="res://beehave/talk_action.gd" id="16_xaydb"]
+[ext_resource type="Script" path="res://beehave/say_generated_action.gd" id="16_xaydb"]
 
 [sub_resource type="Resource" id="Resource_6ukov"]
 script = ExtResource("2_kijpv")
@@ -360,21 +360,21 @@ search_area = NodePath("../../../../UsableObjectsArea")
 [node name="GoToUsableAction" type="Node" parent="BeehaveTree/SelectorComposite/NeedFulfillingComposite"]
 script = ExtResource("6_a17s0")
 distance_threshold = 25.0
+current_action_label = "ir comer"
 metadata/_custom_type_script = "uid://hygx6hac2ukq"
 
-[node name="TalkAction" type="Node" parent="BeehaveTree/SelectorComposite/NeedFulfillingComposite"]
+[node name="SayGeneratedAction" type="Node" parent="BeehaveTree/SelectorComposite/NeedFulfillingComposite"]
 script = ExtResource("16_xaydb")
-texts = PackedStringArray("Yummy!", "I like fish!", "Munch munch", "Why are there no coconuts here?", "")
-metadata/_custom_type_script = "uid://rfhhjdwsrqra"
+fallback_category = "eating"
 
 [node name="UseUsableAction" type="Node" parent="BeehaveTree/SelectorComposite/NeedFulfillingComposite"]
 script = ExtResource("9_kijpv")
 use_physics_process_delta = true
 metadata/_custom_type_script = "uid://dw8dh2c0cfef7"
 
-[node name="TalkAction2" type="Node" parent="BeehaveTree/SelectorComposite/NeedFulfillingComposite"]
+[node name="SayGeneratedAction2" type="Node" parent="BeehaveTree/SelectorComposite/NeedFulfillingComposite"]
 script = ExtResource("16_xaydb")
-metadata/_custom_type_script = "uid://rfhhjdwsrqra"
+fallback_category = "eating"
 
 [node name="IdleActionComposite" type="Node" parent="BeehaveTree/SelectorComposite"]
 script = ExtResource("13_ovcs7")
@@ -391,12 +391,12 @@ metadata/_custom_type_script = "uid://l61blqinab2t"
 [node name="GoToUsableAction" type="Node" parent="BeehaveTree/SelectorComposite/IdleActionComposite/LookAtRandomLocationSequence"]
 script = ExtResource("6_a17s0")
 distance_threshold = 10.0
+current_action_label = "passear"
 metadata/_custom_type_script = "uid://hygx6hac2ukq"
 
-[node name="TalkAction" type="Node" parent="BeehaveTree/SelectorComposite/IdleActionComposite/LookAtRandomLocationSequence"]
+[node name="SayGeneratedAction" type="Node" parent="BeehaveTree/SelectorComposite/IdleActionComposite/LookAtRandomLocationSequence"]
 script = ExtResource("16_xaydb")
-texts = PackedStringArray("Hm...", "It\'s hot here.", "I wonder, where Wilson is.", "WILSOOON!", "I wonder...", "...", "HELP!", "No ships in sight.", "I feel lonely.")
-metadata/_custom_type_script = "uid://rfhhjdwsrqra"
+fallback_category = "idle"
 
 [node name="WatchOceanAction" type="Node" parent="BeehaveTree/SelectorComposite/IdleActionComposite/LookAtRandomLocationSequence"]
 script = ExtResource("14_ovcs7")
@@ -405,9 +405,9 @@ max_watch_time_seconds = 5.0
 use_physics_process_delta = true
 metadata/_custom_type_script = "uid://bipjobdk7cdu"
 
-[node name="TalkAction2" type="Node" parent="BeehaveTree/SelectorComposite/IdleActionComposite/LookAtRandomLocationSequence"]
+[node name="SayGeneratedAction2" type="Node" parent="BeehaveTree/SelectorComposite/IdleActionComposite/LookAtRandomLocationSequence"]
 script = ExtResource("16_xaydb")
-metadata/_custom_type_script = "uid://rfhhjdwsrqra"
+fallback_category = "idle"
 
 [node name="GoFishingSequence" type="Node" parent="BeehaveTree/SelectorComposite/IdleActionComposite"]
 script = ExtResource("3_jtfwu")
@@ -422,12 +422,12 @@ metadata/_custom_type_script = "uid://cui7xuic46e2g"
 [node name="GoToUsableAction" type="Node" parent="BeehaveTree/SelectorComposite/IdleActionComposite/GoFishingSequence"]
 script = ExtResource("6_a17s0")
 distance_threshold = 25.0
+current_action_label = "ir pescar"
 metadata/_custom_type_script = "uid://hygx6hac2ukq"
 
-[node name="TalkAction" type="Node" parent="BeehaveTree/SelectorComposite/IdleActionComposite/GoFishingSequence"]
+[node name="SayGeneratedAction" type="Node" parent="BeehaveTree/SelectorComposite/IdleActionComposite/GoFishingSequence"]
 script = ExtResource("16_xaydb")
-texts = PackedStringArray("Nice day for fishing, ain\'t it? Hua ha!", "Come heeere, fishy fishy!", "Hm hm hm...", "")
-metadata/_custom_type_script = "uid://rfhhjdwsrqra"
+fallback_category = "fishing"
 
 [node name="FishingAction" type="Node" parent="BeehaveTree/SelectorComposite/IdleActionComposite/GoFishingSequence" node_paths=PackedStringArray("fishing_rod")]
 script = ExtResource("16_gumv8")
@@ -435,6 +435,6 @@ fishing_rod = NodePath("../../../../../Fishingrod")
 use_physics_process_delta = true
 metadata/_custom_type_script = "uid://c78ixkheqb01m"
 
-[node name="TalkAction2" type="Node" parent="BeehaveTree/SelectorComposite/IdleActionComposite/GoFishingSequence"]
+[node name="SayGeneratedAction2" type="Node" parent="BeehaveTree/SelectorComposite/IdleActionComposite/GoFishingSequence"]
 script = ExtResource("16_xaydb")
-metadata/_custom_type_script = "uid://rfhhjdwsrqra"
+fallback_category = "fishing"

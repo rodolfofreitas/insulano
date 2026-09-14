@@ -142,8 +142,26 @@ Contrato de comportamento:
 - `game/beehave/say_generated_action.gd`, `class_name SayGeneratedAction extends ActionLeaf`:
   substitui o `TalkAction` fixo. Primeiro tick pede a frase e devolve `RUNNING`; quando o sinal chega
   com o seu `request_id`, escreve `character.talking_text` e devolve `SUCCESS`. Respeita
-  `min_interval_s` entre frases (se ainda não passou, devolve `SUCCESS` sem falar). Monta o
-  `PhraseContext` a partir do blackboard (`current_action`), da fome e do `Clock`/`Weather` quando existirem.
+  `min_interval_s` entre frases; se ainda não passou, devolve `SUCCESS` sem falar, e só limpa o balão
+  (`character.talking_text = ""`) se a frase actual já esteve visível pelo menos `MIN_VISIBLE_S`
+  (constante da classe, 3 s, o limite inferior do clamp de duração abaixo). Sem esta guarda, uma
+  sequência que chega ao seu nó de abertura poucos frames depois de outra ter falado no nó de fecho
+  apagava a frase mal ela aparecia. Diferença para a base: a base nunca fazia o nó de fecho falar,
+  só limpava; esta classe faz os dois nós de cada sequência falarem. A garantia de 3 s visíveis só
+  vale com `min_interval_s >= MIN_VISIBLE_S`: com um intervalo menor (possível através de
+  `user://settings.cfg`), uma frase nova pode substituir a anterior antes dos 3 s. O relógio (`Time.get_ticks_msec`
+  por defeito) é injectável (`clock: Callable`) para os testes controlarem o tempo sem esperar
+  segundos reais. `interrupt()` esquece o pedido em curso (`_awaiting_request_id`/`_has_result`), para
+  uma resposta tardia de um pedido interrompido nunca resolver com um contexto que já não é o actual;
+  não chama `super.interrupt()` de propósito: o `super` só notifica o depurador visual do Beehave e,
+  a correr sem depurador activo (headless, testes), imprime um `ERROR` que o GUT conta como erro
+  inesperado; a execução não aborta (AGENTS.md §10, ruído conhecido). Monta o `PhraseContext` a
+  partir do blackboard (`current_action`), da fome e do `Clock`/`Weather` quando existirem.
+- `game/beehave/go_to_usable_action.gd`, `@export var current_action_label: String`: verbo em pt-PT
+  a escrever em `current_action` enquanto este nó anda, para a `SayGeneratedAction` que segue na
+  mesma sequência nunca ler o verbo deixado por uma sequência anterior. Vazio (defeito) não escreve
+  nada. Em `guy.tscn`: "ir comer" (sequência de comer), "ir pescar" (sequência de pesca) e "passear"
+  (sequência de passear, único verbo dessa sequência).
 - `game/ui/speech_bubble.gd`, `class_name SpeechBubble extends PanelContainer`: fundo legível sobre
   água e relva, largura máxima com quebra de linha, duração visível `clamp(2.5 + 0.35 * palavras, 3, 9)` segundos.
 

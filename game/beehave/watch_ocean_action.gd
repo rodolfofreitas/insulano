@@ -12,6 +12,8 @@ extends ActionUsingDelta
 
 ## Ignora o actor; conta o tempo já observado até atingir o alvo sorteado.
 func tick(_actor: Node, blackboard: Blackboard) -> int:
+	# Contexto para o LLMBridge (SayGeneratedAction, T-106).
+	blackboard.set_value("current_action", "observar o oceano")
 	var watched: float = blackboard.get_value("time_watched", 0)
 	var watch_goal: float = blackboard.get_value("watch_goal", 0)
 	if watch_goal == 0:

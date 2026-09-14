@@ -44,7 +44,7 @@ depende_de: [T-101, T-102, T-103, T-104]
 Uma ou duas frases: o resultado observável, não a implementação.
 
 ## Ler antes
-- ficheiros e secções exactas (agent_docs/tech_design.md §3.2, game/beehave/talk_action.gd)
+- ficheiros e secções exactas (agent_docs/tech_design.md §3.2, game/beehave/say_generated_action.gd)
 
 ## Critérios de aceitação
 - [ ] frase binária e verificável, com o comando ou teste que a prova

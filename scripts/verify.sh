@@ -119,8 +119,12 @@ if [ "$QUICK" -eq 0 ]; then
       grep -E 'Failed|GUT ERROR|SCRIPT ERROR' reports/gut.log | head -20
     fi
 
-    # 7. Smoke de arranque (30 s de jogo simulados)
-    timeout 300 "$GODOT" --headless --fixed-fps 60 --path game -s res://tools/boot_smoke.gd > reports/boot.log 2>&1
+    # 7. Smoke de arranque (90 s de jogo simulados). INSULANO_LLM_URL para uma
+    # porta morta (T-106): força o SayGeneratedAction a cair sempre no
+    # fallback, sem depender de nenhum Ollama real a responder (nem sequer
+    # a existir) para esta prova ser determinística.
+    INSULANO_LLM_URL="http://127.0.0.1:9" \
+      timeout 300 "$GODOT" --headless --fixed-fps 60 --path game -s res://tools/boot_smoke.gd > reports/boot.log 2>&1
     boot_exit=$?
     if [ "$boot_exit" -eq 0 ] && ! log_has_script_errors reports/boot.log; then
       record boot PASSOU "$(grep BOOT_SMOKE reports/boot.log)"

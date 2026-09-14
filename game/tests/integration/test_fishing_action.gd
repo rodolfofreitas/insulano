@@ -3,6 +3,31 @@ extends GutTest
 ## `get_child(character.get_index() - 1)`, que dá -1 quando o personagem é o
 ## primeiro filho do pai; o Godot interpreta índice -1 como "o último filho",
 ## um nó qualquer sem relação com o personagem.
+##
+## test_escreve_current_action_pescar (T-106): FishingAction tem de escrever
+## "current_action" no blackboard, para o SayGeneratedAction o usar no
+## contexto da frase. Força-se o ramo "à espera da mordida" (in_use = true,
+## seconds_until_bite alto) para não precisar de um ponto de pesca nem de
+## AnimatedSprite2D válidos, que a animação (fora de âmbito aqui) exigiria.
+
+
+func test_escreve_current_action_pescar() -> void:
+	var action: FishingAction = autofree(FishingAction.new())
+	add_child_autofree(action)
+	action.in_use = true
+	action.seconds_until_bite = 999.0
+
+	var character := Character.new()
+	character.needs = []
+	add_child_autofree(character)
+
+	var blackboard := Blackboard.new()
+	add_child_autofree(blackboard)
+
+	var result := action.tick(character, blackboard)
+
+	assert_eq(result, action.RUNNING, "sem a mordida acontecer ainda, tick tem de ficar RUNNING")
+	assert_eq(blackboard.get_value("current_action"), "pescar")
 
 
 func test_regression_indice_negativo() -> void:

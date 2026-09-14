@@ -22,6 +22,9 @@ func tick(actor: Node, blackboard: Blackboard) -> int:
 	var character = actor as Character
 	var result: int = FAILURE
 	var spot: Node2D = blackboard.get_value(node_blackboard_key)
+	# Contexto para o LLMBridge (SayGeneratedAction, T-106): o que o
+	# náufrago está a fazer enquanto esta acção corre.
+	blackboard.set_value("current_action", "pescar")
 
 	if !in_use:
 		seconds_until_bite = randf_range(5, 10)

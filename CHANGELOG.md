@@ -56,6 +56,27 @@ Entradas em linguagem de utilizador, não de commit. Cada tarefa acrescenta a su
   o prompt inteiro. Teste ao vivo em `game/tests/live/test_llm_live.gd` (fora do
   `.gutconfig.json`, só corre com `scripts/verify.sh --llm`): marca-se `pending()` em vez de falhar
   quando o Ollama não responde nesta máquina.
+- `SayGeneratedAction` (T-106): substitui todos os `TalkAction` fixos em inglês da árvore herdada
+  por uma acção que pede uma frase à ponte `LLM` (ou ao fallback garantido) e fala sempre em
+  português de Portugal. Lê `current_action` do blackboard, agora escrito por `FishingAction`
+  ("pescar"), `UseUsableAction` ("comer"), `WatchOceanAction` ("observar o oceano") e, pelas três
+  instâncias de `GoToUsableAction.current_action_label` em `guy.tscn`, "ir comer" (a caminho de
+  comer), "ir pescar" (a caminho da pesca) e "passear" (sequência de passear): sem isto, a frase
+  dita antes de comer ou pescar podia usar o verbo deixado pela sequência anterior. Respeita
+  `LLMSettings.min_interval_s` partilhado entre todas as instâncias via `say_last_at_s` no
+  blackboard (provado por mutação: um relógio por instância deixaria os 6 nós falar em sequência
+  sem esperar pelos outros); quando o intervalo bloqueia, só limpa o balão (`talking_text = ""`) se
+  a frase actual já estiver visível pelo menos `MIN_VISIBLE_S` (3 s), para nunca piscar uma frase
+  acabada de dizer nem a deixar pregada no ecrã para sempre. Ignora `phrase_ready` com o
+  `request_id` de outro pedido. Trata a resposta síncrona do `LLMBridge` (ponte desligada, pedido
+  concorrente ou prompt vazio) ligando o sinal `phrase_ready` antes de chamar `request_phrase`,
+  para nunca perder esse caso e ficar `RUNNING` para sempre. `interrupt()` esquece o pedido em
+  curso, para uma resposta tardia de um pedido interrompido nunca falar sobre um contexto que já
+  não é o actual. Relógio (`Time.get_ticks_msec` por defeito) injectável via `clock: Callable`,
+  para os testes controlarem o tempo sem esperar segundos reais. `boot_smoke.gd` alargado para 90 s
+  simulados e confirma que o náufrago diz pelo menos uma frase de `phrases_fallback.json` com
+  `INSULANO_LLM_URL` apontado para uma porta morta (agora também passado por `scripts/verify.sh`,
+  determinístico e sem depender de um Ollama real a responder).
 
 ### Alterado
 - Renderer passa a Compatibility (OpenGL 3): mais leve para um protector de ecrã 2D.

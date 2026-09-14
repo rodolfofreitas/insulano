@@ -94,8 +94,8 @@ Estado a 2026-09-13: existem a cena principal e a behavior tree herdadas; os aut
 | `beehave/fishing_action.gd` | FishingAction | ActionUsingDelta | Acção de pescar: mostra a cana, espera um tempo aleatório e faz nascer um peixe. |
 | `beehave/go_to_usable_action.gd` | GoToUsableAction | ActionLeaf | Move o actor até à posição em `blackboard_key`, usando o `NavigationAgent2D` do Character. |
 | `beehave/need_low_condition.gd` | NeedLowCondition | ConditionLeaf | Sorteia, para cada necessidade do actor, se está baixa o suficiente para tratar agora. |
+| `beehave/say_generated_action.gd` | SayGeneratedAction | ActionLeaf | Pede uma frase ao LLMBridge (ou fallback) e di-la em `character.talking_text` (tech_design §4.6). |
 | `beehave/set_delta_on_blackboard.gd` | SetDeltaOnBlackboardAction | ActionLeaf | Escreve o delta do frame corrente no blackboard, para outras folhas o lerem. |
-| `beehave/talk_action.gd` | TalkAction | ActionLeaf | Escolhe ao acaso uma frase de `texts` e escreve-a em `character.talking_text`. |
 | `beehave/use_usable_action.gd` | UseUsableAction | ActionUsingDelta | Usa o objecto em `object_blackboard_key` enquanto a necessidade associada não estiver satisfeita. |
 | `beehave/watch_ocean_action.gd` | WatchOceanAction | ActionUsingDelta | Faz o actor "olhar o mar" durante um tempo aleatório entre os dois limites. |
 | `character/character.gd` | Character | CharacterBody2D | Personagem base: necessidades, navegação, animação por direcção e balão de fala. |
