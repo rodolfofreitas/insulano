@@ -11,3 +11,6 @@ graphify-out/
 __pycache__/
 .pytest_cache/
 *.tmp
+
+# Referencia visual proprietaria (NAO distribuir)
+docs/reference/johnny-castaway/*.png
