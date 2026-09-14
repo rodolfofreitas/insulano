@@ -116,6 +116,7 @@ Estado a 2026-09-13: existem a cena principal e a behavior tree herdadas; os aut
 | `object/usable_object_container.gd` | UsableObjectContainer | UsableObject | Agrupa vários objectos utilizáveis num só nó (ex.: uma prateleira com comida). |
 | `tools/boot_smoke.gd` | - | SceneTree | Smoke de arranque: carrega a cena principal, simula tempo de jogo e verifica |
 | `tools/capture.gd` | - | SceneTree | Captura de prova visual: carrega uma cena com renderização real dentro de um |
+| `ui/speech_bubble.gd` | SpeechBubble | PanelContainer | Balão de fala do personagem: fundo opaco e legível sobre qualquer fundo da |
 <!-- gerado:componentes:fim -->
 
 ## 5. Vista de runtime

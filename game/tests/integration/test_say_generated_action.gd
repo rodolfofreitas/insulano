@@ -6,10 +6,11 @@ extends GutTest
 ## respeito por min_interval_s partilhado entre instâncias via blackboard,
 ## incluindo o BLOQUEIO de uma 2ª instância pela 1ª; a rejeição de
 ## phrase_ready com o request_id de outro pedido; o esquecimento do pedido em
-## curso ao interromper (interrupt()); e, com um relógio controlado
-## (ronda 3, correcção do bloqueante 2), a garantia de que uma frase dita não
-## fica visível menos de MIN_VISIBLE_S antes de um ramo bloqueado a poder
-## limpar.
+## curso ao interromper (interrupt()); e, desde a T-107, a garantia de que um
+## ramo bloqueado pelo intervalo mínimo NUNCA toca em `character.talking_text`
+## (nem para falar, nem para o limpar): quem manda no desaparecimento do
+## balão passou a ser o `SpeechBubble` (game/ui/speech_bubble.gd), não esta
+## classe (ver o Relatório da T-107 em backlog/fase-1/T-107-speech-bubble.md).
 
 
 ## Ponte falsa injectável (code_patterns.md §5): imita o contrato de
@@ -122,20 +123,23 @@ func test_resposta_sincrona_dentro_de_request_phrase_ainda_resolve_para_success(
 	assert_eq(_character.talking_text, "Frase sincrona")
 
 
-## min_interval_s partilhado via blackboard: se uma frase foi dita há pouco
-## tempo (menos do que min_interval_s), um tick novo tem de devolver SUCCESS
-## sem chamar a ponte outra vez. NÃO pode limpar o balão de imediato (ronda 3,
-## correcção do bloqueante 2 do reviewer): um tick que acontece poucos frames
-## depois de falar encontraria o balão a piscar e a apagar-se antes de ser
-## legível. Só depois de MIN_VISIBLE_S é que um tick bloqueado limpa a frase
-## antiga, para ela nunca ficar pregada no ecrã para sempre.
-func test_respeita_min_interval_s_entre_frases() -> void:
+## Bloqueante da revisão da T-107, ronda 1: um `min_interval_s` configurado
+## abaixo de `MIN_VISIBLE_S` (aqui 1.0, contra o mínimo real de 3.0) não pode
+## fazer `tick()` pedir uma frase nova antes dos 3 s efectivos, porque o
+## `SpeechBubble` substitui o texto sem condição em `show_text()` (nunca
+## espera que a frase anterior tenha ficado visível o suficiente): se
+## `tick()` só olhasse para `min_interval_s`, a frase B substituiria a A ao
+## fim de 1 s, e A teria ficado visível só 1 s, não os 3 s garantidos. O
+## relógio falso começa em 1000.0, nunca em 0.0 (T-106, bug de tempo
+## absoluto).
+func test_min_interval_s_abaixo_do_minimo_e_elevado_a_min_visible_s() -> void:
 	var bridge: FakeBridge = autofree(FakeBridge.new())
 	bridge.synchronous = true
 	bridge.text_to_emit = "Primeira frase"
 	var action := _make_action(bridge)
-	action.settings.min_interval_s = 1000.0
+	action.settings.min_interval_s = 1.0
 	var clock := FakeClock.new()
+	clock.now_s = 1000.0
 	action.clock = Callable(clock, "get_now")
 
 	var first := action.tick(_character, _blackboard)
@@ -143,7 +147,63 @@ func test_respeita_min_interval_s_entre_frases() -> void:
 	assert_eq(bridge.call_count, 1, "a 1ª frase tem de chamar a ponte")
 	assert_eq(_character.talking_text, "Primeira frase")
 
-	clock.now_s = 0.1
+	# 1.5s depois: já passou o min_interval_s configurado (1.0), mas ainda não
+	# passou o MIN_VISIBLE_S (3.0). Se o bloqueante não estivesse corrigido, a
+	# ponte seria chamada aqui e a frase A teria ficado visível só 1.5s.
+	bridge.text_to_emit = "Segunda frase"
+	clock.now_s = 1001.5
+	var second := action.tick(_character, _blackboard)
+
+	assert_eq(
+		second,
+		action.SUCCESS,
+		"a 1.5s, ainda dentro do intervalo EFECTIVO de 3s, o tick resolve-se sem falar de novo"
+	)
+	assert_eq(
+		bridge.call_count,
+		1,
+		"a 1.5s a ponte não pode ser chamada outra vez, mesmo com min_interval_s=1.0"
+	)
+	assert_eq(
+		_character.talking_text,
+		"Primeira frase",
+		"a frase A tem de continuar visível: só passaram 1.5s dos 3s efectivos garantidos"
+	)
+
+	# 3.1s depois da primeira frase: passou o MIN_VISIBLE_S efectivo, mesmo
+	# com min_interval_s=1.0 configurado. Agora sim, a ponte pode ser chamada.
+	clock.now_s = 1003.1
+	var third := action.tick(_character, _blackboard)
+
+	assert_eq(third, action.SUCCESS)
+	assert_eq(bridge.call_count, 2, "passados os 3s efectivos, a ponte pode ser chamada de novo")
+	assert_eq(_character.talking_text, "Segunda frase")
+
+
+## min_interval_s partilhado via blackboard: se uma frase foi dita há pouco
+## tempo (menos do que min_interval_s), um tick novo tem de devolver SUCCESS
+## sem chamar a ponte outra vez. Desde a T-107 nunca limpa o balão, nem
+## antes nem depois de qualquer tempo: um tick bloqueado pelo intervalo não
+## toca em `character.talking_text`, ponto final; quem decide se e quando a
+## frase desaparece é o `SpeechBubble`, não esta classe. O relógio falso
+## começa em 1000.0, nunca em 0.0 (um bug de tempo absoluto não pode passar
+## despercebido só porque 0.0 também seria um valor plausível).
+func test_respeita_min_interval_s_entre_frases() -> void:
+	var bridge: FakeBridge = autofree(FakeBridge.new())
+	bridge.synchronous = true
+	bridge.text_to_emit = "Primeira frase"
+	var action := _make_action(bridge)
+	action.settings.min_interval_s = 1000.0
+	var clock := FakeClock.new()
+	clock.now_s = 1000.0
+	action.clock = Callable(clock, "get_now")
+
+	var first := action.tick(_character, _blackboard)
+	assert_eq(first, action.SUCCESS)
+	assert_eq(bridge.call_count, 1, "a 1ª frase tem de chamar a ponte")
+	assert_eq(_character.talking_text, "Primeira frase")
+
+	clock.now_s = 1000.1
 	var second := action.tick(_character, _blackboard)
 
 	assert_eq(
@@ -155,13 +215,10 @@ func test_respeita_min_interval_s_entre_frases() -> void:
 	assert_eq(
 		_character.talking_text,
 		"Primeira frase",
-		(
-			"a frase acabada de dizer (há só 0.1s) tem de continuar visível: "
-			+ "ainda não passou MIN_VISIBLE_S"
-		)
+		"bloqueado pelo intervalo, o tick nunca toca no balão: continua com a frase de A"
 	)
 
-	clock.now_s = action.MIN_VISIBLE_S + 0.5
+	clock.now_s = 1000.0 + action.MIN_VISIBLE_S + 5.0
 	var third := action.tick(_character, _blackboard)
 
 	assert_eq(
@@ -172,20 +229,34 @@ func test_respeita_min_interval_s_entre_frases() -> void:
 	)
 	assert_eq(
 		_character.talking_text,
-		"",
-		"depois de MIN_VISIBLE_S, bloqueado pelo intervalo mínimo, o tick tem de limpar a frase antiga"
+		"Primeira frase",
+		(
+			"mesmo muito depois de MIN_VISIBLE_S, um tick bloqueado continua a não tocar no balão: "
+			+ "quem o esconderia agora é o SpeechBubble, não esta classe"
+		)
 	)
 
 
-## Depois de min_interval_s passar (aqui, 0.0: passa sempre), uma segunda
-## instância consegue falar de novo: prova que o bloqueio é pelo TEMPO
-## guardado no blackboard, partilhado entre instâncias, e não um estado
-## permanente por nó.
+## Depois de o intervalo EFECTIVO passar (aqui, `min_interval_s = 0.0`, elevado
+## a `MIN_VISIBLE_S` pelo `maxf` do bloqueante da T-107 ronda 1), uma segunda
+## instância consegue falar de novo. NÃO prova a partilha por si só (uma
+## instância sem partilha nenhuma também passaria aqui, por nunca ter falado
+## antes ela própria); quem prova a partilha é
+## `test_segunda_instancia_fica_bloqueada_pelo_intervalo_da_primeira`, que
+## mostra a 2ª instância BLOQUEADA por um tempo escrito pela 1ª no MESMO
+## blackboard. Este teste prova, isso sim, que esse bloqueio partilhado NÃO é
+## permanente: passa ao fim do intervalo efectivo. As duas instâncias
+## partilham o MESMO relógio falso (outra instância com o SEU próprio relógio
+## real também passaria aqui ao lado, pela mesma razão de nunca ter falado
+## antes).
 func test_duas_instancias_partilham_o_intervalo_minimo_pelo_blackboard() -> void:
 	var bridge: FakeBridge = autofree(FakeBridge.new())
 	bridge.synchronous = true
 	bridge.text_to_emit = "Frase da primeira instância"
 	var first_action := _make_action(bridge)
+	var clock := FakeClock.new()
+	clock.now_s = 1000.0
+	first_action.clock = Callable(clock, "get_now")
 
 	var first_result := first_action.tick(_character, _blackboard)
 	assert_eq(first_result, first_action.SUCCESS)
@@ -196,12 +267,18 @@ func test_duas_instancias_partilham_o_intervalo_minimo_pelo_blackboard() -> void
 
 	bridge.text_to_emit = "Frase da segunda instância"
 	var second_action := _make_action(bridge)
+	second_action.clock = Callable(clock, "get_now")
+	clock.now_s = 1000.0 + second_action.MIN_VISIBLE_S + 0.1
+
 	var second_result := second_action.tick(_character, _blackboard)
 
 	assert_eq(
 		second_result,
 		second_action.SUCCESS,
-		"com min_interval_s = 0.0, a 2ª instância também pode falar"
+		(
+			"passado o intervalo EFECTIVO (MIN_VISIBLE_S, já que min_interval_s = 0.0), a 2ª instância "
+			+ "também pode falar"
+		)
 	)
 	assert_eq(_character.talking_text, "Frase da segunda instância")
 	assert_eq(bridge.call_count, 2)
@@ -214,11 +291,12 @@ func test_duas_instancias_partilham_o_intervalo_minimo_pelo_blackboard() -> void
 ## blackboard partilhado) passa aqui ao lado: a instância B chamaria a ponte
 ## outra vez, porque nunca tinha falado antes ela própria.
 ##
-## Com um relógio controlado (ronda 3, correcção do bloqueante 2): a
-## instância B, bloqueada, faz tick() LOGO A SEGUIR (o cenário real do bug: a
-## sequência seguinte chega ao destino poucos frames depois de A falar) e o
-## texto de A tem de CONTINUAR visível; só depois de MIN_VISIBLE_S é que um
-## tick bloqueado o limpa.
+## Com um relógio controlado: a instância B, bloqueada, faz tick() LOGO A
+## SEGUIR (o cenário real do bug original: a sequência seguinte chega ao
+## destino poucos frames depois de A falar) e o texto de A tem de CONTINUAR
+## visível, agora e sempre que B continuar bloqueada (T-107: nenhuma
+## instância desta classe limpa o balão, seja o tempo que for; ver docstring
+## do ficheiro). O relógio falso começa em 1000.0, nunca em 0.0.
 func test_segunda_instancia_fica_bloqueada_pelo_intervalo_da_primeira() -> void:
 	var bridge: FakeBridge = autofree(FakeBridge.new())
 	bridge.synchronous = true
@@ -226,6 +304,7 @@ func test_segunda_instancia_fica_bloqueada_pelo_intervalo_da_primeira() -> void:
 	var first_action := _make_action(bridge)
 	first_action.settings.min_interval_s = 1000.0
 	var clock := FakeClock.new()
+	clock.now_s = 1000.0
 	first_action.clock = Callable(clock, "get_now")
 
 	var first_result := first_action.tick(_character, _blackboard)
@@ -237,7 +316,7 @@ func test_segunda_instancia_fica_bloqueada_pelo_intervalo_da_primeira() -> void:
 	second_action.settings.min_interval_s = 1000.0
 	second_action.clock = Callable(clock, "get_now")
 
-	clock.now_s = 0.1
+	clock.now_s = 1000.1
 	var second_result := second_action.tick(_character, _blackboard)
 
 	assert_eq(
@@ -255,19 +334,22 @@ func test_segunda_instancia_fica_bloqueada_pelo_intervalo_da_primeira() -> void:
 		"Frase da primeira instância",
 		(
 			"a frase de A, dita há só 0.1s, tem de continuar visível: "
-			+ "a 2ª instância bloqueada não pode apagá-la antes de MIN_VISIBLE_S"
+			+ "a 2ª instância bloqueada não pode apagá-la"
 		)
 	)
 
-	clock.now_s = second_action.MIN_VISIBLE_S + 0.5
+	clock.now_s = 1000.0 + second_action.MIN_VISIBLE_S + 5.0
 	var third_result := second_action.tick(_character, _blackboard)
 
 	assert_eq(third_result, second_action.SUCCESS, "continua bloqueada pelo intervalo partilhado")
 	assert_eq(bridge.call_count, 1, "ainda bloqueada, a ponte não é chamada outra vez")
 	assert_eq(
 		_character.talking_text,
-		"",
-		"depois de MIN_VISIBLE_S, bloqueada pelo intervalo mínimo, o tick tem de limpar o balão"
+		"Frase da primeira instância",
+		(
+			"mesmo muito depois de MIN_VISIBLE_S, bloqueada pelo intervalo mínimo, esta classe "
+			+ "continua a não tocar no balão"
+		)
 	)
 
 

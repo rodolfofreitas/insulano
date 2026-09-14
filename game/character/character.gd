@@ -5,31 +5,38 @@ extends CharacterBody2D
 ## `Guy` (guy/guy.gd) estende esta classe para o náufrago jogável; a behavior
 ## tree (Beehave) lê `needs` e chama `walk_towards`/`play_animation_for_direction`
 ## através dela. Não decide sozinho o que fazer: quem decide é a árvore.
+##
+## `speech_bubble` é quem manda na duração da frase visível (T-107,
+## `game/ui/speech_bubble.gd`, tech_design.md §4.6): `talking_text` só lhe
+## passa o texto (`show_text()`), nunca controla quanto tempo fica visível
+## nem o esconde directamente. `SayGeneratedAction` (T-106) fala através
+## deste `talking_text`, nunca do `speech_bubble` directamente, para não
+## depender do tipo concreto do balão.
 
 @export var needs: Array[Need]
 @export var walking_speed: int = 100  ## Velocidade em px/s
 @export var navigation_agent: NavigationAgent2D
 @export var animated_sprite: AnimatedSprite2D
-@export var speech_bubble: Label
+@export var speech_bubble: SpeechBubble
 
+## Guarda a última frase dita, mesmo depois de o balão a esconder: o setter
+## só passa o texto ao `speech_bubble` (`show_text()`), nunca o limpa por
+## conta própria quando o balão desaparece sozinho ao fim de
+## `display_seconds_for()`. O `boot_smoke.gd` depende disto para confirmar
+## que a árvore chegou a falar, mesmo que a captura corra depois do balão já
+## se ter escondido.
 @export var talking_text: String = "":
 	set(value):
 		talking_text = value
 		if speech_bubble != null:
-			speech_bubble.text = value
-			if value == "":
-				speech_bubble.visible = false
-			else:
-				speech_bubble.visible = true
+			speech_bubble.show_text(value)
 
 var current_walking_dir: Vector2 = Vector2.ZERO
 
 
 func _ready() -> void:
 	if speech_bubble != null:
-		speech_bubble.text = talking_text
-		if talking_text != "":
-			speech_bubble.visible = true
+		speech_bubble.show_text(talking_text)
 
 
 ## Move o personagem em direcção a `target_global`, via NavigationAgent2D se houver um.

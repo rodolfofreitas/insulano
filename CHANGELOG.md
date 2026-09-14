@@ -65,9 +65,9 @@ Entradas em linguagem de utilizador, não de commit. Cada tarefa acrescenta a su
   dita antes de comer ou pescar podia usar o verbo deixado pela sequência anterior. Respeita
   `LLMSettings.min_interval_s` partilhado entre todas as instâncias via `say_last_at_s` no
   blackboard (provado por mutação: um relógio por instância deixaria os 6 nós falar em sequência
-  sem esperar pelos outros); quando o intervalo bloqueia, só limpa o balão (`talking_text = ""`) se
-  a frase actual já estiver visível pelo menos `MIN_VISIBLE_S` (3 s), para nunca piscar uma frase
-  acabada de dizer nem a deixar pregada no ecrã para sempre. Ignora `phrase_ready` com o
+  sem esperar pelos outros); quando o intervalo bloqueia, nunca toca em `talking_text` (nem para
+  falar nem para o limpar: desde a T-107 quem manda no desaparecimento do balão é o `SpeechBubble`).
+  Ignora `phrase_ready` com o
   `request_id` de outro pedido. Trata a resposta síncrona do `LLMBridge` (ponte desligada, pedido
   concorrente ou prompt vazio) ligando o sinal `phrase_ready` antes de chamar `request_phrase`,
   para nunca perder esse caso e ficar `RUNNING` para sempre. `interrupt()` esquece o pedido em
@@ -77,6 +77,17 @@ Entradas em linguagem de utilizador, não de commit. Cada tarefa acrescenta a su
   simulados e confirma que o náufrago diz pelo menos uma frase de `phrases_fallback.json` com
   `INSULANO_LLM_URL` apontado para uma porta morta (agora também passado por `scripts/verify.sh`,
   determinístico e sem depender de um Ollama real a responder).
+- `SpeechBubble` (T-107): substitui o `Label` simples do balão de fala por um `PanelContainer` com
+  fundo branco opaco e texto quase preto (contraste 18,4:1 pela luminância relativa WCAG, acima do
+  mínimo de 4,5:1 pedido), com fundo opaco para se ler sobre qualquer fundo da ilha. Largura máxima de 220 px do mundo com
+  quebra de linha automática, para uma frase de 15 palavras nunca sair do ecrã. Passa a ser este nó,
+  e não a `SayGeneratedAction`, a decidir quanto tempo uma frase fica visível:
+  `clamp(2.5 + 0.35 * palavras, 3, 9)` segundos, com o mínimo (3 s) igual a
+  `SayGeneratedAction.MIN_VISIBLE_S`. `SayGeneratedAction.tick()` só pede uma frase nova depois de
+  `maxf(min_interval_s, MIN_VISIBLE_S)`, nunca de `min_interval_s` sozinho: assim a garantia de
+  "nenhuma frase visível menos de 3 s" vale para qualquer valor configurado em
+  `user://settings.cfg`, incluindo 0 (bloqueante da revisão, ronda 1). Provado com
+  `docs/proof/T-107-balao-1080p.png` e `docs/proof/T-107-balao-1600p.png`.
 
 ### Alterado
 - Renderer passa a Compatibility (OpenGL 3): mais leve para um protector de ecrã 2D.

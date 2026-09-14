@@ -29,26 +29,40 @@ extends ActionLeaf
 ## instâncias desta classe na mesma árvore (para não haver dois nós a falar
 ## em sequência só porque cada um tinha o seu próprio relógio).
 ##
-## Quando o intervalo mínimo bloqueia a fala, só limpa o balão se a frase
-## actual já esteve visível pelo menos `MIN_VISIBLE_S`; antes disso não toca
-## em `character.talking_text`. Sem esta guarda, uma sequência que chega ao
-## seu nó de fecho poucos frames depois de outra ter acabado de falar (pesca
-## repetida no mesmo ponto, por exemplo) apagava a frase mal ela aparecia,
-## porque o nó de ABERTURA da sequência seguinte também fala e encontra o
-## intervalo já bloqueado (bug medido na ronda 3 desta tarefa: mínimo visível
-## de 2 a 6 frames, 33 a 100 ms, em vez de pelo menos 3 s). Limitação que fica
-## por resolver aqui: se este nó exacto não voltar a ser percorrido tão cedo
-## (a árvore mudou para um ramo diferente), o balão pode ficar com a frase
-## antiga mais do que `MIN_VISIBLE_S` até o próximo nó desta classe, de
-## qualquer sequência, voltar a fazer tick (o que acontece pelo menos uma vez
-## por ciclo de decisão, porque as quatro sequências da árvore começam todas
-## por um destes nós); nunca fica preso para sempre, mas a duração exacta não
-## é garantida, só o mínimo.
+## Quando o intervalo mínimo bloqueia a fala, esta classe NUNCA toca em
+## `character.talking_text`, nem para o limpar: só quem escreveu a frase
+## decide quando ela desaparece, e desde a T-107 isso é o `SpeechBubble`
+## (`game/ui/speech_bubble.gd`), não este nó (ver `tech_design.md` §4.6, "quem
+## manda na duração"). Até à T-106 esta classe limpava o balão aqui mesmo
+## depois de `MIN_VISIBLE_S` segundos, um padrão "fala antes, limpa depois"
+## copiado do `TalkAction` da base; ficou a dois donos da mesma duração
+## quando o `SpeechBubble` passou a ter a sua própria, e um ramo bloqueado
+## podia apagar uma frase que o balão ainda estava a contar como visível.
+##
+## O `SpeechBubble` substitui o texto sem condição em `show_text()` (nunca
+## espera que a frase anterior tenha ficado visível o suficiente); por isso a
+## garantia de "nenhuma frase visível menos de 3 s" só se mantém verdadeira se
+## `tick()` também garantir que só pede uma frase nova pelo menos
+## `MIN_VISIBLE_S` depois da anterior, mesmo que `LLMSettings.min_interval_s`
+## venha configurado (via `user://settings.cfg`, sem limite nenhum) com um
+## valor menor do que isso, incluindo 0. É por isso que `tick()` usa
+## `maxf(min_interval_s, MIN_VISIBLE_S)` como intervalo EFECTIVO, em vez de
+## `min_interval_s` directamente: o intervalo efectivo nunca é inferior a
+## `MIN_VISIBLE_S`, para qualquer `min_interval_s` configurado, e por isso a
+## garantia vale sempre, não só quando alguém configura `min_interval_s` com
+## bom senso (bloqueante da revisão da T-107, ronda 1, com prova por mutação
+## no Relatório).
 
-## Segundos que uma frase tem de ficar visível antes de um ramo bloqueado pelo
-## intervalo mínimo a poder apagar (ver `tick()`). É o limite inferior do
-## clamp de duração da T-107 (`tech_design.md` §4.6); aqui só evita o balão a
-## piscar, a T-107 é que faz a duração depender do comprimento da frase.
+## Antigo limite inferior do clamp de duração desta classe, antes da T-107
+## mover a duração visível do balão para `SpeechBubble`. Continua a ser lido
+## por `tick()`, agora com outro papel: é o piso do intervalo EFECTIVO entre
+## dois pedidos de frase (`maxf(min_interval_s, MIN_VISIBLE_S)`), para
+## `LLMSettings.min_interval_s` nunca conseguir fazer `tick()` pedir uma frase
+## nova antes de a anterior ter tido tempo de ficar visível o suficiente no
+## `SpeechBubble`. Tem de continuar igual a `SpeechBubble.MIN_SECONDS`
+## (testado em `test_minimo_do_clamp_e_o_mesmo_valor_do_antigo_min_visible_s`,
+## `test_speech_bubble.gd`), senão a garantia de "nenhuma frase visível menos
+## de 3 s" divide-se em dois números que podem divergir sem ninguém notar.
 const MIN_VISIBLE_S: float = 3.0
 
 ## Categoria de FallbackPhrases a usar quando a resposta cai em fallback
@@ -82,16 +96,16 @@ var _result_request_id: int = -1
 var _result_text: String = ""
 
 
-## Decide se fala (min_interval_s desde a última frase de qualquer instância
-## desta classe, guardado no blackboard) e, sendo esse o caso, pede a frase à
-## ponte; devolve RUNNING até chegar o sinal do request_id deste pedido, e
-## SUCCESS logo no mesmo tick se a resposta já tiver chegado (síncrona ou já
-## pendente). Quando o intervalo mínimo ainda não passou, devolve SUCCESS sem
-## falar; só LIMPA o balão (`character.talking_text = ""`) se a frase actual
-## já esteve visível pelo menos `MIN_VISIBLE_S` (ver docstring da classe: sem
-## este mínimo, uma frase acabada de dizer podia ser apagada pelo nó seguinte
-## poucos frames depois, antes de ser legível). FAILURE se não há nenhuma
-## ponte disponível (nem injectada, nem o autoload LLM).
+## Decide se fala (intervalo EFECTIVO desde a última frase de qualquer
+## instância desta classe, guardado no blackboard: `maxf(min_interval_s,
+## MIN_VISIBLE_S)`, nunca `min_interval_s` sozinho, ver docstring da classe) e,
+## sendo esse o caso, pede a frase à ponte; devolve RUNNING até chegar o sinal
+## do request_id deste pedido, e SUCCESS logo no mesmo tick se a resposta já
+## tiver chegado (síncrona ou já pendente). Quando o intervalo efectivo ainda
+## não passou, devolve SUCCESS sem tocar em `character.talking_text` (nem
+## para falar, nem para o limpar: ver docstring da classe, quem manda no
+## desaparecimento é o `SpeechBubble`). FAILURE se não há nenhuma ponte
+## disponível (nem injectada, nem o autoload LLM).
 func tick(actor: Node, blackboard: Blackboard) -> int:
 	var character := actor as Character
 	if character == null:
@@ -102,9 +116,8 @@ func tick(actor: Node, blackboard: Blackboard) -> int:
 
 	var now_s := _now_s()
 	var last_said_at: float = blackboard.get_value("say_last_at_s", -INF)
-	if now_s - last_said_at < _get_settings().min_interval_s:
-		if now_s - last_said_at >= MIN_VISIBLE_S:
-			character.talking_text = ""
+	var effective_interval_s: float = maxf(_get_settings().min_interval_s, MIN_VISIBLE_S)
+	if now_s - last_said_at < effective_interval_s:
 		return SUCCESS
 
 	var current_bridge := _get_bridge()
@@ -200,8 +213,8 @@ func _get_settings() -> LLMSettings:
 	return settings
 
 
-## Segundos a usar para medir min_interval_s e MIN_VISIBLE_S: o `clock`
-## injectado, se válido (testes), senão `Time.get_ticks_msec()` (jogo real).
+## Segundos a usar para medir min_interval_s: o `clock` injectado, se válido
+## (testes), senão `Time.get_ticks_msec()` (jogo real).
 func _now_s() -> float:
 	if clock.is_valid():
 		return clock.call()

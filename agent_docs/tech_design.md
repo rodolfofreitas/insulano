@@ -43,7 +43,7 @@ Valores por defeito em `game/project.godot`. O utilizador pode sobrepor em `user
 | `insulano/llm/url` | String | `http://127.0.0.1:11434` | LLMBridge |
 | `insulano/llm/model` | String | `llama3.1:8b` | LLMBridge, llm_eval.py |
 | `insulano/llm/timeout_s` | float | `8.0` | LLMBridge (igual a `timeout_s` em phrase_rules.json) |
-| `insulano/llm/min_interval_s` | float | `30.0` | SayGeneratedAction |
+| `insulano/llm/min_interval_s` | float | `30.0` | SayGeneratedAction (valores abaixo de 3 s sobem a 3 s, o piso `MIN_VISIBLE_S`, ver §4.6) |
 | `insulano/debug/fake_time` | String | `""` | GameClock |
 | `insulano/events/seed` | int | `0` (0 = aleatório) | EventDirector |
 | `insulano/weather/enabled` | bool | `false` | WeatherService (defeito decidido na T-306, humano) |
@@ -141,29 +141,54 @@ Contrato de comportamento:
 
 - `game/beehave/say_generated_action.gd`, `class_name SayGeneratedAction extends ActionLeaf`:
   substitui o `TalkAction` fixo. Primeiro tick pede a frase e devolve `RUNNING`; quando o sinal chega
-  com o seu `request_id`, escreve `character.talking_text` e devolve `SUCCESS`. Respeita
-  `min_interval_s` entre frases; se ainda não passou, devolve `SUCCESS` sem falar, e só limpa o balão
-  (`character.talking_text = ""`) se a frase actual já esteve visível pelo menos `MIN_VISIBLE_S`
-  (constante da classe, 3 s, o limite inferior do clamp de duração abaixo). Sem esta guarda, uma
-  sequência que chega ao seu nó de abertura poucos frames depois de outra ter falado no nó de fecho
-  apagava a frase mal ela aparecia. Diferença para a base: a base nunca fazia o nó de fecho falar,
-  só limpava; esta classe faz os dois nós de cada sequência falarem. A garantia de 3 s visíveis só
-  vale com `min_interval_s >= MIN_VISIBLE_S`: com um intervalo menor (possível através de
-  `user://settings.cfg`), uma frase nova pode substituir a anterior antes dos 3 s. O relógio (`Time.get_ticks_msec`
-  por defeito) é injectável (`clock: Callable`) para os testes controlarem o tempo sem esperar
-  segundos reais. `interrupt()` esquece o pedido em curso (`_awaiting_request_id`/`_has_result`), para
-  uma resposta tardia de um pedido interrompido nunca resolver com um contexto que já não é o actual;
-  não chama `super.interrupt()` de propósito: o `super` só notifica o depurador visual do Beehave e,
-  a correr sem depurador activo (headless, testes), imprime um `ERROR` que o GUT conta como erro
-  inesperado; a execução não aborta (AGENTS.md §10, ruído conhecido). Monta o `PhraseContext` a
-  partir do blackboard (`current_action`), da fome e do `Clock`/`Weather` quando existirem.
+  com o seu `request_id`, escreve `character.talking_text` e devolve `SUCCESS`. Respeita um intervalo
+  EFECTIVO entre frases (`maxf(min_interval_s, MIN_VISIBLE_S)`, nunca `min_interval_s` sozinho); se
+  ainda não passou, devolve `SUCCESS` sem tocar em `character.talking_text`, nem para falar nem para o
+  limpar (T-107: quem manda no desaparecimento do balão é o `SpeechBubble` abaixo, nunca esta classe;
+  até à T-106 esta classe limpava o balão aqui mesmo depois de `MIN_VISIBLE_S`, um padrão "fala antes,
+  limpa depois" copiado do `TalkAction` da base, mas isso deixava dois donos da mesma duração quando o
+  `SpeechBubble` passou a ter a sua própria). Diferença para a base: a base nunca fazia o nó de fecho
+  falar, só limpava; esta classe faz os dois nós de cada sequência falarem. O relógio
+  (`Time.get_ticks_msec` por defeito) é injectável (`clock: Callable`) para os testes controlarem o
+  tempo sem esperar segundos reais.
+  `MIN_VISIBLE_S` (3 s) é o piso desse intervalo efectivo: o `SpeechBubble` substitui o texto sem
+  condição em `show_text()` (nunca espera que a frase anterior tenha ficado visível o suficiente), por
+  isso a garantia de "nenhuma frase visível menos de 3 s" só é verdadeira se `tick()` nunca pedir uma
+  frase nova antes de `MIN_VISIBLE_S` desde a anterior, mesmo que `LLMSettings.min_interval_s` venha
+  configurado (via `user://settings.cfg`, sem limite nenhum) com um valor menor, incluindo 0; por isso
+  a garantia vale para QUALQUER `min_interval_s` configurado, não só para valores sensatos (bloqueante
+  da revisão da T-107, ronda 1, com prova por mutação em `backlog/fase-1/T-107-speech-bubble.md`).
+  `MIN_VISIBLE_S` tem de continuar igual a `SpeechBubble.MIN_SECONDS` (testado em
+  `test_speech_bubble.gd`), senão os dois números podem divergir sem ninguém notar. `interrupt()`
+  esquece o pedido em curso
+  (`_awaiting_request_id`/`_has_result`), para uma resposta tardia de um pedido interrompido nunca
+  resolver com um contexto que já não é o actual; não chama `super.interrupt()` de propósito: o
+  `super` só notifica o depurador visual do Beehave e, a correr sem depurador activo (headless,
+  testes), imprime um `ERROR` que o GUT conta como erro inesperado; a execução não aborta
+  (AGENTS.md §10, ruído conhecido). Monta o `PhraseContext` a partir do blackboard (`current_action`),
+  da fome e do `Clock`/`Weather` quando existirem.
 - `game/beehave/go_to_usable_action.gd`, `@export var current_action_label: String`: verbo em pt-PT
   a escrever em `current_action` enquanto este nó anda, para a `SayGeneratedAction` que segue na
   mesma sequência nunca ler o verbo deixado por uma sequência anterior. Vazio (defeito) não escreve
   nada. Em `guy.tscn`: "ir comer" (sequência de comer), "ir pescar" (sequência de pesca) e "passear"
   (sequência de passear, único verbo dessa sequência).
-- `game/ui/speech_bubble.gd`, `class_name SpeechBubble extends PanelContainer`: fundo legível sobre
-  água e relva, largura máxima com quebra de linha, duração visível `clamp(2.5 + 0.35 * palavras, 3, 9)` segundos.
+- `game/ui/speech_bubble.gd`, `class_name SpeechBubble extends PanelContainer` (T-107): fundo branco
+  opaco (`bg_color` alfa 1.0) com texto quase preto, contraste 18,4:1 pela luminância relativa WCAG
+  (muito acima do mínimo de 4,5:1), legível sobre a água azul e a relva verde da ilha; largura máxima
+  `MAX_WIDTH` (220 px do mundo) com `autowrap_mode = AUTOWRAP_WORD_SMART` no `Label` interno, para uma
+  frase longa quebrar linha em vez de sair do ecrã. Quem manda na duração é este nó, não quem lhe pede
+  para falar: `show_text(texto)` escreve o texto, redimensiona o balão ao conteúdo
+  (`reset_size()`) e agenda o próprio desaparecimento via `display_seconds_for(texto)`
+  (`clamp(2.5 + 0.35 * palavras, 3, 9)` segundos, contagem de palavras com o mesmo padrão `(*UCP)\S+`
+  de `PhraseFilter`); `check_hide()` (chamado a cada `_process`, e directamente pelos testes com um
+  `clock` injectado) esconde-o quando o relógio passa desse instante. `Character.talking_text`
+  (`game/character/character.gd`) só chama `show_text()`; `SayGeneratedAction` nunca conhece o
+  `SpeechBubble` directamente. Depois de `reset_size()`, `position` é recalculada explicitamente
+  (`Vector2(-size.x / 2.0, BOTTOM_OFFSET - size.y)`) para o balão crescer para CIMA quando precisa de
+  mais linhas: `reset_size()`, chamado a partir de código, cresce sempre a partir do canto superior
+  esquerdo do rectângulo actual (para baixo), sem respeitar `grow_vertical`; sem esta correcção o
+  balão crescia por cima do próprio personagem, escondendo-o (bug apanhado por inspecção visual,
+  corrigido antes da versão final de `docs/proof/T-107-balao-1080p.png`).
 
 ## 5. Tempo e ambiente (Fase 2)
 

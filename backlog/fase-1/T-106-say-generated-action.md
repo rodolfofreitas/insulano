@@ -450,6 +450,10 @@ corrigidos aqui para não mexer em código de produção depois da aprovação.
   `min_interval_s >= 3`; o `user://settings.cfg` aceita qualquer valor. Usar
   `maxf(min_interval_s, MIN_VISIBLE_S)` ou validar em `LLMSettings`. O `CHANGELOG.md` diz "para nunca
   piscar" sem esta condição.
+  **Resolvido na T-107** (ronda 1 de revisão): `tick()` usa
+  `maxf(min_interval_s, MIN_VISIBLE_S)` como intervalo efectivo entre pedidos, provado por mutação e
+  por `test_min_interval_s_abaixo_do_minimo_e_elevado_a_min_visible_s`
+  (`game/tests/integration/test_say_generated_action.gd`); ver Relatório da T-107.
 - `game/beehave/say_generated_action.gd:186`: trocar a omissão do `super` por
   `if EngineDebugger.is_active(): super(_actor, _blackboard)`, para manter o depurador visual no
   editor sem erro em headless.

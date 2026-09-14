@@ -18,6 +18,7 @@
 [ext_resource type="Script" uid="uid://cui7xuic46e2g" path="res://beehave/find_group_spot_condition.gd" id="15_k6rot"]
 [ext_resource type="Script" uid="uid://c78ixkheqb01m" path="res://beehave/fishing_action.gd" id="16_gumv8"]
 [ext_resource type="Script" path="res://beehave/say_generated_action.gd" id="16_xaydb"]
+[ext_resource type="Script" path="res://ui/speech_bubble.gd" id="17_spchb"]
 
 [sub_resource type="Resource" id="Resource_6ukov"]
 script = ExtResource("2_kijpv")
@@ -281,9 +282,6 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gumv8"]
-bg_color = Color(0.969137, 0.969137, 0.969137, 1)
-
 [sub_resource type="CircleShape2D" id="CircleShape2D_6ukov"]
 radius = 700.0
 
@@ -309,20 +307,25 @@ visible = false
 texture = ExtResource("4_m8j3q")
 centered = false
 
-[node name="SpeechBubble" type="Label" parent="."]
+[node name="SpeechBubble" type="PanelContainer" parent="." node_paths=PackedStringArray("label")]
 visible = false
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -7.0
-offset_top = -32.0
-offset_right = 7.0
+offset_left = -110.0
+offset_top = -40.0
+offset_right = 110.0
 offset_bottom = -16.0
 grow_horizontal = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
+grow_vertical = 0
+script = ExtResource("17_spchb")
+label = NodePath("Label")
+
+[node name="Label" type="Label" parent="SpeechBubble"]
+layout_mode = 2
 theme_override_font_sizes/font_size = 11
-theme_override_styles/normal = SubResource("StyleBoxFlat_gumv8")
 horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="UsableObjectsArea" type="Area2D" parent="."]
 collision_layer = 3
