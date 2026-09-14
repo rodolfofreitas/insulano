@@ -39,6 +39,13 @@ Entradas em linguagem de utilizador, não de commit. Cada tarefa acrescenta a su
   `(*UCP)`, para o `(?i)` inline ignorar maiúsculas também em acentuados (ex. `VOCÊ`, `TÔ`) e para
   o NBSP (U+00A0) contar como separador de palavra, como já fazia o Python (`re.IGNORECASE` e
   `str.split()`).
+- `FallbackPhrases` (T-104): frases fixas em português de Portugal para quando o Ollama não
+  responde, lidas de `game/data/phrases_fallback.json` (nunca hard-coded), com as categorias
+  `idle`, `fishing`, `eating`, `morning`, `night`, `rain`, `seagull` e `boat`, cada uma com pelo
+  menos 4 frases. `pick()` nunca repete de imediato a frase anterior da mesma categoria e uma
+  categoria desconhecida cai sempre em `idle`. Todas as frases de fallback passam o mesmo
+  `PhraseFilter` (T-103) que valida as frases geradas pelo LLM: um náufrago sem rede fala tão bem
+  como um náufrago com Ollama.
 
 ### Alterado
 - Renderer passa a Compatibility (OpenGL 3): mais leve para um protector de ecrã 2D.

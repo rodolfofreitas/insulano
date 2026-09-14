@@ -103,6 +103,7 @@ Estado a 2026-09-13: existem a cena principal e a behavior tree herdadas; os aut
 | `fishing_spot.gd` | - | Node2D | Marcador visual de um ponto de pesca, com círculo vermelho só no editor. |
 | `guy/direction.gd` | Direction | Object | Uma das quatro direcções cardinais, usada para escolher animação (walk_up, |
 | `guy/guy.gd` | Guy | Character | O náufrago jogável: um Character que perde fome com o tempo. |
+| `llm/fallback_phrases.gd` | FallbackPhrases | RefCounted | Escolhe frases fixas em português de Portugal quando não há resposta do |
 | `llm/llm_settings.gd` | LLMSettings | RefCounted | Configuração da camada LLM: se está activa, URL, modelo, timeout e intervalo |
 | `llm/phrase_context.gd` | PhraseContext | RefCounted | Contexto tipado que descreve a situação do náufrago num dado momento. |
 | `llm/phrase_filter.gd` | PhraseFilter | RefCounted | Aceita ou rejeita frases geradas pelo LLM segundo game/data/phrase_rules.json |
