@@ -67,7 +67,7 @@ Detalhe em [`agent_docs/tech_design.md`](agent_docs/tech_design.md).
 ```bash
 scripts/verify.sh            # docs, backlog, pytest, lint, testes GUT e smoke de arranque
 scripts/verify.sh --visual   # mais screenshot real em reports/verify-latest.png
-scripts/verify.sh --llm      # mais eval das frases contra o Ollama
+scripts/verify.sh --llm      # mais eval das frases e teste ao vivo contra o Ollama
 scripts/verify.sh --full     # tudo, incluindo export
 ```
 

@@ -6,7 +6,7 @@
 #   (sem flags)  docs, backlog, pytest, lint, import, testes GUT, smoke de arranque
 #   --quick      docs, backlog, pytest, lint            (é o que o pre-commit corre)
 #   --visual     + screenshot real em reports/verify-latest.png (abre uma janela ~5 s)
-#   --llm        + eval das frases contra o Ollama local
+#   --llm        + eval das frases e teste ao vivo (game/tests/live/) contra o Ollama local
 #   --export     + export Linux e arranque do binário exportado
 #   --full       tudo o que está acima
 #
@@ -144,7 +144,7 @@ if [ "$QUICK" -eq 0 ]; then
   fi
 fi
 
-# 9. Eval do LLM
+# 9. Eval do LLM e teste ao vivo do LLMBridge (game/tests/live/, fora do .gutconfig.json)
 if [ "$LLM" -eq 1 ]; then
   python3 scripts/llm_eval.py > reports/llm_eval.log 2>&1
   case $? in
@@ -152,6 +152,34 @@ if [ "$LLM" -eq 1 ]; then
     3) record llm INDETERMINADO "$(grep INDETERMINADO reports/llm_eval.log)" ;;
     *) record llm FALHOU "$(tail -2 reports/llm_eval.log | head -1)" ;;
   esac
+
+  if [ -z "$GODOT" ]; then
+    record llm_live FALHOU "Godot não encontrado: correr 'mise install' na raiz do repositório"
+  else
+    # -gconfig= (vazio) ignora o .gutconfig.json de propósito: tests/live/ não
+    # está nos seus "dirs" e o teste ao vivo nunca deve correr por defeito.
+    timeout 300 "$GODOT" --headless --path game -s res://addons/gut/gut_cmdln.gd \
+      -gconfig= -gdir=res://tests/live -ginclude_subdirs -gprefix=test_ -gsuffix=.gd \
+      -gexit -gexit_on_success -gignore_pause -ghide_orphans \
+      -gjunit_xml_file="$ROOT/reports/gut-live-junit.xml" > reports/gut-live.log 2>&1
+    live_exit=$?
+    live_totals="$(grep -E '^(Tests|Passing Tests|Failing Tests|Errors|Risky/Pending)' reports/gut-live.log | tr -s ' ' | paste -sd ';' -)"
+    # O GUT sai com 0 quando o único teste se marca pending() (Ollama parado):
+    # "Risky/Pending" > 0 nos totais significa que o teste nunca chegou a correr
+    # contra o Ollama a sério, por isso não conta como PASSOU (nunca se trata
+    # pending como passou; cabeçalho do script, linhas 13-14).
+    live_pending="$(printf '%s' "$live_totals" | grep -oE 'Risky/Pending [0-9]+' | grep -oE '[0-9]+$')"
+    if [ "$live_exit" -eq 0 ] && ! log_has_script_errors reports/gut-live.log; then
+      if [ "${live_pending:-0}" -gt 0 ]; then
+        record llm_live INDETERMINADO "teste ao vivo saltado (Ollama não respondeu); $live_totals"
+      else
+        record llm_live PASSOU "$live_totals"
+      fi
+    else
+      record llm_live FALHOU "exit=$live_exit; $live_totals; ver reports/gut-live.log"
+      grep -E 'Failed|GUT ERROR|SCRIPT ERROR' reports/gut-live.log | head -20
+    fi
+  fi
 fi
 
 # 10. Export Linux

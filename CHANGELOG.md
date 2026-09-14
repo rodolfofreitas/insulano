@@ -46,6 +46,16 @@ Entradas em linguagem de utilizador, não de commit. Cada tarefa acrescenta a su
   categoria desconhecida cai sempre em `idle`. Todas as frases de fallback passam o mesmo
   `PhraseFilter` (T-103) que valida as frases geradas pelo LLM: um náufrago sem rede fala tão bem
   como um náufrago com Ollama.
+- `LLMBridge` (T-105), autoload `LLM`: ponte assíncrona única com o Ollama, com `HTTPRequest` filho
+  (nunca bloqueia um frame) e o sinal `phrase_ready(request_id, text, source)` emitido exactamente
+  uma vez por pedido, sempre, mesmo em erro. Um só pedido de cada vez: um pedido novo com outro em
+  curso responde já com fallback, sem tocar no pedido em curso. `settings.enabled = false` nunca
+  cria o `HTTPRequest` filho. Qualquer falha (rede, timeout, HTTP diferente de 200, JSON inválido,
+  resposta vazia ou frase rejeitada pelo `PhraseFilter`) cai no fallback garantido de
+  `FallbackPhrases` (T-104). Log `[Insulano/LLM]` com modelo, latência e motivo de fallback, nunca
+  o prompt inteiro. Teste ao vivo em `game/tests/live/test_llm_live.gd` (fora do
+  `.gutconfig.json`, só corre com `scripts/verify.sh --llm`): marca-se `pending()` em vez de falhar
+  quando o Ollama não responde nesta máquina.
 
 ### Alterado
 - Renderer passa a Compatibility (OpenGL 3): mais leve para um protector de ecrã 2D.
