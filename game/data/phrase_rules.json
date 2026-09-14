@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "notes": "Fonte única das regras de aceitação de frases geradas. Lida pelo PhraseFilter (GDScript) e pelo scripts/llm_eval.py. Padrões regex: sem \\b nem \\w, porque o RegEx do Godot (PCRE2 sem UCP) trata letras acentuadas como não-palavra; usar (?i) inline para ignorar maiúsculas. Ordem de verificação: empty, english, ptbr, forbidden, too_short, too_long.",
+  "notes": "Fonte única das regras de aceitação de frases geradas. Lida pelo PhraseFilter (GDScript) e pelo scripts/llm_eval.py. Padrões regex: sem \\b nem \\w, porque o RegEx do Godot (PCRE2 sem UCP) trata letras acentuadas como não-palavra; usar (?i) inline para ignorar maiúsculas. Ressalva: em maiúsculas acentuadas (ex. VOCÊ, TÔ), o (?i) sozinho NÃO chega, porque a mesma ausência de UCP também tira o case-folding Unicode do (?i) no PCRE2 do Godot (mas não no Python, que já faz case-folding Unicode por defeito); o PhraseFilter (GDScript) compensa isto prefixando cada padrão com o verbo (*UCP) ao compilar (phrase_filter.gd, _compile_patterns) -- qualquer regra nova com acentos tem de contar com esse prefixo automático, nunca repeti-lo no próprio padrão. Ordem de verificação: empty, english, ptbr, forbidden, too_short, too_long.",
   "min_words": 2,
   "max_words": 15,
   "max_chars": 120,

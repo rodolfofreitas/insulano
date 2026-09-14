@@ -27,6 +27,18 @@ Entradas em linguagem de utilizador, não de commit. Cada tarefa acrescenta a su
   contra `scripts/llm_eval.py` (fixture `game/tests/fixtures/prompt_tarde_pescar.txt`, gerada pelo
   Python real). Contexto incompleto nunca produz um prompt com `{campo}` por preencher: devolve `""`
   e regista erro.
+- `PhraseFilter` (T-103): aceita ou rejeita frases geradas pelo LLM, com regras lidas de
+  `game/data/phrase_rules.json` (nunca hard-coded) e paridade total com `scripts/llm_eval.py`,
+  provada contra a fixture partilhada `game/tests/fixtures/phrase_filter_cases.json` em ambos os
+  lados (GUT e pytest, com casos de sobreposição de motivos e de NBSP para guardar a ordem de
+  verificação e a contagem de palavras). Mesma ordem de verificação do Python: empty, english,
+  ptbr, forbidden, too_short, too_long, mais o sétimo valor `rules_missing` (sem equivalente no
+  Python), quando `phrase_rules.json` falta ou tem JSON inválido: o filtro falha FECHADO,
+  `rejection_reason()` rejeita sempre, nunca aceita por omissão. Padrões
+  `english_patterns`/`ptbr_patterns` e a contagem de palavras (`\S+`) compilados com o verbo PCRE2
+  `(*UCP)`, para o `(?i)` inline ignorar maiúsculas também em acentuados (ex. `VOCÊ`, `TÔ`) e para
+  o NBSP (U+00A0) contar como separador de palavra, como já fazia o Python (`re.IGNORECASE` e
+  `str.split()`).
 
 ### Alterado
 - Renderer passa a Compatibility (OpenGL 3): mais leve para um protector de ecrã 2D.

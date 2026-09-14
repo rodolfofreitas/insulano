@@ -95,11 +95,17 @@ Campo em falta é erro, nunca prompt com chavetas por preencher.
 class_name PhraseFilter extends RefCounted
 static func from_rules_file(path: String = "res://data/phrase_rules.json") -> PhraseFilter
 func clean(raw: String) -> String              ## primeira linha, sem aspas nem espaços nas pontas
-func rejection_reason(text: String) -> String  ## "" se aceite; senão empty|english|ptbr|forbidden|too_short|too_long
+func rejection_reason(text: String) -> String  ## "" se aceite; senão empty|english|ptbr|forbidden|too_short|too_long|rules_missing
 ```
 
 Paridade obrigatória com `scripts/llm_eval.py`: o teste GUT percorre
 `game/tests/fixtures/phrase_filter_cases.json`, o mesmo ficheiro que o pytest usa.
+
+`rules_missing` é o único dos sete valores sem equivalente no lado Python: sai quando
+`from_rules_file` não conseguiu ler ou interpretar `phrase_rules.json` (motor a correr, ficheiro
+de dados em falta ou inválido); nesse caso o filtro falha FECHADO e rejeita sempre, antes de
+qualquer outra verificação. `scripts/llm_eval.py` não tem este estado porque falha alto
+(excepção) se `phrase_rules.json` não existir, em vez de continuar a correr sem regras.
 
 ### 4.4 `FallbackPhrases` (T-104), `game/llm/fallback_phrases.gd`, RefCounted
 

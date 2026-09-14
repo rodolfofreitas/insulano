@@ -105,6 +105,7 @@ Estado a 2026-09-13: existem a cena principal e a behavior tree herdadas; os aut
 | `guy/guy.gd` | Guy | Character | O náufrago jogável: um Character que perde fome com o tempo. |
 | `llm/llm_settings.gd` | LLMSettings | RefCounted | Configuração da camada LLM: se está activa, URL, modelo, timeout e intervalo |
 | `llm/phrase_context.gd` | PhraseContext | RefCounted | Contexto tipado que descreve a situação do náufrago num dado momento. |
+| `llm/phrase_filter.gd` | PhraseFilter | RefCounted | Aceita ou rejeita frases geradas pelo LLM segundo game/data/phrase_rules.json |
 | `llm/prompt_builder.gd` | PromptBuilder | RefCounted | Monta o prompt enviado ao Ollama a partir do template partilhado |
 | `need_bar.gd` | NeedBar | ProgressBar | Barra de progresso que reflecte uma necessidade (`need_name`) de `target`. |
 | `object/general_usable_object.gd` | GeneralUsableObject | UsableObject | Objecto utilizável que declara, em `satisfying_needs`, quais necessidades trata. |

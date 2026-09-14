@@ -10,12 +10,16 @@
     { "raw": "The ocean is calm today.", "clean": "The ocean is calm today.", "reason": "english" },
     { "raw": "Você viu o barco?", "clean": "Você viu o barco?", "reason": "ptbr" },
     { "raw": "Estou pescando o jantar.", "clean": "Estou pescando o jantar.", "reason": "ptbr" },
+    { "raw": "VOCÊ VIU O BARCO?", "clean": "VOCÊ VIU O BARCO?", "reason": "ptbr" },
     { "raw": "Que merda de dia.", "clean": "Que merda de dia.", "reason": "forbidden" },
     { "raw": "Sim.", "clean": "Sim.", "reason": "too_short" },
     {
       "raw": "Hoje acordei cedo e fui ver o mar e depois voltei e fiquei a pensar na vida toda outra vez.",
       "clean": "Hoje acordei cedo e fui ver o mar e depois voltei e fiquei a pensar na vida toda outra vez.",
       "reason": "too_long"
-    }
+    },
+    { "raw": "You está fazendo isto.", "clean": "You está fazendo isto.", "reason": "english" },
+    { "raw": "Merda.", "clean": "Merda.", "reason": "forbidden" },
+    { "raw": "Olá mundo", "clean": "Olá mundo", "reason": null }
   ]
 }
