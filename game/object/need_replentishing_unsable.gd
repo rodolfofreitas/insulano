@@ -8,12 +8,11 @@ extends GeneralUsableObject
 ## herdados) não foi corrigido aqui: é fora do âmbito da T-002 (proíbe
 ## renomear ficheiros).
 ##
-## Bugs herdados, não corrigidos aqui (ver T-003): em `get_satisfying_needs`,
-## `result` é `Array[String]` mas o `find_custom` chama `n.name`, que `String`
-## não tem (erro em runtime se este ramo chegar a correr); e a condição que o
-## guarda (`max_replentish_value == 0`) quase nunca é verdadeira, porque `use`
-## já chama `queue_free()` assim que `max_replentish_value` fica `<= 0`, o que
-## torna o ramo praticamente morto.
+## Nota (não corrigida aqui, fora do âmbito): a condição que guarda a remoção
+## de `need_name` (`max_replentish_value == 0`) quase nunca é verdadeira,
+## porque `use` já chama `queue_free()` assim que `max_replentish_value` fica
+## `<= 0`, o que torna o ramo praticamente morto. É comportamento, não um erro
+## de tipos, por isso fica fora do âmbito da T-003.
 
 @export var max_replentish_value = 50  ## Valor máximo de reposição da necessidade
 @export var replentish_speed = 10  ## Velocidade de reposição, em unidades por segundo
@@ -24,7 +23,7 @@ extends GeneralUsableObject
 func get_satisfying_needs():
 	var result = Array(satisfying_needs)
 	if max_replentish_value == 0:
-		var need_index = result.find_custom(func(n): return n.name == need_name)
+		var need_index = result.find_custom(func(n: String): return n == need_name)
 		if need_index >= 0:
 			result.pop_at(need_index)
 	return result

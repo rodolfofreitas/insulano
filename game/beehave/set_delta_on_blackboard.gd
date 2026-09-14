@@ -20,7 +20,6 @@ func tick(_actor: Node, blackboard: Blackboard) -> int:
 		delta = get_process_delta_time()
 
 	blackboard.set_value(key, delta)
-	print("delta = ", delta)
 	if delta == 0:
 		return RUNNING
 	return SUCCESS

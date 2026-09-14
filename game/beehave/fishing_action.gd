@@ -72,10 +72,17 @@ func display_fishing_rod(character: Character, fishing_spot: Node2D) -> void:
 
 
 ## Instancia um peixe atrás do personagem, no lado oposto ao ponto de pesca.
+##
+## O peixe entra na lista de irmãos mesmo antes do personagem (por
+## `move_child`, não por `get_child(indice - 1).add_sibling`, que dava -1
+## e apanhava o último filho do pai quando o personagem era o primeiro, ver T-003).
 func spawn_fish(character: Character, spot_location: Vector2) -> void:
 	var fish: Node2D = fish_scene.instantiate()
 	var character_location: Vector2 = character.global_position
 	# O vector aponta do ponto de pesca para o personagem: nasce do lado oposto.
 	var direction: Direction = Direction.get_closest_direction(character_location - spot_location)
 	fish.position = character_location + (direction.vector * 32)
-	character.get_parent().get_child(character.get_index() - 1).add_sibling(fish)
+	var parent: Node = character.get_parent()
+	var character_index: int = character.get_index()
+	parent.add_child(fish)
+	parent.move_child(fish, character_index)

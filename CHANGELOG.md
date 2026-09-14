@@ -8,7 +8,7 @@ Entradas em linguagem de utilizador, não de commit. Cada tarefa acrescenta a su
 ### Adicionado
 - Projecto jogável em `game/`, a partir do Guy on Island, a correr em Godot 4.7.2.
 - Portão de verificação único (`scripts/verify.sh`): documentação, backlog, lint, testes, arranque, imagem, LLM e export.
-- Testes automáticos: 11 testes GUT, 39 testes dos scripts, smoke de arranque de 30 s simulados.
+- Testes automáticos: 20 testes GUT, 40 testes dos scripts, smoke de arranque de 30 s simulados.
 - Captura de ecrã real de tamanho fixo, para provas visuais.
 - Eval das frases do LLM local (latência, português de Portugal, comprimento, conteúdo proibido).
 - Backlog de 33 tarefas em 6 fases, com critérios de aceitação verificáveis.
@@ -25,3 +25,11 @@ Entradas em linguagem de utilizador, não de commit. Cada tarefa acrescenta a su
   (`scripts/gd_baseline.txt` fica vazia): cabeçalhos e docstrings novos, variáveis exportadas
   `fishingRod`, `searchArea` e `navigationAgent` renomeadas para `snake_case` (cenas actualizadas),
   sem alterar o comportamento do jogo.
+- Seis bugs latentes do código herdado, cada um com teste de regressão (`test_regression_<bug>`):
+  `search_area.body_exited` ligava ao handler errado e os objectos nunca saíam de
+  `objects_in_area`; `NeedReplentishingUsable.get_satisfying_needs()` rebentava com
+  `max_replentish_value == 0`; `FundUsableForNeedCondition` devolvia `FAILED` (erro global) em
+  vez de `FAILURE` quando não havia objectos; `SetDeltaOnBlackboardAction` imprimia o delta a
+  cada tick; `FishingAction.spawn_fish` usava um índice `-1` que apanhava o filho errado quando
+  o personagem era o primeiro filho do pai; `fishing_spot.gd` desenhava o círculo de debug
+  também fora do editor.

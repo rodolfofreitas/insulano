@@ -8,13 +8,9 @@ extends ConditionLeaf
 ## Escreve `location`, `object_blackboard_key` e `need` no blackboard quando
 ## encontra um par válido; limpa-os quando não encontra nenhum.
 ##
-## Nota (não corrigida aqui, fora do âmbito da T-002, ver T-003): o nome da
-## classe tem um erro tipográfico herdado ("Fund" em vez de "Find"); o ramo
-## de falha usa a constante `FAILED` (erro global, vale 1) em vez de `FAILURE`,
-## que só funciona porque calham a ter o mesmo valor (ver AGENTS.md, secção 10);
-## e `search_area.body_exited` está ligado a `_body_entered_area` (linha
-## abaixo), não a `_body_exited_area`: os objectos nunca saem de
-## `objects_in_area`, mesmo depois de saírem fisicamente da área.
+## Nota (não corrigida aqui, fora do âmbito): o nome da classe tem um erro
+## tipográfico herdado ("Fund" em vez de "Find"), preservado para não obrigar a
+## uma tarefa dedicada à renomeação.
 
 
 class UsableObjectAndNeed:
@@ -31,7 +27,7 @@ class UsableObjectAndNeed:
 		assert(search_area == null, "search_area is already set")
 		search_area = value
 		search_area.body_entered.connect(_body_entered_area)
-		search_area.body_exited.connect(_body_entered_area)
+		search_area.body_exited.connect(_body_exited_area)
 
 var objects_in_area: Array[UsableObject] = []
 
@@ -54,7 +50,7 @@ func tick(actor: Node, blackboard: Blackboard) -> int:
 			blackboard.erase_value(location_blackboard_key)
 			blackboard.erase_value(object_blackboard_key)
 			blackboard.erase_value("need")
-			result = FAILED
+			result = FAILURE
 
 	return result
 
