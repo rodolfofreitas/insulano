@@ -20,6 +20,8 @@ config/icon="res://icon.svg"
 BeehaveGlobalMetrics="*res://addons/beehave/metrics/beehave_global_metrics.gd"
 BeehaveGlobalDebugger="*res://addons/beehave/debug/global_debugger.gd"
 LLM="*res://llm/llm_bridge.gd"
+NeedsManager="*res://world/needs_manager.gd"
+Clock="*res://world/game_clock.gd"
 
 [editor_plugins]
 
@@ -37,6 +39,7 @@ llm/url="http://127.0.0.1:11434"
 llm/model="llama3.1:8b"
 llm/timeout_s=8.0
 llm/min_interval_s=30.0
+debug/fake_time=""
 
 [physics]
 

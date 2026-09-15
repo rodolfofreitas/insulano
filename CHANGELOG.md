@@ -5,6 +5,9 @@ Entradas em linguagem de utilizador, não de commit. Cada tarefa acrescenta a su
 
 ## [Não lançado]
 
+### Adicionado
+- `GameClock` (T-201): autoload `Clock`, fonte unica da hora do sistema. API publica: `now()`, `hour_float()`, `period()`, `signal hour_changed`. Suporta override via variavel de ambiente `INSULANO_FAKE_TIME` (formato `AAAA-MM-DDTHH:MM`) e setting `insulano/debug/fake_time`, sem mexer no relogio da maquina. Valor invalido regista aviso e usa hora real.
+
 ## [0.1.0] - 2026-09-14
 
 ### Adicionado

@@ -103,7 +103,9 @@ Estado a 2026-09-13: existem a cena principal e a behavior tree herdadas; os aut
 | `fishing_spot.gd` | - | Node2D | Marcador visual de um ponto de pesca, com círculo vermelho só no editor. |
 | `guy/direction.gd` | Direction | Object | Uma das quatro direcções cardinais, usada para escolher animação (walk_up, |
 | `guy/guy.gd` | Guy | Character | O náufrago jogável: um Character que perde fome com o tempo. |
+| `llm/director_directive.gd` | DirectorDirective | Resource | Instrucao do director para o EventDirector: que arco, actividade e tom usar. |
 | `llm/fallback_phrases.gd` | FallbackPhrases | RefCounted | Escolhe frases fixas em português de Portugal quando não há resposta do |
+| `llm/i_director.gd` | IDirector | Resource | Contrato que SimpleDirector e LLMDirector satisfazem. |
 | `llm/llm_bridge.gd` | LLMBridge | Node | Ponte assíncrona para o Ollama: qualquer parte do jogo pede uma frase e |
 | `llm/llm_settings.gd` | LLMSettings | RefCounted | Configuração da camada LLM: se está activa, URL, modelo, timeout e intervalo |
 | `llm/phrase_context.gd` | PhraseContext | RefCounted | Contexto tipado que descreve a situação do náufrago num dado momento. |
@@ -117,6 +119,8 @@ Estado a 2026-09-13: existem a cena principal e a behavior tree herdadas; os aut
 | `tools/boot_smoke.gd` | - | SceneTree | Smoke de arranque: carrega a cena principal, simula tempo de jogo e verifica |
 | `tools/capture.gd` | - | SceneTree | Captura de prova visual: carrega uma cena com renderização real dentro de um |
 | `ui/speech_bubble.gd` | SpeechBubble | PanelContainer | Balão de fala do personagem: fundo opaco e legível sobre qualquer fundo da |
+| `world/game_clock.gd` | GameClock | Node | Relogio do jogo: fonte unica da hora, com suporte a hora simulada para testes. |
+| `world/needs_manager.gd` | - | Node | Autoload NeedsManager: gere as necessidades SOLIDAO, TEDIO e ESPERANCA do naufrago. |
 <!-- gerado:componentes:fim -->
 
 ## 5. Vista de runtime

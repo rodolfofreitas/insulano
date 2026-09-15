@@ -1,0 +1,5 @@
+{
+  "SOLIDAO": {"neutral": 40, "passive_rate": 0.8, "urgent_threshold": 70, "max": 100},
+  "TEDIO": {"neutral": 30, "passive_rate": 0.5, "urgent_threshold": 65, "max": 100},
+  "ESPERANCA": {"neutral": 55, "passive_rate": -0.2, "urgent_threshold": 25, "max": 100}
+}
