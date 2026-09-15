@@ -2,7 +2,7 @@
 id: T-506
 titulo: Confirmar a licença do código Insulano e criar LICENSE
 fase: 5
-estado: humano
+estado: feito
 tipo: docs
 depende_de: [T-001]
 ---
@@ -29,4 +29,6 @@ O repositório tem um ficheiro LICENSE na raiz com a licença escolhida pelo Rod
 - ADR, ficheiro LICENSE e output do check_docs.
 
 ## Relatório
-(preenchido pelo executor)
+
+Decisao do Rodolfo: MIT. LICENSE criado na raiz do projecto.
+README.md seccao Licenca actualizada. Assets de terceiros listados com as suas licencas proprias.

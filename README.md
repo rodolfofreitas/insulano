@@ -86,11 +86,11 @@ Procedimentos, incidentes e export templates em [`docs/runbook.md`](docs/runbook
 Este repositório está preparado para ser construído por agentes de IA de ponta a ponta. O ponto de
 entrada é [`AGENTS.md`](AGENTS.md); no Claude Code, `/insulano-loop`.
 
-## Licença
+## Licenca
 
-Código herdado sob MIT (Doubi, [`game/LICENSE-guy-on-island.md`](game/LICENSE-guy-on-island.md)).
-Licença do código novo do Insulano por confirmar (T-506). Assets e créditos obrigatórios em
-[`docs/assets-licencas.md`](docs/assets-licencas.md).
+Codigo do Insulano sob **MIT** -- ver [`LICENSE`](LICENSE).
+Codigo base Guy on Island: Doubi, MIT -- [`game/LICENSE-guy-on-island.md`](game/LICENSE-guy-on-island.md).
+Assets de terceiros (sprites, sons, tileset): CC-BY 3.0 e CC0 -- ver [`docs/assets-licencas.md`](docs/assets-licencas.md).
 
 Inspirações: Johnny Castaway (Sierra, 1992, só conceito, nenhum asset), Guy on Island (Doubi, 2025),
 Hunter Davis PS1 Port (feriados), Mochi LLM Pet (arquitectura LLM para comportamento).

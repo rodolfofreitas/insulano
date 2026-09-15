@@ -21,6 +21,7 @@ BeehaveGlobalMetrics="*res://addons/beehave/metrics/beehave_global_metrics.gd"
 BeehaveGlobalDebugger="*res://addons/beehave/debug/global_debugger.gd"
 LLM="*res://llm/llm_bridge.gd"
 NeedsManager="*res://world/needs_manager.gd"
+AmbientAudio="*res://audio/ambient_audio.gd"
 Clock="*res://world/game_clock.gd"
 InputWatcher="*res://app/input_watcher.gd"
 ArcHistory="*res://world/arc_history.gd"
@@ -47,6 +48,8 @@ debug/fake_time=""
 weather/enabled=true
 weather/location=""
 events/seed=0
+audio/enabled=true
+audio/volume_db=0.0
 
 [physics]
 

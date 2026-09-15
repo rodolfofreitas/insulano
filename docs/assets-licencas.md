@@ -43,6 +43,15 @@ Feito com Godot Engine (MIT)
 Nenhum. Propostas de assets de terceiros entram aqui com autor, URL, licença exacta e alternativa sem terceiros,
 e esperam pelo Rodolfo.
 
+## Sons ambiente
+
+| Ficheiro (em `game/audio/ambient/`) | Licenca | Autor | Fonte | Data |
+|---|---|---|---|---|
+| `ocean_waves.ogg` | CC0 | Noted451 | https://freesound.org/s/531015 | 2026-09-15 |
+| `seagulls.ogg` | CC0 | sinewave1kHz | https://freesound.org/s/202996 | 2026-09-15 |
+| `wind_breeze.ogg` | CC0 | mario1298 | https://freesound.org/s/181255 | 2026-09-15 |
+| `rain_storm.ogg` | CC0 | visionear | https://freesound.org/s/723595 | 2026-09-15 |
+
 ## Proibido
 
 Assets da Sierra On-Line ou Activision (incluindo `RESOURCE.001`, `RESOURCE.MAP` e sprites do Johnny Castaway),

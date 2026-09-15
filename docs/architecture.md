@@ -90,6 +90,7 @@ Estado a 2026-09-13: existem a cena principal e a behavior tree herdadas; os aut
 | `app/credits_screen.gd` | CreditsScreen | CanvasLayer | Ecra de creditos com atribuicoes obrigatorias. |
 | `app/input_watcher.gd` | - | Node | Detecta presenca do utilizador e emite sinal para reaccao antes de fechar. |
 | `app/screensaver_mode.gd` | - | Node | Configura o modo de execucao: protector de ecra ou janela. |
+| `audio/ambient_audio.gd` | - | Node | Gere os sons ambiente da ilha. |
 | `beehave/action_using_delta.gd` | ActionUsingDelta | ActionLeaf | Base para acções do Beehave que precisam do delta do frame corrente. |
 | `beehave/find_group_spot_condition.gd` | FindGroupSpotCondition | ConditionLeaf | Escolhe ao acaso um nó do grupo `group_name` e grava a posição no blackboard. |
 | `beehave/find_random_spot_condition.gd` | FindRandomSpotCondition | ConditionLeaf | Escolhe um ponto aleatório navegável do `NavigationServer2D` e grava-o no blackboard. |
