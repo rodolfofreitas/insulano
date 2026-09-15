@@ -91,6 +91,50 @@
       "requires_condition": null,
       "arc_id":           null,
       "phrase_action":    "ver a mare levar o companheiro"
+    },
+    {
+      "id":               "holiday_xmas_tree",
+      "kind":             "holiday_xmas",
+      "weight":           3,
+      "min_interval_s":   3600,
+      "duration_s":       30,
+      "requires_condition": "is_christmas",
+      "arc_id":           null,
+      "asset":            "game/object/holiday_xmas_tree.png",
+      "phrase_action":    "decorar uma arvore de Natal improvisada"
+    },
+    {
+      "id":               "holiday_xmas_star",
+      "kind":             "holiday_xmas",
+      "weight":           2,
+      "min_interval_s":   1800,
+      "duration_s":       10,
+      "requires_condition": "is_christmas",
+      "arc_id":           null,
+      "asset":            "game/object/holiday_xmas_star.png",
+      "phrase_action":    "ver a estrela de Natal a brilhar"
+    },
+    {
+      "id":               "holiday_newyear_firework",
+      "kind":             "holiday_newyear",
+      "weight":           4,
+      "min_interval_s":   600,
+      "duration_s":       8,
+      "requires_condition": "is_new_year",
+      "arc_id":           null,
+      "asset":            "game/object/holiday_newyear_firework.png",
+      "phrase_action":    "ver fogos de artificio no horizonte"
+    },
+    {
+      "id":               "holiday_newyear_bottle",
+      "kind":             "holiday_newyear",
+      "weight":           2,
+      "min_interval_s":   3600,
+      "duration_s":       20,
+      "requires_condition": "is_new_year",
+      "arc_id":           null,
+      "asset":            "game/object/holiday_newyear_bottle.png",
+      "phrase_action":    "encontrar uma garrafa de champanhe vazia na praia"
     }
   ]
 }

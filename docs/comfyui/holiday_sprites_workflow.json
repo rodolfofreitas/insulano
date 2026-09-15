@@ -1,0 +1,45 @@
+{
+  "_comment": "Workflow de geração de sprites de feriado para Insulano (T-609).",
+  "_method": "Pillow/Python (geração programática pixel art). ComfyUI/SD1.5 previsto para fases futuras.",
+  "_script": "scripts/generate_holiday_sprites.py",
+  "_generated": "2026-09-15",
+  "sprites": [
+    {
+      "name": "holiday_xmas_tree.png",
+      "size": "16x24",
+      "method": "pillow",
+      "description": "Árvore de Natal pixel art: camadas verdes triangulares, tronco castanho, decorações coloridas, estrela dourada no topo.",
+      "sd_prompt": "pixel art christmas tree 16x24, green triangular layers, brown trunk, colorful ornaments, golden star on top, indie game style, transparent background, crisp pixels"
+    },
+    {
+      "name": "holiday_xmas_star.png",
+      "size": "16x16",
+      "method": "pillow",
+      "description": "Estrela de 5 pontas amarela/dourada para topo da árvore de Natal.",
+      "sd_prompt": "pixel art 5-pointed star 16x16, yellow gold color, indie game style, transparent background, crisp pixels"
+    },
+    {
+      "name": "holiday_newyear_firework.png",
+      "size": "16x16",
+      "method": "pillow",
+      "description": "Explosão colorida de fogos de artifício: raios em vermelho, verde, dourado, azul, laranja.",
+      "sd_prompt": "pixel art firework explosion 16x16, colorful rays red green gold blue, sparkles, new year, indie game style, transparent background"
+    },
+    {
+      "name": "holiday_newyear_bottle.png",
+      "size": "8x16",
+      "method": "pillow",
+      "description": "Garrafa de champanhe pixel art: verde com rolha branca, capsule dourada, borbulhas.",
+      "sd_prompt": "pixel art champagne bottle 8x16, dark green glass, white cork, gold foil, bubbles, indie game style, transparent background"
+    }
+  ],
+  "comfyui_nodes_planned": [
+    "CheckpointLoaderSimple (dreamshaper_8.safetensors)",
+    "LoraLoader (pixel_art_xl_v1.1.safetensors, strength 0.85)",
+    "CLIPTextEncode (positive prompt per sprite)",
+    "CLIPTextEncode (negative: blurry, smooth, antialiased, 3d, realistic)",
+    "KSampler (steps=20, cfg=7.5, sampler=euler_a, scheduler=karras)",
+    "VAEDecode",
+    "SaveImage (output: game/object/)"
+  ]
+}

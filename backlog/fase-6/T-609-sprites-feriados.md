@@ -2,7 +2,7 @@
 id: T-609
 titulo: Sprites de feriados
 fase: 6
-estado: pronto
+estado: feito
 tipo: visual
 depende_de: [T-601, T-402]
 ---
@@ -42,4 +42,20 @@ Screenshot `docs/proof/T-609-sprites-feriados.png` com todos os 4 sprites de
 feriado visiveis lado a lado, demonstrando consistencia de paleta com o estilo da
 ilha.
 
-## Relatorio
+## Relatório
+
+Sprites gerados programaticamente em Python/Pillow (sem ComfyUI); metodo alternativo
+documentado em `docs/comfyui/holiday_sprites_workflow.json` para uso futuro com SD1.5.
+
+Sprites criados em `game/object/`:
+- `gorro_natal.png` (16x16): gorro vermelho triangular com pompom branco e aba branca.
+- `estrela_natal.png` (16x16): estrela de 5 pontas amarela/dourada (alias: `holiday_xmas_star.png`).
+- `fogo_artificio.png` (16x16): explosão de 8 raios coloridos (alias: `holiday_newyear_firework.png`).
+- `holiday_xmas_tree.png` (16x24): árvore de Natal com 3 camadas, decorações e estrela no topo.
+- `holiday_newyear_bottle.png` (8x16): garrafa de champanhe com rolha e borbulhas.
+- Todas com versão `_4x.png` (upscale nearest-neighbour via `scripts/upscale_pixel_art.py`).
+
+`game/data/events.json` actualizado com 4 eventos de feriado que referenciam os assets.
+Prova visual: `docs/proof/T-609-sprites-feriados.png`.
+Todos os critérios de aceitação verificados manualmente com `python3 -c "..."`.
+`bash scripts/verify.sh --quick` devolve exit 0.

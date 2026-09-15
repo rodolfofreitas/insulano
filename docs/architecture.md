@@ -151,6 +151,7 @@ Estado a 2026-09-13: existem a cena principal e a behavior tree herdadas; os aut
 | `tools/capture_seagull.gd` | - | SceneTree | Captura de prova visual da gaivota (T-302). |
 | `tools/fps_rain.gd` | - | SceneTree | Mede FPS durante 10s com chuva activa (T-305). |
 | `ui/speech_bubble.gd` | SpeechBubble | PanelContainer | Balão de fala do personagem: fundo opaco e legível sobre qualquer fundo da |
+| `world/ambient_night_light.gd` | AmbientNightLight | Node | Luz ambiente nocturna suave no naufrago. |
 | `world/arc_history.gd` | - | Node | Persistencia de arcos entre sessoes. Escrita atomica: tmp + rename. |
 | `world/cloud_layer.gd` | CloudLayer | Node2D | Camada de nuvens que se move da direita para a esquerda. |
 | `world/day_night.gd` | DayNight | CanvasModulate | Aplica a cor da hora actual a toda a cena via CanvasModulate. |

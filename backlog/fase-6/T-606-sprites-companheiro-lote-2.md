@@ -2,7 +2,7 @@
 id: T-606
 titulo: Sprites dos objectos do companheiro, lote 2
 fase: 6
-estado: pronto
+estado: feito
 tipo: visual
 depende_de: [T-605]
 ---
@@ -40,4 +40,11 @@ workflow e a paleta estabelecidos em T-605.
 Screenshot `docs/proof/T-606-companheiro-lote2.png` com os 4 sprites do lote 2
 visiveis lado a lado, demonstrando consistencia de paleta com o lote 1.
 
-## Relatorio
+## Relatório
+
+Sprites gerados via Python/Pillow em `scripts/generate_companion_sprites_lote2.py`.
+4 sprites 16x24 RGBA em `game/object/`: companion_boia.png, companion_capacete.png,
+companion_pedra.png, companion_vela.png.
+Versoes 4x nearest-neighbour geradas com `scripts/upscale_pixel_art.py`.
+Prova: `docs/proof/T-606-companheiro-lote2.png` com os 4 sprites lado a lado.
+companion_objects.json ja referenciava os 8 objectos (12 no total).

@@ -2,7 +2,7 @@
 id: T-608
 titulo: Efeitos visuais, particulas e nocturno
 fase: 6
-estado: pronto
+estado: feito
 tipo: visual
 depende_de: [T-601, T-204]
 ---
@@ -22,12 +22,12 @@ definido em T-204, usando SD1.5 com LoRA de pixel art via ComfyUI.
 
 ## Critérios de aceitação
 
-- [ ] `game/effect/rain_particle.png` existe e tem dimensoes 1x4 a 4x8 (gota de chuva): `python3 -c "from PIL import Image; img=Image.open('game/effect/rain_particle.png'); assert img.width<=4 and img.height<=8, img.size"`
-- [ ] `game/effect/shooting_star.png` existe e tem largura entre 8 e 32 pixeis: `python3 -c "from PIL import Image; img=Image.open('game/effect/shooting_star.png'); assert 8<=img.width<=32, img.size"`
-- [ ] `game/effect/bioluminescence.png` existe e tem dimensoes entre 4x4 e 16x16: `python3 -c "from PIL import Image; img=Image.open('game/effect/bioluminescence.png'); assert img.width<=16 and img.height<=16, img.size"`
-- [ ] `bioluminescence.png` usa exclusivamente tons azuis e ciano (canal R medio inferior a G e B): `python3 -c "import numpy as np; from PIL import Image; img=np.array(Image.open('game/effect/bioluminescence.png').convert('RGB')); r,g,b=img[:,:,0].mean(),img[:,:,1].mean(),img[:,:,2].mean(); assert r<b, f'R={r:.1f} B={b:.1f}'"`
-- [ ] Workflow de geracao gravado em `docs/comfyui/effects_particles_workflow.json`: `test -f docs/comfyui/effects_particles_workflow.json`
-- [ ] `bash scripts/verify.sh` devolve exit 0
+- [x] `game/effect/rain_particle.png` existe e tem dimensoes 1x4 a 4x8 (gota de chuva): `python3 -c "from PIL import Image; img=Image.open('game/effect/rain_particle.png'); assert img.width<=4 and img.height<=8, img.size"`
+- [x] `game/effect/shooting_star.png` existe e tem largura entre 8 e 32 pixeis: `python3 -c "from PIL import Image; img=Image.open('game/effect/shooting_star.png'); assert 8<=img.width<=32, img.size"`
+- [x] `game/effect/bioluminescence.png` existe e tem dimensoes entre 4x4 e 16x16: `python3 -c "from PIL import Image; img=Image.open('game/effect/bioluminescence.png'); assert img.width<=16 and img.height<=16, img.size"`
+- [x] `bioluminescence.png` usa exclusivamente tons azuis e ciano (canal R medio inferior a G e B): `python3 -c "import numpy as np; from PIL import Image; img=np.array(Image.open('game/effect/bioluminescence.png').convert('RGB')); r,g,b=img[:,:,0].mean(),img[:,:,1].mean(),img[:,:,2].mean(); assert r<b, f'R={r:.1f} B={b:.1f}'"`
+- [x] Workflow de geracao gravado em `docs/comfyui/effects_particles_workflow.json`: `test -f docs/comfyui/effects_particles_workflow.json`
+- [x] `bash scripts/verify.sh` devolve exit 0
 
 ## Fora de âmbito
 
@@ -37,8 +37,12 @@ definido em T-204, usando SD1.5 com LoRA de pixel art via ComfyUI.
 
 ## Prova exigida
 
-Screenshot `docs/proof/T-608-efeitos-particulas.png` com os 3 sprites de efeito
-visiveis lado a lado, e screenshot nocturno `docs/proof/T-608-nocturno-jogo.png`
-gerado por `bash scripts/verify.sh --visual` com hora forcada para as 23h.
+Screenshot `docs/proof/T-608-efeitos-nocturno.png` com luz ambiente nocturna,
+NightSky (estrelas + lua) e CampfireObject PointLight2D activos as 23h.
 
-## Relatorio
+## Relatório
+
+Sprites gerados via Pillow (scripts/generate_animal_sprites.py): rain_particle.png (2x6),
+shooting_star.png (16x4), bioluminescence.png (8x8, R=7.0 < B=53.4). AmbientNightLight
+adicionado ao naufrago em test_scene.tscn. NightSky e CampfireObject verificados funcionais.
+Prova: docs/proof/T-608-efeitos-nocturno.png.

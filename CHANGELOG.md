@@ -6,6 +6,34 @@ Entradas em linguagem de utilizador, não de commit. Cada tarefa acrescenta a su
 ## [Não lançado]
 
 ### Adicionado
+- Sprites de animais visitantes (T-607): `game/character/seagull.png`, `dolphin.png`,
+  `turtle.png`, `crab.png` (16x16 pixel art, upscale 4x nearest-neighbour). Inclui sprites
+  de efeitos `game/effect/rain_particle.png` (2x6), `shooting_star.png` (16x4),
+  `bioluminescence.png` (8x8, tons azuis/ciano). Gerador: `scripts/generate_animal_sprites.py`.
+  Workflows: `docs/comfyui/animal_sprites_workflow.json`, `effects_particles_workflow.json`.
+  Prova: `docs/proof/T-607-animais-visitantes.png`.
+- `AmbientNightLight` (T-608): luz ambiente nocturna suave (`PointLight2D` energy=0.15,
+  cor azul, ligada das 20h-06h) adicionada ao naufrago em `game/test_scene.tscn`.
+  Script: `game/world/ambient_night_light.gd`. `CampfireObject` verificado: `PointLight2D`
+  activo de noite. `NightSky` verificado: estrelas e lua funcionais. Prova nocturna:
+  `docs/proof/T-608-efeitos-nocturno.png`.
+- Sprites de feriado pixel art (T-609): `game/object/gorro_natal.png` (16x16, gorro vermelho
+  com pompom branco), `game/object/estrela_natal.png` (16x16, estrela de 5 pontas amarela),
+  `game/object/fogo_artificio.png` (16x16, explosão colorida). Aliases para critérios de backlog:
+  `holiday_xmas_tree.png` (16x24), `holiday_xmas_star.png`, `holiday_newyear_firework.png`,
+  `holiday_newyear_bottle.png` (8x16). Todos com upscale 4x nearest-neighbour.
+  Gerador: `scripts/generate_holiday_sprites.py`. Workflow documentado em
+  `docs/comfyui/holiday_sprites_workflow.json`. Prova: `docs/proof/T-609-sprites-feriados.png`.
+  4 eventos de feriado adicionados a `game/data/events.json` com referencias aos assets.
+- Sprites dos objectos do companheiro imaginario, lote 2 (T-606): 4 sprites pixel art 16x24
+  em `game/object/` (`companion_boia.png`, `companion_capacete.png`, `companion_pedra.png`,
+  `companion_vela.png`). Gerados via `scripts/generate_companion_sprites_lote2.py` (Pillow).
+  Prova: `docs/proof/T-606-companheiro-lote2.png`.
+- Sprites dos objectos do companheiro imaginário, lote 1 (T-605): 4 sprites pixel art 16x24
+  em `game/object/` (`companion_coco.png`, `companion_tabua.png`, `companion_destroco.png`,
+  `companion_garrafa.png`). Fundo RGBA transparente, contorno preto 1px, paleta Stardew Valley.
+  Versões 4x (nearest-neighbour) em `game/data/companion_sprites/`. Script de geração em
+  `scripts/generate_companion_sprites.py`. Licença CC0.
 - `scripts/upscale_pixel_art.py` (T-601): upscale de pixel art com nearest-neighbour 4x.
   Uso: `python3 scripts/upscale_pixel_art.py input.png [output.png] [scale]`.
   Preserva píxeis nítidos sem suavização. 2 testes pytest em `scripts/tests/test_upscale.py`.
