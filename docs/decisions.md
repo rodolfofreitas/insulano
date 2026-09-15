@@ -170,3 +170,19 @@ depois), sem nenhum ficheiro de configuração global: a regra `class-variable-n
 deve rejeitar a ordem antiga. Um nome em MAIÚSCULAS fora de `guy/direction.gd` continua a falhar o
 lint: alargar a supressão a outro ficheiro exige a mesma justificação (singleton imutável, não
 renomeável por causa de testes) e uma decisão nova, nunca um `.gdlintrc` de projecto.
+
+
+## ADR-012: clima aleatorio em vez de servico meteorologico real (T-306)
+
+**Data:** 2026-09-15
+**Decisor:** Rodolfo (dono do projecto)
+
+**Contexto:** O WeatherService pode ligar ao wttr.in para reflectir o tempo real. Isso envolve pedidos HTTP automaticos e envio do IP do utilizador para um servico externo.
+
+**Decisao:** Usar clima aleatorio com pesos naturais (clear=50%, clouds=30%, rain=15%, storm=4%, snow=1%). Muda a cada 30 minutos de jogo. Sem pedidos de rede.
+
+**Motivo:** Simplicidade e privacidade para a v0.x. A experiencia do utilizador fica variada sem dependencias externas. A integracao com clima real fica para a V2 apos avaliar: que servico usar, como gerir a localizacao, se e o default ou opt-in.
+
+**Consequencias:** A chuva na ilha e independente do tempo real. O utilizador que queira clima real pode configurar manualmente em V2. O WeatherService mantem a mesma API (current(), weather_changed) para que a V2 seja transparente para o resto do codigo.
+
+**V2 -- o que considerar:** servico proprio, OpenWeatherMap (API key), Open-Meteo (gratuito sem chave), ou wttr.in com localizacao explicita configurada pelo utilizador.

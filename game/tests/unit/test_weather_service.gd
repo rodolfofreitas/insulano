@@ -1,15 +1,6 @@
 extends GutTest
-## Testes puros de [WeatherService]: estado inicial, parsing de respostas
-## wttr.in sem rede. Fixtures gravadas em game/tests/fixtures/wttr_*.json
-## (curl 'https://wttr.in/Lisbon?format=j1' -o wttr_sol.json em 2026-09-15).
-
-const SOL_FIXTURE := "res://tests/fixtures/wttr_sol.json"
-const CHUVA_FIXTURE := "res://tests/fixtures/wttr_chuva.json"
-const TROVOADA_FIXTURE := "res://tests/fixtures/wttr_trovoada.json"
-
-
-func _read_fixture(path: String) -> PackedByteArray:
-	return FileAccess.get_file_as_bytes(path)
+## Testes do WeatherService com clima aleatorio (sem rede).
+## V2 com servico meteorologico real documentada em docs/decisions.md ADR-012.
 
 
 func _make_service() -> WeatherService:
@@ -18,40 +9,36 @@ func _make_service() -> WeatherService:
 	return svc
 
 
-func test_disabled_no_http() -> void:
-	## Com insulano/weather/enabled=false (defeito), _http nao e criado.
+func test_initial_condition_is_valid() -> void:
+	## current() devolve uma condicao valida desde o inicio.
 	var svc := _make_service()
-	assert_null(svc._http, "_http deve ser null quando disabled")
+	var valid := ["clear", "clouds", "rain", "storm", "snow"]
+	assert_has(valid, svc.current(), "condicao inicial deve ser valida")
 
 
-func test_unknown_before_response() -> void:
-	## current() devolve 'unknown' antes de qualquer resposta HTTP.
+func test_random_weather_returns_valid() -> void:
+	## random_weather() devolve sempre uma condicao valida.
 	var svc := _make_service()
-	assert_eq(svc.current(), "unknown")
+	var valid := ["clear", "clouds", "rain", "storm", "snow"]
+	for i in range(20):
+		assert_has(valid, svc.random_weather(), "random_weather deve ser valido")
 
 
-func test_parse_clear() -> void:
-	## weatherCode=113 mapeia para 'clear'.
+func test_fake_weather_env() -> void:
+	## INSULANO_FAKE_WEATHER=rain forca a condicao sem rede.
+	OS.set_environment("INSULANO_FAKE_WEATHER", "rain")
 	var svc := _make_service()
-	var body := _read_fixture(SOL_FIXTURE)
-	assert_gt(body.size(), 0, "fixture wttr_sol.json deve existir e nao estar vazia")
-	var result := svc.parse_response(body)
-	assert_eq(result, "clear")
+	assert_eq(svc.current(), "rain", "FAKE_WEATHER deve ser respeitado")
+	OS.set_environment("INSULANO_FAKE_WEATHER", "")
 
 
-func test_parse_rain() -> void:
-	## weatherCode=302 mapeia para 'rain'.
+func test_distribution_has_clear_most_often() -> void:
+	## Numa amostra de 200 chamadas, clear deve ser o mais frequente.
 	var svc := _make_service()
-	var body := _read_fixture(CHUVA_FIXTURE)
-	assert_gt(body.size(), 0, "fixture wttr_chuva.json deve existir e nao estar vazia")
-	var result := svc.parse_response(body)
-	assert_eq(result, "rain")
-
-
-func test_parse_storm() -> void:
-	## weatherCode=389 mapeia para 'storm'.
-	var svc := _make_service()
-	var body := _read_fixture(TROVOADA_FIXTURE)
-	assert_gt(body.size(), 0, "fixture wttr_trovoada.json deve existir e nao estar vazia")
-	var result := svc.parse_response(body)
-	assert_eq(result, "storm")
+	var counts := {"clear": 0, "clouds": 0, "rain": 0, "storm": 0, "snow": 0}
+	for i in range(200):
+		var c := svc.random_weather()
+		if c in counts:
+			counts[c] += 1
+	assert_gt(counts["clear"], counts["rain"], "clear deve ser mais frequente que rain")
+	assert_gt(counts["clouds"], counts["storm"], "clouds deve ser mais frequente que storm")

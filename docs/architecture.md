@@ -140,7 +140,7 @@ Estado a 2026-09-13: existem a cena principal e a behavior tree herdadas; os aut
 | `world/needs_manager.gd` | - | Node | Autoload NeedsManager: gere as necessidades SOLIDAO, TEDIO e ESPERANCA do naufrago. |
 | `world/night_sky.gd` | NightSky | Node2D | Estrelas e lua desenhadas com _draw(), sem assets novos. |
 | `world/rain.gd` | Rain | Node2D | Efeito de chuva com CPUParticles2D. |
-| `world/weather_service.gd` | WeatherService | Node | Servico de tempo: devolve condicao meteorologica actual. |
+| `world/weather_service.gd` | WeatherService | Node | Servico de tempo: devolve condicao meteorologica com variacao aleatoria natural. |
 <!-- gerado:componentes:fim -->
 
 ## 5. Vista de runtime

@@ -2,7 +2,7 @@
 id: T-306
 titulo: Decidir se o clima real fica ligado por defeito
 fase: 3
-estado: humano
+estado: feito
 tipo: docs
 depende_de: [T-304]
 ---
@@ -27,4 +27,10 @@ O Rodolfo decide se `insulano/weather/enabled` passa a `true` por defeito, saben
 - Diff do ADR e, se aplicável, do threat model e do project.godot.
 
 ## Relatório
-(preenchido pelo executor)
+
+Decisao tomada pelo Rodolfo em 2026-09-15.
+
+Clima aleatorio com pesos naturais implementado em WeatherService.
+Sem pedidos de rede. Muda a cada 30 minutos de jogo.
+ADR-012 em docs/decisions.md regista a decisao e o plano V2.
+Testes actualizados: 4 testes novos (condicao valida, distribuicao, FAKE_WEATHER).

@@ -44,6 +44,9 @@ llm/model="llama3.1:8b"
 llm/timeout_s=8.0
 llm/min_interval_s=30.0
 debug/fake_time=""
+weather/enabled=true
+weather/location=""
+events/seed=0
 
 [physics]
 
