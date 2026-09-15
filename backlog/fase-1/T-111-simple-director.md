@@ -38,7 +38,7 @@ e uma tabela de frases. O jogo deve ser completamente interessante sem Ollama.
 - Smoke de 30s com SimpleDirector activo e arco visivel no log
 - Teste de frases: 10 picks sem repeticao imediata
 
-## Relatorio
+## Relatório
 
 Implementado em `game/llm/simple_director.gd` (class_name SimpleDirector, extends Resource).
 Satisfaz IDirector por duck typing (get_directive, is_available).
