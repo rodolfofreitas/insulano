@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<title>Insulano Gauntlet Status</title>
+<style>
+  body { font-family: monospace; background: #0a0a0a; color: #e0e0e0; padding: 2rem; }
+  h1 { color: #7ec8e3; }
+  table { border-collapse: collapse; width: 100%; }
+  th { background: #1a1a2e; color: #7ec8e3; padding: 8px; text-align: left; }
+  td { padding: 8px; border-bottom: 1px solid #333; }
+  .passou { color: #4caf50; }
+  .falhou { color: #f44336; }
+  .em-curso { color: #ff9800; }
+  .gap { color: #ffeb3b; font-style: italic; }
+</style>
+</head>
+<body>
+<h1>Insulano Gauntlet Status</h1>
+<p>Referencia: <strong>Johnny Castaway (Sierra 1992)</strong> | Tu es o travao.</p>
+<table>
+  <thead>
+    <tr><th>Peca</th><th>Ronda</th><th>Candidato</th><th>Referencia</th><th>Veredicto</th><th>Gap</th></tr>
+  </thead>
+  <tbody id="rounds">
+    <!-- rondas aqui -->
+    <tr><td colspan="6" style="color:#666">Nenhuma ronda ainda.</td></tr>
+  </tbody>
+</table>
+<hr style="border-color:#333;margin-top:2rem">
+<p style="color:#666">Ratchet activo: so substitui o best se o challenger ganhar pick cego.<br>
+Evidencia ma invalida a ronda.</p>
+</body>
+</html>

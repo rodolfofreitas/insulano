@@ -187,7 +187,39 @@ tem de correr (export Linux ou `boot_smoke`) e a UI tem screenshot em `docs/proo
 - A behavior tree usa `randf()`: testes que dependem de comportamento fixam a seed. Mesmo assim,
   `NavigationServer2D.map_get_random_point` não obedece ao `seed()`: asserções sobre posições usam limiares, nunca valores exactos.
 
-## 11. Ficheiros protegidos
+## 11. Gauntlet Loop
+
+Usar o Gauntlet Loop para polimento subjectivo (qualidade visual, comportamento, narrativa).
+NAO usar para tarefas de backlog com criterios binarios claros (infraestrutura, builds, testes).
+
+### Quando usar Gauntlet vs loop de backlog
+
+| Situacao | Loop |
+|---|---|
+| Nova feature (T-114...) ou bug fix | Backlog loop + verify.sh |
+| Polimento de sprites existentes | Gauntlet |
+| Melhorar comportamento do naufrago | Gauntlet |
+| Afinar frases PT-PT | Gauntlet |
+| Screensaver feel geral | Gauntlet |
+
+Ver playbook completo: docs/gauntlet/playbook.md
+
+### Modo A -- Hermes compoe, Claude Code executa (recomendado)
+
+1. Dizer ao Hermes: 'Gauntlet: [dimensao] -- [peca especifica]'
+2. O Hermes propoe 2-3 barras fetchable. Tu escolhes.
+3. O Hermes escreve o prompt e grava em docs/gauntlet/PROMPT-YYYYMMDD.md
+4. Abrir sessao Claude Code fresca: `cd ~/Programacao/Kaeto/Insulano && claude`
+5. Colar o conteudo de PROMPT-YYYYMMDD.md. Tu es o travao.
+
+### Modo B -- Hermes executa com subagentes isolados
+
+1. Dizer: 'Corre o gauntlet [peca] contra [barra]'
+2. O Hermes faz fan-out: builder-subagente + critic-subagente (contextos distintos)
+3. O critico recebe APENAS: screenshot do resultado + screenshot da barra + 'pick um'
+4. Loop ate o humano parar. Nunca round cap.
+
+## 12. Ficheiros protegidos
 
 - `docs/threat_model.md`: só o Rodolfo altera. Propostas vão para `docs/threat_model-propostas.md`.
 - `base-guy-on-island/` e `.gitmodules`: referência upstream.
