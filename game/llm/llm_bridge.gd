@@ -19,6 +19,23 @@ extends Node
 ## outro caso.
 signal phrase_ready(request_id: int, text: String, source: String)
 
+## Emitido exactamente uma vez por cada request_id devolvido por
+## request_completion(), a par de phrase_ready mas para pedidos genéricos
+## (T-115, LLMDirector): sem PromptBuilder nem PhraseFilter, o chamador
+## já traz o prompt pronto e recebe o texto cru da resposta. source: "llm"
+## se a resposta chegou com sucesso (HTTP 200, JSON válido, corpo com
+## "response" não vazio); "fallback" em qualquer outro caso, com
+## raw_text = "" (ao contrário de phrase_ready, não há aqui nenhuma
+## FallbackPhrases: quem chama decide o próprio fallback).
+signal completion_ready(request_id: int, raw_text: String, source: String)
+
+## num_predict por defeito de request_completion() quando o chamador não
+## indica um valor: bem acima dos 40 da resposta de uma frase
+## (docs/api-ollama.md) porque a resposta esperada de request_completion()
+## é um JSON com vários campos (LLMDirector, T-115), que uma resposta a
+## meio (Ollama corta ao chegar a num_predict tokens) deixaria inválida.
+const DEFAULT_COMPLETION_NUM_PREDICT: int = 200
+
 ## Definições injectadas pelos testes; em jogo ficam nulas e são carregadas
 ## em _ready() a partir dos defeitos reais (project.godot, user://settings.cfg,
 ## INSULANO_LLM_URL). Um teste que as define ANTES de add_child() evita que
@@ -48,6 +65,11 @@ var _busy_fallback_category: String = ""
 ## Momento (Time.get_ticks_msec()) em que o pedido em curso foi despachado,
 ## só para calcular a latência que vai para o log.
 var _busy_started_at_ms: int = 0
+## "phrase" ou "completion": qual dos dois fluxos o pedido em curso pertence,
+## para _on_request_completed saber se emite phrase_ready (com PhraseFilter e
+## fallback por categoria) ou completion_ready (texto cru, sem filtro). Só
+## válido enquanto is_busy() for verdadeiro.
+var _busy_kind: String = "phrase"
 
 
 ## Carrega os defeitos que um teste não tenha injectado. Feito em _ready()
@@ -101,6 +123,34 @@ func request_phrase(context: PhraseContext, fallback_category: String) -> int:
 	return request_id
 
 
+## Pedido genérico de conclusão ao Ollama (T-115, LLMDirector): o prompt já
+## vem pronto de quem chama (sem PromptBuilder) e a resposta chega crua a
+## completion_ready (sem PhraseFilter nem FallbackPhrases). Mesmas garantias
+## de concorrência de request_phrase: desligado, pedido em curso ou prompt
+## vazio resolvem já, síncronamente, com raw_text = "" e source = "fallback".
+## num_predict e timeout_s são configuráveis por chamada (defeito <= 0 usa
+## DEFAULT_COMPLETION_NUM_PREDICT e settings.timeout_s): o prompt do director (T-115) é muito
+## maior do que o das frases e a resposta JSON não cabe nos 40 tokens do
+## fluxo de frases (docs/api-ollama.md), por isso não pode partilhar
+## build_payload() sem truncar a resposta a meio.
+func request_completion(prompt: String, num_predict: int = -1, timeout_s: float = -1.0) -> int:
+	var request_id := _next_request_id
+	_next_request_id += 1
+
+	if not settings.enabled:
+		_emit_completion_fallback(request_id, "desligado (enabled=false)")
+		return request_id
+	if is_busy():
+		_emit_completion_fallback(request_id, "pedido anterior ainda em curso")
+		return request_id
+	if prompt.is_empty():
+		_emit_completion_fallback(request_id, "prompt vazio")
+		return request_id
+
+	_dispatch_completion_request(request_id, prompt, num_predict, timeout_s)
+	return request_id
+
+
 ## Cria (se preciso) o HTTPRequest filho e despacha o pedido POST ao Ollama.
 ## Um erro imediato de HTTPRequest.request() (URL inválida, etc.) cai logo
 ## em fallback; falhas que só aparecem mais tarde (rede, timeout, HTTP
@@ -113,6 +163,7 @@ func _dispatch_request(request_id: int, fallback_category: String, prompt: Strin
 	_http.timeout = settings.timeout_s
 
 	_busy_request_id = request_id
+	_busy_kind = "phrase"
 	_busy_fallback_category = fallback_category
 	_busy_started_at_ms = Time.get_ticks_msec()
 
@@ -128,17 +179,61 @@ func _dispatch_request(request_id: int, fallback_category: String, prompt: Strin
 		_emit_fallback(request_id, fallback_category, "request_error_%d" % err)
 
 
+## Mesma lógica de _dispatch_request, mas marca o pedido como "completion":
+## _on_request_completed emite completion_ready (texto cru) em vez de
+## phrase_ready (filtrado) quando a resposta chegar. num_predict/timeout_s
+## <= 0 usam os defeitos (DEFAULT_COMPLETION_NUM_PREDICT e settings.timeout_s).
+func _dispatch_completion_request(
+	request_id: int, prompt: String, num_predict: int, timeout_s: float
+) -> void:
+	if _http == null:
+		_http = HTTPRequest.new()
+		add_child(_http)
+		_http.request_completed.connect(_on_request_completed)
+	_http.timeout = timeout_s if timeout_s > 0.0 else settings.timeout_s
+
+	_busy_request_id = request_id
+	_busy_kind = "completion"
+	_busy_started_at_ms = Time.get_ticks_msec()
+
+	var effective_num_predict := num_predict if num_predict > 0 else DEFAULT_COMPLETION_NUM_PREDICT
+	var payload := build_completion_payload(settings.model, prompt, effective_num_predict)
+	var err := _http.request(
+		settings.url + "/api/generate",
+		["Content-Type: application/json"],
+		HTTPClient.METHOD_POST,
+		JSON.stringify(payload)
+	)
+	if err != OK:
+		_busy_request_id = -1
+		_emit_completion_fallback(request_id, "request_error_%d" % err)
+
+
+## Emite completion_ready com raw_text = "" e source = "fallback". reason só
+## vai para o log (mesmo critério de _emit_fallback).
+func _emit_completion_fallback(request_id: int, reason: String) -> void:
+	print("[Insulano/LLM] completion fallback (%s)" % reason)
+	completion_ready.emit(request_id, "", "fallback")
+
+
 ## Callback de HTTPRequest.request_completed. Resolve o pedido em curso
-## (aceite do Ollama ou fallback) e emite phrase_ready exactamente uma vez.
+## (aceite do Ollama ou fallback) e emite phrase_ready ou completion_ready
+## (consoante _busy_kind) exactamente uma vez.
 func _on_request_completed(
 	result: int, response_code: int, _headers: PackedStringArray, body: PackedByteArray
 ) -> void:
 	var request_id := _busy_request_id
+	var kind := _busy_kind
 	var fallback_category := _busy_fallback_category
 	var latency_s := (Time.get_ticks_msec() - _busy_started_at_ms) / 1000.0
 	_busy_request_id = -1
 
 	var raw := parse_response(result, response_code, body)
+
+	if kind == "completion":
+		_resolve_completion(request_id, raw, latency_s, result, response_code)
+		return
+
 	if raw.is_empty():
 		print(
 			(
@@ -177,6 +272,32 @@ func _emit_fallback(request_id: int, fallback_category: String, reason: String) 
 	phrase_ready.emit(request_id, text, "fallback")
 
 
+## Resolve um pedido de completion (raw já vem de parse_response, "" em
+## qualquer falha): completion_ready com source "llm" e o texto cru quando
+## raw não é vazio, senão "fallback" com raw_text = "". Sem PhraseFilter:
+## quem chama (LLMDirector) valida o próprio schema JSON.
+func _resolve_completion(
+	request_id: int, raw: String, latency_s: float, result: int, response_code: int
+) -> void:
+	if raw.is_empty():
+		print(
+			(
+				(
+					"[Insulano/LLM] completion modelo=%s latencia=%.2fs fallback: resposta vazia/invalida "
+					+ "(result=%d codigo=%d)"
+				)
+				% [settings.model, latency_s, result, response_code]
+			)
+		)
+		completion_ready.emit(request_id, "", "fallback")
+		return
+
+	print(
+		"[Insulano/LLM] completion modelo=%s latencia=%.2fs fonte=llm" % [settings.model, latency_s]
+	)
+	completion_ready.emit(request_id, raw, "llm")
+
+
 ## Payload exacto documentado em docs/api-ollama.md ("Pedido"): model e
 ## prompt vêm dos argumentos, o resto é fixo. static e pura, para testar o
 ## payload sem montar toda a ponte (settings, filtro, fallback).
@@ -187,6 +308,20 @@ static func build_payload(model: String, prompt: String) -> Dictionary:
 		"stream": false,
 		"keep_alive": "10m",
 		"options": {"temperature": 0.8, "top_p": 0.9, "num_predict": 40},
+	}
+
+
+## Mesmo payload de build_payload(), mas com num_predict configurável
+## (T-115, request_completion): a resposta esperada é um JSON com vários
+## campos, não uma frase curta, por isso o num_predict fixo de build_payload
+## corta a resposta a meio em qualquer prompt mais longo que uma frase.
+static func build_completion_payload(model: String, prompt: String, num_predict: int) -> Dictionary:
+	return {
+		"model": model,
+		"prompt": prompt,
+		"stream": false,
+		"keep_alive": "10m",
+		"options": {"temperature": 0.8, "top_p": 0.9, "num_predict": num_predict},
 	}
 
 

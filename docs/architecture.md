@@ -117,6 +117,7 @@ Estado a 2026-09-13: existem a cena principal e a behavior tree herdadas; os aut
 | `llm/fallback_phrases.gd` | FallbackPhrases | RefCounted | Escolhe frases fixas em português de Portugal quando não há resposta do |
 | `llm/i_director.gd` | IDirector | Resource | Contrato que SimpleDirector e LLMDirector satisfazem. |
 | `llm/llm_bridge.gd` | LLMBridge | Node | Ponte assíncrona para o Ollama: qualquer parte do jogo pede uma frase e |
+| `llm/llm_director.gd` | LLMDirector | Node | Director narrativo via Ollama (T-115): satisfaz o contrato IDirector por |
 | `llm/llm_settings.gd` | LLMSettings | RefCounted | Configuração da camada LLM: se está activa, URL, modelo, timeout e intervalo |
 | `llm/phrase_context.gd` | PhraseContext | RefCounted | Contexto tipado que descreve a situação do náufrago num dado momento. |
 | `llm/phrase_filter.gd` | PhraseFilter | RefCounted | Aceita ou rejeita frases geradas pelo LLM segundo game/data/phrase_rules.json |
@@ -190,7 +191,7 @@ sequenceDiagram
 
 ## 7. Decisões
 
-Registo completo em [`decisions.md`](decisions.md): ADR-001 a ADR-011.
+Registo completo em [`decisions.md`](decisions.md): ADR-001 a ADR-014.
 
 ## 8. Riscos e dívida técnica
 
@@ -198,7 +199,8 @@ Registo completo em [`decisions.md`](decisions.md): ADR-001 a ADR-011.
 |---|---|---|
 | Bugs latentes da base (sinal trocado, `FAILED`, índice -1, print por tick, `.name` sobre `Array[String]` em `need_replentishing_unsable.gd`, `else` morto em `go_to_usable_action.gd`) | dívida | T-003 |
 | Frases fixas da base em inglês | dívida | T-106 |
-| Ollama só em CPU (p50 2,82 s) | risco de desempenho | aceitável com fallback; GPU é decisão do Rodolfo |
+| Ollama só em CPU (p50 2,82 s numa frase) | risco de desempenho | aceitável com fallback; GPU é decisão do Rodolfo |
+| Ollama só em CPU, prompt do `LLMDirector` (~400 tokens, p50 9,5-11,6 s, acima do alvo <5 s da T-115) | risco de desempenho | aceitável com fallback e tecto de sanidade de 20 s; decisão do Rodolfo pendente, ver ADR-014 e `backlog/fase-3/T-122-decidir-latencia-llm-director.md` |
 | Ollama publicado em `0.0.0.0:11434` | risco de segurança | `threat_model-propostas.md` P-01 |
 | Beehave imprime erros de debugger em headless | ruído | ignorado nos logs; reavaliar na T-005 |
 | Repositório sem remoto e `/home` sem snapshots | risco de perda | `threat_model-propostas.md` P-05 |

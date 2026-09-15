@@ -1,0 +1,24 @@
+[0m[Insulano/LLM] completion modelo=llama3.1:8b latencia=11.09s fonte=llm
+[Insulano/Director] teste ao vivo ciclo 00: source=llm latencia=11.10s arc=jangada activity=reparar a jangada
+[0m[Insulano/LLM] completion modelo=llama3.1:8b latencia=12.51s fonte=llm
+[Insulano/Director] teste ao vivo ciclo 01: source=llm latencia=12.52s arc=jangada activity=reparar a jangada
+[0m[Insulano/LLM] completion modelo=llama3.1:8b latencia=12.04s fonte=llm
+[Insulano/Director] teste ao vivo ciclo 02: source=llm latencia=12.05s arc=sinalizacao activity=procurar o sinal de ajuda
+[0m[Insulano/LLM] completion modelo=llama3.1:8b latencia=11.71s fonte=llm
+[Insulano/Director] teste ao vivo ciclo 03: source=llm latencia=11.72s arc=sinalizacao activity=procurar sinais de civilização
+[0m[Insulano/LLM] completion modelo=llama3.1:8b latencia=10.44s fonte=llm
+[Insulano/Director] teste ao vivo ciclo 04: source=llm latencia=10.45s arc=jangada activity=construir a jangada
+[0m[Insulano/LLM] completion modelo=llama3.1:8b latencia=11.61s fonte=llm
+[Insulano/Director] teste ao vivo ciclo 05: source=llm latencia=11.62s arc=jangada activity=construir a jangada
+[0m[Insulano/LLM] completion modelo=llama3.1:8b latencia=12.03s fonte=llm
+[Insulano/Director] teste ao vivo ciclo 06: source=llm latencia=12.05s arc=sinalizacao activity=apagar um sinal de fumaça
+[0m[Insulano/LLM] completion modelo=llama3.1:8b latencia=9.85s fonte=llm
+[Insulano/Director] teste ao vivo ciclo 07: source=llm latencia=9.87s arc=sinalizacao activity=construir um fogo
+[0m[Insulano/LLM] completion modelo=llama3.1:8b latencia=11.55s fonte=llm
+[Insulano/Director] teste ao vivo ciclo 08: source=llm latencia=11.56s arc=jangada activity=construir a jangada
+[0m[Insulano/LLM] completion modelo=llama3.1:8b latencia=11.22s fonte=llm
+[Insulano/Director] teste ao vivo ciclo 09: source=llm latencia=11.23s arc=diario activity=escrever no diário
+[Insulano/Director] teste ao vivo: 10 ciclos, p50=11.59s (alvo T-115: <5.0s)
+WARNING: [Insulano/Director] p50=11.59s acima do alvo da T-115 (5.0s); hardware desta máquina é CPU-only, ver docstring deste ficheiro
+[0m[Insulano/LLM] modelo=llama3.1:8b latencia=4.55s fonte=llm
+[Insulano/LLM] teste ao vivo: modelo=llama3.1:8b source=llm latencia=4.57s texto=Vou-me sentar à sombra e desfrutar de mais um dia na minha ilha.

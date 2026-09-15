@@ -121,7 +121,9 @@ func categories() -> PackedStringArray
 ```gdscript
 class_name LLMBridge extends Node
 signal phrase_ready(request_id: int, text: String, source: String)   ## source: "llm" | "fallback"
+signal completion_ready(request_id: int, raw_text: String, source: String)   ## T-115, ver abaixo
 func request_phrase(context: PhraseContext, fallback_category: String) -> int
+func request_completion(prompt: String, num_predict: int = -1, timeout_s: float = -1.0) -> int   ## T-115, ver abaixo
 func is_busy() -> bool
 static func build_payload(model: String, prompt: String) -> Dictionary
 static func parse_response(result: int, response_code: int, body: PackedByteArray) -> String  ## "" em qualquer falha
@@ -129,13 +131,31 @@ static func parse_response(result: int, response_code: int, body: PackedByteArra
 
 Contrato de comportamento:
 
-- Um pedido de cada vez. Pedido novo com um em curso: responde já com fallback (`source = "fallback"`).
+- Um pedido de cada vez, partilhado pelos DOIS fluxos (`request_phrase` e `request_completion`, ver
+  abaixo): pedido novo com um em curso (de qualquer um dos dois) responde já com fallback
+  (`source = "fallback"`).
 - `HTTPRequest` filho com `timeout = timeout_s`. Falha de rede, código diferente de 200, JSON inválido,
   resposta vazia ou rejeitada pelo `PhraseFilter`: emite fallback. Nunca emite texto rejeitado.
+  `request_completion` pode sobrepor este `timeout_s` e o `num_predict` do payload por chamada
+  (parâmetros `timeout_s`/`num_predict`, ambos com defeito `<= 0` = "usa o valor de `LLMSettings`/
+  `DEFAULT_COMPLETION_NUM_PREDICT`"): o `LLMDirector` (T-115) usa sempre `num_predict=100` e
+  `timeout_s=25.0` (`LLMDirector.NUM_PREDICT`/`REQUEST_TIMEOUT_S`), acima do `timeout_s` por
+  defeito de `LLMSettings` (8 s, calibrado para uma frase curta), porque o prompt do director
+  (~400 tokens de contexto) demora muito mais a avaliar em CPU do que o prompt de uma frase
+  (~30-40 tokens); números medidos e o porquê em `backlog/fase-3/T-115-llm-director.md`,
+  secção Relatório.
 - `enabled = false`: emite sempre fallback, sem abrir sockets.
 - O sinal é emitido sempre, exactamente uma vez por `request_id`, mesmo em erro.
 - Log com prefixo `[Insulano/LLM]`: modelo, latência, motivo de fallback. Nunca o prompt inteiro em release.
 - Payload: `{"model", "prompt", "stream": false, "keep_alive": "10m", "options": {"temperature": 0.8, "top_p": 0.9, "num_predict": 40}}`.
+
+`request_completion(prompt, num_predict=-1, timeout_s=-1.0)` (T-115, para o `LLMDirector`): pedido genérico ao Ollama, sem
+`PromptBuilder` nem `PhraseFilter` nem `FallbackPhrases` -- o chamador já traz o prompt pronto e
+recebe o texto cru da resposta via `completion_ready`. `source = "llm"` só quando a resposta chegou
+com sucesso (HTTP 200, JSON válido, corpo com `response` não vazio); em qualquer outra falha
+(desligado, pedido concorrente, prompt vazio, erro de rede, timeout, JSON inválido, HTTP != 200),
+`raw_text = ""` e `source = "fallback"` -- ao contrário de `request_phrase`, não há aqui nenhuma
+frase de recurso: quem chama decide o próprio fallback (o `LLMDirector` cai no `SimpleDirector`).
 
 ### 4.6 Integração na behavior tree (T-106) e balão (T-107)
 
@@ -189,6 +209,61 @@ Contrato de comportamento:
   esquerdo do rectângulo actual (para baixo), sem respeitar `grow_vertical`; sem esta correcção o
   balão crescia por cima do próprio personagem, escondendo-o (bug apanhado por inspecção visual,
   corrigido antes da versão final de `docs/proof/T-107-balao-1080p.png`).
+
+### 4.7 `LLMDirector` (T-115), `game/llm/llm_director.gd`, Node
+
+```gdscript
+class_name LLMDirector extends Node
+signal directive_ready(directive: DirectorDirective, source: String)   ## source: "llm" | "fallback"
+const TRIGGER_ACTIVITY_COMPLETED: String = "activity_completed"
+const TRIGGER_NEED_THRESHOLD: String = "need_threshold_crossed"
+const TRIGGER_SESSION_START: String = "session_start"
+const NUM_PREDICT: int = 100        ## sobrepõe request_completion(num_predict), medido nesta máquina
+const REQUEST_TIMEOUT_S: float = 25.0   ## sobrepõe request_completion(timeout_s), > LLMSettings.timeout_s (8s)
+func get_directive() -> DirectorDirective   ## contrato IDirector, duck typing como o SimpleDirector
+func is_available() -> bool                 ## sempre true: fallback garantido
+func is_thinking() -> bool
+func trigger_cycle(reason: String) -> void  ## 1 única chamada ao LLM (LLM.request_completion) por ciclo
+func set_last_event(event: String) -> void
+static func season_for_month(month: int) -> String
+static func build_prompt(template: String, context: Dictionary) -> String
+static func parse_directive(raw_text: String) -> Dictionary   ## {} em qualquer falha de parsing
+static func validate_directive(data: Dictionary) -> bool      ## schema {arc, activity, phrase}
+static func directive_from_data(data: Dictionary) -> DirectorDirective
+```
+
+Substitui o `SimpleDirector` (T-111) via `IDirector`, sem mudar quem o consome: `get_directive()`
+continua síncrono. Como o pedido ao LLM é assíncrono, `get_directive()` devolve sempre a última
+directiva de um ciclo já terminado (ou a de um `SimpleDirector` interno, antes do primeiro ciclo
+terminar); `trigger_cycle(reason)` é quem dispara um ciclo novo, chamado por quem gere o jogo quando
+um dos três `TRIGGER_*` acontece (fim de actividade, cruzamento de limiar de necessidade, início de
+sessão) -- não há `_process` a fazer polling. Um `trigger_cycle` novo enquanto `is_thinking()` é
+verdadeiro é ignorado: nunca duas chamadas simultâneas ao Ollama.
+
+Contexto enviado (critério de aceitação da T-115): `{gatilho, dia, hora, estacao, necessidades,
+arco_activo, arcos_recentes (5 títulos), companheiro (sempre null até à T-118), ultimo_evento}`.
+`estacao` vem de `season_for_month` (hemisfério norte: Dez-Fev inverno, Mar-Mai primavera, Jun-Ago
+verão, Set-Nov outono). O prompt (`game/data/prompts/director_prompt.txt`) usa o marcador literal
+`{{CONTEXTO}}` (não `String.format`, que colidiria com as chavetas do exemplo JSON no próprio
+texto); `build_prompt` substitui-o pelo contexto em JSON.
+
+Resposta esperada: `{"arc", "activity", "phrase"}`. `parse_directive` aceita a resposta envolvida em
+cercas markdown (```` ```json ... ``` ````, comum no `llama3.1:8b` apesar do prompt pedir só JSON) e
+devolve `{}` em qualquer JSON inválido ou que não seja objecto. `validate_directive` exige `arc`
+numa das 5 constantes de arco do `SimpleDirector` (`ARC_JANGADA`, `ARC_COMPANHEIRO`,
+`ARC_SINALIZACAO`, `ARC_DIARIO`, `ARC_AVULSO`, fonte única, sem duplicar a lista), `activity` String
+não vazia e `phrase` String (pode ser vazia). `validate_directive` só confirma o TIPO de `phrase`;
+o CONTEÚDO passa pelo mesmo `PhraseFilter` (§4.3) do `LLMBridge` antes de entrar na directiva
+(`phrase_filter`, injectável, lazy via `PhraseFilter.from_rules_file()`): uma frase rejeitada
+(inglês, PT-BR, proibida, fora dos limites de palavras/caracteres) fica `""` com log, mas `arc`/
+`activity` continuam válidos e `source` continua `"llm"` -- rejeitar a directiva inteira por causa
+só do texto falado desperdiçaria uma decisão de arco/actividade boa. Qualquer falha -- `completion_ready` com
+`source = "fallback"`, JSON inválido, ou schema inválido -- resolve com `fallback_director.get_directive()`
+(um `SimpleDirector` injectável, lazy por defeito) e `source = "fallback"` no sinal `directive_ready`.
+
+Memória: as últimas 10 decisões (`{arc, activity, source, timestamp}`) em `memory_path` (por defeito
+`user://director_memory.json`, sobreponível nos testes), escrita atómica tmp + rename, mesmo padrão
+de `game/world/arc_history.gd`.
 
 ## 5. Tempo e ambiente (Fase 2)
 

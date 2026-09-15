@@ -1,0 +1,3 @@
+```json
+{"arc": "jangada", "activity": "reparar a jangada", "phrase": "Hoje a jangada fica pronta."}
+```

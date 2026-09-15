@@ -6,6 +6,22 @@ Entradas em linguagem de utilizador, não de commit. Cada tarefa acrescenta a su
 ## [Não lançado]
 
 ### Adicionado
+- `LLMDirector` (T-115): director narrativo via Ollama que substitui o `SimpleDirector`
+  através do contrato `IDirector` (`get_directive`/`is_available`, mesma interface).
+  Um único pedido ao Ollama por ciclo (`LLM.request_completion`, novo método do
+  `LLMBridge` com o sinal `completion_ready`, ao lado de `request_phrase`) devolve JSON
+  `{arc, activity, phrase}`, validado contra o schema (arco tem de ser um dos 5 do
+  `SimpleDirector`, `activity` não vazia, `phrase` do tipo certo); qualquer falha --
+  rede, timeout, JSON inválido ou schema inválido -- cai no `SimpleDirector` injectado,
+  nunca deixa o jogo sem directiva. Ciclo event-driven, disparado por
+  `trigger_cycle(reason)` com um dos três gatilhos (`activity_completed`,
+  `need_threshold_crossed`, `session_start`), nunca por poll; um ciclo já em curso
+  ignora pedidos novos. Contexto enviado: dia, hora, estação (hemisfério norte),
+  necessidades, arco activo, 5 títulos de arcos recentes, companheiro (sempre `null`
+  até à T-118) e último evento livre. Prompt em
+  `game/data/prompts/director_prompt.txt`, memória das últimas 10 decisões em
+  `user://director_memory.json` com escrita atómica (tmp + rename, mesmo padrão de
+  `arc_history.gd`).
 - `ArcManager` e `arc_definitions.json` (T-114): máquina de estados de fases para os 3
   arcos base, com actividades ligadas aos códigos reais de `docs/events-catalogue.md`
   (ex.: `R13`, `MR26`, `C16`, `MR06`, `L05`, `MR01`). "A Jangada" (5 fases CICLICO:

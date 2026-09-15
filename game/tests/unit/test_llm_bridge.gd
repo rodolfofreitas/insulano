@@ -43,6 +43,36 @@ func test_build_payload_uses_the_given_model_and_prompt() -> void:
 	assert_eq(actual["prompt"], "outro prompt")
 
 
+func test_build_completion_payload_matches_docs_api_ollama() -> void:
+	# Mesmo payload de build_payload, mas com num_predict configurável
+	# (tech_design.md §4.5, request_completion): a resposta do director é
+	# um JSON com vários campos, não cabe nos 40 tokens fixos das frases.
+	var expected := {
+		"model": "llama3.1:8b",
+		"prompt": "prompt do director",
+		"stream": false,
+		"keep_alive": "10m",
+		"options": {"temperature": 0.8, "top_p": 0.9, "num_predict": 123},
+	}
+
+	var actual := LLMBridge.build_completion_payload("llama3.1:8b", "prompt do director", 123)
+
+	assert_eq(actual, expected)
+
+
+func test_build_completion_payload_with_default_num_predict_constant() -> void:
+	# Exercita DEFAULT_COMPLETION_NUM_PREDICT explicitamente: é o valor que
+	# _dispatch_completion_request usa quando o chamador não indica
+	# num_predict (request_completion(prompt) sem o 2º argumento), nunca
+	# antes coberto por um teste (bloqueante apontado na revisão da T-115).
+	var actual := LLMBridge.build_completion_payload(
+		"llama3.1:8b", "prompt", LLMBridge.DEFAULT_COMPLETION_NUM_PREDICT
+	)
+
+	assert_eq(actual["options"]["num_predict"], 200)
+	assert_eq(actual["options"]["num_predict"], LLMBridge.DEFAULT_COMPLETION_NUM_PREDICT)
+
+
 func test_parse_response_extracts_response_field_from_ok_fixture() -> void:
 	var body := _read_fixture(OK_FIXTURE)
 	assert_gt(body.size(), 0, "a fixture ollama_ok.json tem de existir e não estar vazia")

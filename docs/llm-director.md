@@ -1,6 +1,16 @@
 # Insulano -- LLM Director: A IA como Directora Narrativa
 
-*Documento de Arquitectura v1.0*
+*Documento de Arquitectura v1.0 (visao original, pre-implementacao)*
+
+**Nota (T-115, 2026-09-15):** este documento descreve a visao inicial (3 chamadas ao LLM por
+ciclo, tick de 15 minutos, criacao de arcos pelo LLM, memoria com "padroes detectados"). O que
+ficou construido diverge em pontos concretos: uma unica chamada por ciclo devolvendo
+`{arc, activity, phrase}`, ciclo event-driven (sem tick timer) e sem criacao de arcos novos
+(adiada para a T-117). A API de exemplo na seccao 4 (`LLMBridge.request()`, `max_tokens`) tambem
+nao corresponde ao codigo real. Para o contrato e o comportamento tal como existem hoje, ver
+`agent_docs/tech_design.md` §4.5-§4.7 e `backlog/fase-3/T-115-llm-director.md`. As seccoes 1
+(arcos), 5 (modo degradado) e 7 (director como personagem) continuam validas como visao para
+tarefas futuras (T-117, T-118) ainda nao construidas.
 
 ## Conceito Central
 

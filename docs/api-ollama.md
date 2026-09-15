@@ -49,6 +49,20 @@ Só `response` é usado. `total_duration` (nanossegundos) pode ir para o log de 
 | JSON inválido ou `response` vazio | parse falha | fallback |
 | Frase rejeitada pelo `PhraseFilter` | - | fallback, log com o motivo |
 
+## Pedido genérico (T-115, LLMDirector)
+
+Mesmo endpoint, `LLMBridge.request_completion(prompt, num_predict, timeout_s)`: o `prompt` já vem
+pronto de quem chama (sem `PromptBuilder`), `num_predict` sobrepõe o 40 da tabela "Pedido" acima
+(o `LLMDirector` usa 100 -- uma resposta JSON `{arc, activity, phrase}` não cabe em 40 tokens) e
+`timeout_s` sobrepõe o timeout por defeito (o `LLMDirector` usa 25 s). Resposta chega crua a
+`completion_ready`, sem `PhraseFilter`: quem chama valida o próprio schema.
+
+Medido nesta máquina (Docker, só CPU, `docs/proof/T-115-director-live.log`): o prompt do director
+tem ~400 tokens (muito maior do que o de uma frase), o que domina a latência mesmo com poucos
+tokens de resposta -- p50 observado de 6 a 12 s, acima do alvo de <5 s da tarefa. É uma limitação
+de hardware desta máquina (sem GPU), não do código; corrigir isso é decisão do Rodolfo (AGENTS.md
+§4, "nunca sem o Rodolfo: alterar o contentor Docker do Ollama").
+
 ## Verificar à mão
 
 ```bash

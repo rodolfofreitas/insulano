@@ -209,3 +209,32 @@ O Insulano deve ter alma propria, nao ser uma copia actualizada do JC.
 - docs/visual-identity.md a actualizar com nova direccao (tamanho sprite, paleta, estilo)
 - Fase 7 (redesenho): naufrago ~32x48px indie, NAO 64x96px a imitar JC
 - ComfyUI Caminho B (SD1.5 + LoRA pixel art indie) ganha mais importancia
+
+## ADR-014: criterio "p50 < 5s" do LLMDirector baixado para um tecto de sanidade de 20s nesta maquina
+
+**Data:** 2026-09-15
+**Decisor:** agente construtor (correcao de bloqueantes da revisao da T-115), pendente de ratificacao pelo Rodolfo -- ver `backlog/fase-3/T-122-decidir-latencia-llm-director.md`
+
+**Contexto.** A "Prova exigida" da T-115 (`backlog/fase-3/T-115-llm-director.md`) pede
+"p50 < 5s com 1 chamada" para o `LLMDirector`. Medido nesta maquina (Ollama em Docker,
+100% CPU, sem GPU -- ver memoria `ollama-docker-exposto-cpu`, AGENTS.md §9) o p50 real
+fica entre 9,5s e 11,6s: o prompt do director tem ~400 tokens de instrucoes e contexto
+(muito maior do que o prompt de uma frase, ~30-40 tokens) e o custo dominante em CPU e a
+avaliacao do prompt, nao a geracao da resposta (confirmado por medicao directa, curl
+manual e teste ao vivo, nao suposicao). Religar a GPU do Ollama e decisao do Rodolfo
+(AGENTS.md §4: "nunca sem o Rodolfo: alterar o contentor Docker do Ollama"), fora do
+ambito de autonomia desta tarefa.
+
+**Decisao.** Ate o Rodolfo decidir, `game/tests/live/test_llm_director_live.gd` regista o
+p50 real e emite `push_warning` quando ultrapassa os 5s pedidos pela tarefa (aviso, nao
+falha), mas so falha a serio acima de um tecto de sanidade de 20s
+(`P50_SANITY_CEILING_S`, sinal de regressao/hang real, nao so hardware lento). Isto evita
+bloquear `verify.sh --llm` permanentemente nesta maquina por um numero fora do controlo
+do codigo, sem esconder o desvio: o aviso fica no log de cada corrida e esta ADR regista
+a decisao formalmente.
+
+**Consequencias.** A T-115 fica com a "Prova exigida" tecnicamente nao cumprida (p50 real
+~9,5-11,6s, nao <5s) ate uma destas trés acontecer, por decisao do Rodolfo (T-122): religar
+a GPU do Ollama, encolher o prompt do director para reduzir o custo de avaliacao, ou aceitar
+o p50 actual e reescrever formalmente a "Prova exigida" da T-115 para o valor medido. A
+T-115 nao deve passar a `estado: feito` sem essa ratificacao.

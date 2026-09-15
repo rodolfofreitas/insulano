@@ -134,3 +134,93 @@ func test_second_request_while_busy_gets_immediate_fallback_and_each_id_gets_one
 			count_id2 += 1
 	assert_eq(count_id1, 1, "id1 recebe exactamente um sinal")
 	assert_eq(count_id2, 1, "id2 recebe exactamente um sinal")
+
+
+## Liga um recetor de completion_ready, mesma técnica de _collect_phrase_ready
+## mas para o fluxo genérico (T-115, request_completion).
+func _collect_completion_ready(bridge: LLMBridge) -> Array:
+	var received: Array = []
+	bridge.completion_ready.connect(
+		func(request_id: int, raw_text: String, source: String) -> void:
+			received.append({"id": request_id, "raw_text": raw_text, "source": source})
+	)
+	return received
+
+
+func test_request_completion_dead_port_yields_empty_fallback_within_timeout() -> void:
+	var bridge := LLMBridge.new()
+	bridge.settings = LLMSettings.new()
+	bridge.settings.url = DEAD_URL
+	bridge.settings.timeout_s = 2.0
+	add_child_autofree(bridge)
+	var received := _collect_completion_ready(bridge)
+
+	var request_id := bridge.request_completion("um prompt qualquer para o director")
+	var arrived: bool = await wait_for_signal(
+		bridge.completion_ready, bridge.settings.timeout_s + 1.0
+	)
+
+	assert_true(arrived, "completion_ready tem de chegar dentro de timeout_s + 1 s")
+	assert_eq(received.size(), 1)
+	assert_eq(received[0]["id"], request_id)
+	assert_eq(received[0]["raw_text"], "")
+	assert_eq(received[0]["source"], "fallback")
+
+
+func test_request_completion_disabled_bridge_yields_fallback_without_http_request() -> void:
+	var bridge := LLMBridge.new()
+	bridge.settings = LLMSettings.new()
+	bridge.settings.enabled = false
+	add_child_autofree(bridge)
+	var received := _collect_completion_ready(bridge)
+
+	var initial_child_count := bridge.get_child_count()
+	var request_id := bridge.request_completion("prompt")
+
+	assert_eq(received.size(), 1)
+	assert_eq(received[0]["id"], request_id)
+	assert_eq(received[0]["raw_text"], "")
+	assert_eq(received[0]["source"], "fallback")
+	assert_eq(
+		bridge.get_child_count(),
+		initial_child_count,
+		"enabled=false nunca cria o HTTPRequest filho"
+	)
+
+
+func test_request_completion_empty_prompt_yields_immediate_fallback() -> void:
+	var bridge := LLMBridge.new()
+	bridge.settings = LLMSettings.new()
+	bridge.settings.url = DEAD_URL
+	add_child_autofree(bridge)
+	var received := _collect_completion_ready(bridge)
+
+	var request_id := bridge.request_completion("")
+
+	assert_eq(received.size(), 1)
+	assert_eq(received[0]["id"], request_id)
+	assert_eq(received[0]["source"], "fallback")
+	assert_false(bridge.is_busy(), "prompt vazio nunca chega a abrir um pedido HTTP")
+
+
+func test_request_completion_while_phrase_request_busy_gets_immediate_fallback() -> void:
+	# Os dois fluxos (phrase_ready e completion_ready) partilham o mesmo "um
+	# pedido de cada vez" da ponte (tech_design.md §4.5): um pedido de
+	# completion concorrente com uma frase em curso resolve-se já, tal como
+	# duas frases concorrentes.
+	var bridge := LLMBridge.new()
+	bridge.settings = LLMSettings.new()
+	bridge.settings.url = DEAD_URL
+	bridge.settings.timeout_s = 2.0
+	add_child_autofree(bridge)
+	var received := _collect_completion_ready(bridge)
+
+	bridge.request_phrase(_full_context(), "idle")
+	assert_true(
+		bridge.is_busy(), "o pedido de frase tem de ficar em curso antes do de completion chegar"
+	)
+	var completion_id := bridge.request_completion("prompt do director")
+
+	assert_eq(received.size(), 1, "o pedido de completion resolve-se logo, sem esperar pela frase")
+	assert_eq(received[0]["id"], completion_id)
+	assert_eq(received[0]["source"], "fallback")

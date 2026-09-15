@@ -1,0 +1,85 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+[Insulano/Needs] NeedsManager pronto. Necessidades: ["SOLIDAO", "TEDIO", "ESPERANCA"]
+---  GUT  ---
+[1m[INFO]:  [0musing [/home/rodolfoc/.local/share/godot/app_userdata/Insulano] for temporary output.
+Godot version:  4.7.2
+GUT version:  9.7.1
+[4m
+
+res://tests/live/test_llm_director_live.gd
+[0m* test_dez_ciclos_reais_devolvem_json_valido_com_p50_dentro_do_orcamento
+[33m    --- Awaiting signal directive_ready or 27.0s  ---
+[0m[Insulano/LLM] completion modelo=llama3.1:8b latencia=12.74s fonte=llm
+[Insulano/Director] teste ao vivo ciclo 00: source=llm latencia=12.76s arc=diario activity=escrever no diário
+[33m    --- Awaiting signal directive_ready or 27.0s  ---
+[0m[Insulano/LLM] completion modelo=llama3.1:8b latencia=10.91s fonte=llm
+[Insulano/Director] teste ao vivo ciclo 01: source=llm latencia=10.92s arc=diario activity=escrever no diário
+[33m    --- Awaiting signal directive_ready or 27.0s  ---
+[0m[Insulano/LLM] completion modelo=llama3.1:8b latencia=10.96s fonte=llm
+[Insulano/Director] teste ao vivo ciclo 02: source=llm latencia=10.97s arc=jangada activity=construir a jangada
+[33m    --- Awaiting signal directive_ready or 27.0s  ---
+[0m[Insulano/LLM] completion modelo=llama3.1:8b latencia=11.29s fonte=llm
+[Insulano/Director] teste ao vivo ciclo 03: source=llm latencia=11.31s arc=diario activity=escrever no diário
+[33m    --- Awaiting signal directive_ready or 27.0s  ---
+[0m[Insulano/LLM] completion modelo=llama3.1:8b latencia=10.36s fonte=llm
+[Insulano/Director] teste ao vivo ciclo 04: source=llm latencia=10.37s arc=diario activity=escrever no diário
+[33m    --- Awaiting signal directive_ready or 27.0s  ---
+[0m[Insulano/LLM] completion modelo=llama3.1:8b latencia=10.04s fonte=llm
+[Insulano/Director] teste ao vivo ciclo 05: source=llm latencia=10.05s arc=diario activity=escrever no diario
+[33m    --- Awaiting signal directive_ready or 27.0s  ---
+[0m[Insulano/LLM] completion modelo=llama3.1:8b latencia=11.27s fonte=llm
+[Insulano/Director] teste ao vivo ciclo 06: source=llm latencia=11.28s arc=sinalizacao activity=acender um fogo de sinalização
+[33m    --- Awaiting signal directive_ready or 27.0s  ---
+[0m[Insulano/LLM] completion modelo=llama3.1:8b latencia=11.76s fonte=llm
+[Insulano/Director] frase rejeitada pelo PhraseFilter (ptbr): Agora que a esperança vai desaparecendo, sinto uma tristeza imensa dentro de mim.
+[Insulano/Director] teste ao vivo ciclo 07: source=llm latencia=11.78s arc=diario activity=escrever no diário
+[33m    --- Awaiting signal directive_ready or 27.0s  ---
+[0m[Insulano/LLM] completion modelo=llama3.1:8b latencia=13.41s fonte=llm
+[Insulano/Director] teste ao vivo ciclo 08: source=llm latencia=13.42s arc=diario activity=escrever no diário
+[33m    --- Awaiting signal directive_ready or 27.0s  ---
+[0m[Insulano/LLM] completion modelo=llama3.1:8b latencia=11.01s fonte=llm
+[Insulano/Director] teste ao vivo ciclo 09: source=llm latencia=11.02s arc=jangada activity=construir a jangada
+[Insulano/Director] teste ao vivo: 10 ciclos, p50=11.15s (alvo T-115: <5.0s)
+WARNING: [Insulano/Director] p50=11.15s acima do alvo da T-115 (5.0s); hardware desta máquina é CPU-only, ver docstring deste ficheiro
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] test_dez_ciclos_reais_devolvem_json_valido_com_p50_dentro_do_orcamento (res://tests/live/test_llm_director_live.gd:157)
+         [1] wait_for_signal (res://addons/gut/test.gd:2448)
+         [2] _end_wait (res://addons/gut/awaiter.gd:126)
+         [3] _on_tree_process_frame (res://addons/gut/awaiter.gd:68)
+[1m1/1 passed.
+[0m[4m
+
+res://tests/live/test_llm_live.gd
+[0m* test_real_ollama_answers_with_llm_source_and_measured_latency
+[33m    --- Awaiting signal phrase_ready or 10.0s  ---
+[0m[Insulano/LLM] modelo=llama3.1:8b latencia=3.79s fonte=llm
+[Insulano/LLM] teste ao vivo: modelo=llama3.1:8b source=llm latencia=3.81s texto=Vou cá para fora, ver se encontro um peixe para a ceia.
+[1m1/1 passed.
+[0m
+
+
+
+[33m==============================================
+[0m[33m= Run Summary
+[0m[33m==============================================
+[0m
+Totals
+------
+Scripts               2
+Tests                 2
+Passing Tests         2
+Asserts              36
+Time              118.285s
+
+
+[32m---- All tests passed! ----
+[0m
+Results saved to /home/rodolfoc/Programacao/Kaeto/Insulano/reports/gut-live-junit.xml
+ERROR: Capture not registered: 'beehave'.
+   at: unregister_message_capture (core/debugger/engine_debugger.cpp:62)
+WARNING: 4 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 2 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)
