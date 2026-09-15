@@ -1,0 +1,25 @@
+>> docs         PASSOU         scripts/check_docs.py
+>> backlog      PASSOU         backlog: PASSOU (85 tarefas, 0 erros)
+>> pytest       PASSOU         51 passed in 0.07s
+>> lint         PASSOU         133 ficheiros próprios limpos
+>> import       PASSOU         godot --import
+>> gut          PASSOU         Tests 276;Passing Tests 276
+>> boot         PASSOU         BOOT_SMOKE PASSOU: fome -64.0 pontos, deslocação máxima 588 px
+>> visual       PASSOU         reports/verify-latest.png (inspeccionar a imagem antes de declarar feito)
+>> llm          PASSOU         {"model": "llama3.1:8b", "samples": 24, "pass_rate": 1.0, "latency_p50_s": 2.62, "latency_p95_s": 4.1, "rejections": {}, "verdict": "PASSOU"}
+>> llm_live     PASSOU         Tests 2;Passing Tests 2
+>> export       PASSOU         PASSOU: dist/windows/insulano.exe
+
+==== resumo ====
+docs         PASSOU         scripts/check_docs.py
+backlog      PASSOU         backlog: PASSOU (85 tarefas, 0 erros)
+pytest       PASSOU         51 passed in 0.07s
+lint         PASSOU         133 ficheiros próprios limpos
+import       PASSOU         godot --import
+gut          PASSOU         Tests 276;Passing Tests 276
+boot         PASSOU         BOOT_SMOKE PASSOU: fome -64.0 pontos, deslocação máxima 588 px
+visual       PASSOU         reports/verify-latest.png (inspeccionar a imagem antes de declarar feito)
+llm          PASSOU         {"model": "llama3.1:8b", "samples": 24, "pass_rate": 1.0, "latency_p50_s": 2.62, "latency_p95_s": 4.1, "rejections": {}, "verdict": "PASSOU"}
+llm_live     PASSOU         Tests 2;Passing Tests 2
+export       PASSOU         PASSOU: dist/windows/insulano.exe
+VEREDICTO: PASSOU

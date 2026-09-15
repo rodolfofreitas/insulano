@@ -2,7 +2,7 @@
 id: T-610
 titulo: Revisao visual completa da Fase 6
 fase: 6
-estado: pronto
+estado: feito
 tipo: visual
 depende_de: [T-602, T-603, T-604, T-605, T-606, T-607, T-608, T-609]
 ---
@@ -44,4 +44,44 @@ visivel, todos os novos assets presentes em cena, gerado por
 Alem disso, o output completo de `bash scripts/verify.sh --full` gravado em
 `docs/proof/T-610-verify-full.txt`: `bash scripts/verify.sh --full | tee docs/proof/T-610-verify-full.txt`.
 
-## Relatorio
+## Relatório
+
+Data: 2026-09-15
+
+### Criterios verificados
+
+- [x] `bash scripts/verify.sh --full` devolveu exit 0 (11/11 checks PASSOU)
+- [x] Todos os 24 assets da Fase 6 existem nos paths esperados
+- [x] Sprites upscalados em uso: human_base (576x288), fishingrod (128x24), raw_fish (128x64) -- todos 4x
+- [x] Screenshot panoramico `docs/proof/T-610-ilha-panoramica.png` (1280x720 > 800px) -- hora simulada 19h30
+- [x] Screenshot nocturno `docs/proof/T-610-ilha-noite.png` (1280x720) -- hora simulada 23h00
+- [x] `python3 scripts/check_docs.py` devolveu 0 falhas
+- [x] `python3 scripts/backlog.py check` devolveu exit 0 (85 tarefas, 0 erros)
+- [x] Output completo do verify.sh --full gravado em `docs/proof/T-610-verify-full.txt`
+
+### Resumo verify.sh --full
+
+| Gate        | Resultado |
+|-------------|-----------|
+| docs        | PASSOU    |
+| backlog     | PASSOU    |
+| pytest      | PASSOU (51) |
+| lint        | PASSOU (133 ficheiros) |
+| import      | PASSOU    |
+| gut         | PASSOU (276/276) |
+| boot        | PASSOU    |
+| visual      | PASSOU    |
+| llm         | PASSOU (24 amostras, pass_rate=1.0) |
+| llm_live    | PASSOU (2/2) |
+| export      | PASSOU (dist/windows/insulano.exe) |
+
+### Assets Fase 6 validados
+
+- **Naufrago** (human_base.png): 576x288 -- 4x upscale de 144x72 original
+- **Cana de pesca** (fishingrod.png): 128x24 -- 4x upscale
+- **Peixe cru** (raw_fish.png): 128x64 -- 4x upscale
+- **Tilemap** (tilemap.png + tilemap-separated.png): presentes
+- **Companheiros (8)**: coco, tabua, destroco, garrafa, boia, pedra, capacete, vela
+- **Animais (4)**: seagull, dolphin, turtle, crab
+- **Efeitos (3)**: rain_particle, shooting_star, bioluminescence
+- **Feriados (4)**: holiday_xmas_tree, holiday_xmas_star, holiday_newyear_firework, holiday_newyear_bottle
