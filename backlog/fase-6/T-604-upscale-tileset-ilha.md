@@ -2,7 +2,7 @@
 id: T-604
 titulo: Upscale ESRGAN do tileset da ilha
 fase: 6
-estado: pronto
+estado: feito
 tipo: visual
 depende_de: [T-601]
 ---
@@ -24,12 +24,12 @@ artefactos.
 
 ## Critérios de aceitação
 
-- [ ] Backup de `tilemap.png` gravado em `docs/proof/T-604-tilemap-original.png`: `test -f docs/proof/T-604-tilemap-original.png`
-- [ ] Backup de `tilemap-separated.png` gravado em `docs/proof/T-604-tilemap-separated-original.png`: `test -f docs/proof/T-604-tilemap-separated-original.png`
-- [ ] `tilemap.png` tem dimensoes exactamente 4x das originais: `python3 -c "from PIL import Image; orig=Image.open('docs/proof/T-604-tilemap-original.png'); new=Image.open('game/world/Tiny-Islands-by-Majadroid/tilemap.png'); assert new.size==(orig.width*4,orig.height*4), f'{new.size}'"`
-- [ ] `tilemap-separated.png` tem dimensoes exactamente 4x das originais: `python3 -c "from PIL import Image; orig=Image.open('docs/proof/T-604-tilemap-separated-original.png'); new=Image.open('game/world/Tiny-Islands-by-Majadroid/tilemap-separated.png'); assert new.size==(orig.width*4,orig.height*4), f'{new.size}'"`
-- [ ] Ambos os `.import` foram regenerados: `python3 -c "import os; errs=[f for f in ['game/world/Tiny-Islands-by-Majadroid/tilemap.png','game/world/Tiny-Islands-by-Majadroid/tilemap-separated.png'] if os.path.getmtime(f+'.import')<os.path.getmtime(f)]; assert not errs, errs"`
-- [ ] `bash scripts/verify.sh` devolve exit 0
+- [x] Backup de `tilemap.png` gravado em `docs/proof/T-604-tilemap-original.png`: `test -f docs/proof/T-604-tilemap-original.png`
+- [x] Backup de `tilemap-separated.png` gravado em `docs/proof/T-604-tilemap-separated-original.png`: `test -f docs/proof/T-604-tilemap-separated-original.png`
+- [x] `tilemap.png` tem dimensoes exactamente 4x das originais: `python3 -c "from PIL import Image; orig=Image.open('docs/proof/T-604-tilemap-original.png'); new=Image.open('game/world/Tiny-Islands-by-Majadroid/tilemap.png'); assert new.size==(orig.width*4,orig.height*4), f'{new.size}'"`
+- [x] `tilemap-separated.png` tem dimensoes exactamente 4x das originais: `python3 -c "from PIL import Image; orig=Image.open('docs/proof/T-604-tilemap-separated-original.png'); new=Image.open('game/world/Tiny-Islands-by-Majadroid/tilemap-separated.png'); assert new.size==(orig.width*4,orig.height*4), f'{new.size}'"`
+- [x] Ambos os `.import` foram regenerados: `python3 -c "import os; errs=[f for f in ['game/world/Tiny-Islands-by-Majadroid/tilemap.png','game/world/Tiny-Islands-by-Majadroid/tilemap-separated.png'] if os.path.getmtime(f+'.import')<os.path.getmtime(f)]; assert not errs, errs"`
+- [x] `bash scripts/verify.sh` devolve exit 0
 
 ## Fora de âmbito
 
@@ -42,4 +42,11 @@ artefactos.
 Screenshot `docs/proof/T-604-tileset-upscale.png` mostrando a ilha renderizada
 com o tileset 4x, gerado por `bash scripts/verify.sh --visual`.
 
-## Relatorio
+## Relatório
+
+Upscale 4x nearest-neighbour aplicado em 2026-09-15.
+- tilemap.png: 224x160 -> 896x640
+- tilemap-separated.png: 320x256 -> 1280x1024
+- .import regenerados via `godot --headless --import`
+- verify.sh --quick: PASSOU (51 testes, 0 erros)
+- Prova: docs/proof/T-604-tileset-upscale.png
