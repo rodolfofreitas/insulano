@@ -132,6 +132,8 @@ Estado a 2026-09-13: existem a cena principal e a behavior tree herdadas; os aut
 | `world/arc_history.gd` | - | Node | Persistencia de arcos entre sessoes. Escrita atomica: tmp + rename. |
 | `world/day_night.gd` | DayNight | CanvasModulate | Aplica a cor da hora actual a toda a cena via CanvasModulate. |
 | `world/game_clock.gd` | GameClock | Node | Relogio do jogo: fonte unica da hora, com suporte a hora simulada para testes. |
+| `world/holiday_calendar.gd` | HolidayCalendar | RefCounted | Calendario de feriados: datas fixas e moveis calculadas pela Pascoa. |
+| `world/holiday_scenes.gd` | HolidayScenes | Node | Activa decoracoes visuais e contexto LLM de acordo com os feriados do dia. |
 | `world/needs_manager.gd` | - | Node | Autoload NeedsManager: gere as necessidades SOLIDAO, TEDIO e ESPERANCA do naufrago. |
 | `world/night_sky.gd` | NightSky | Node2D | Estrelas e lua desenhadas com _draw(), sem assets novos. |
 | `world/rain.gd` | Rain | Node2D | Efeito de chuva com CPUParticles2D. |

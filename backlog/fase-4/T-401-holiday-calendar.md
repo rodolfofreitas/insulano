@@ -2,7 +2,7 @@
 id: T-401
 titulo: HolidayCalendar com datas fixas e móveis pela Páscoa
 fase: 4
-estado: pronto
+estado: feito
 tipo: codigo
 depende_de: [T-001]
 ---
@@ -32,4 +32,10 @@ O jogo sabe se hoje é um dia especial, incluindo feriados móveis (Carnaval, P�
 - Testes GUT nomeados com o resultado e a fonte usada para confirmar as datas de Páscoa (citada no Relatório).
 
 ## Relatório
-(preenchido pelo executor)
+Implementado `game/world/holiday_calendar.gd` com `class_name HolidayCalendar` (sem autoload).
+`easter_sunday(year)` usa o algoritmo de Meeus/Butcher; correcta para 2026-04-05, 2027-03-28,
+2028-04-16 (ano bissexto), 2030-04-21. `holidays_on(date, _override)` suporta datas fixas
+(`rule.type=fixed`) e moveis (`rule.type=easter`, `offset_days`); entradas com tipo desconhecido
+ignoradas com `push_warning`. Testes GUT em `game/tests/unit/test_holiday_calendar.gd` (8 testes,
+147 no total -- todos PASSAM). Datas verificadas em timeanddate.com e contra Meeus 1998. CHANGELOG
+actualizado. verify.sh PASSOU (docs, backlog, pytest, lint, import, gut, boot).
