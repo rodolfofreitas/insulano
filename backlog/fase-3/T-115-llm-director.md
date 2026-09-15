@@ -2,7 +2,7 @@
 id: T-115
 titulo: LLMDirector -- director narrativo via Ollama com 1 chamada por ciclo (JSON estruturado)
 fase: 3
-estado: em-curso
+estado: feito
 tipo: codigo
 depende_de: [T-111, T-113, T-114, T-105]
 ---
