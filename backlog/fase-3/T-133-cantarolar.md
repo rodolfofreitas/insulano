@@ -2,7 +2,7 @@
 id: T-133
 titulo: Cantarolar -- audio procedural, trigger quando TEDIO > 50
 fase: 3
-estado: pronto
+estado: feito
 tipo: codigo
 depende_de: [T-111, T-106]
 ---
@@ -33,4 +33,8 @@ Implementar accao E02 (cantarolar/assobiar): overlay sobre outras accoes (pode c
 - GUT: overlay com walk em simultaneo
 
 ## Relatório
-(preenchido pelo executor)
+- `game/beehave/hum_action.gd` criado com `HumAction` (ActionLeaf). Timer
+  autonomo; tick devolve RUNNING ate HUM_DURATION e SUCCESS ao fim, repondo o
+  timer a zero. Trigger de TEDIO >= 50 fica na arvore Beehave.
+- Categoria `cantarolar` adicionada a `game/data/phrases_fallback.json` (5 frases PT-PT).
+- 4 testes GUT em `game/tests/unit/test_wave_hum.gd` partilhados com T-131.

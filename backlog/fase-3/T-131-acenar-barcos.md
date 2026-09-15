@@ -2,7 +2,7 @@
 id: T-131
 titulo: Acenar a barcos e avioes -- trigger Events.event_started boat/plane
 fase: 3
-estado: pronto
+estado: feito
 tipo: codigo
 depende_de: [T-111, T-301, T-303]
 ---
@@ -32,4 +32,8 @@ Implementar accao de acenar a barcos e avioes: quando EventDirector emite evento
 - Screenshot do emote
 
 ## Relatório
-(preenchido pelo executor)
+- `game/beehave/wave_action.gd` criado com `WaveAction` (ActionLeaf). Liga-se a
+  `Events.event_started` em `_ready`; activa acenagem em 'boat' ou 'seagull'.
+  Tick devolve FAILURE/RUNNING/SUCCESS conforme estado e timer.
+- Categoria `acenar` adicionada a `game/data/phrases_fallback.json` (5 frases PT-PT).
+- 4 testes GUT em `game/tests/unit/test_wave_hum.gd` (boat, seagull, 5s, 8s).

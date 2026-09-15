@@ -6,6 +6,30 @@ Entradas em linguagem de utilizador, não de commit. Cada tarefa acrescenta a su
 ## [Não lançado]
 
 ### Adicionado
+- `ImaginaryCompanion` (T-118): companheiro imaginario com ciclo de vida completo
+  (ABSENT -> ALIVE -> MOURNING -> ABSENT). Nasce quando SOLIDAO >= 100, perde-se
+  via evento `tide_takes_companion` (MUITO_RARO, peso 1). Nome e objecto aleatorios
+  por sessao (nunca "Wilson"). SOLIDAO cai 40pts ao nascer; sobe 30pts e TEDIO 20pts
+  ao perder-se. Autoload `Companion`. Evento adicionado a `game/data/events.json`.
+  Dados em `companion_names.json` (12 nomes) e `companion_objects.json` (12 objectos).
+  7 testes GUT em `game/tests/unit/test_imaginary_companion.gd`.
+- `RantAction` (T-128): naufrago xinga o oceano quando TEDIO >= 60 ou ESPERANCA <= 30.
+  Dura 4s, pede frase LLM com categoria `furia` via `LLMBridge`. 5 frases fallback
+  categoria `furia` adicionadas a `game/data/phrases_fallback.json`.
+- `PrayAction` (T-132): naufrago reza ou medita quando ESPERANCA <= 40 ou hora >= 21.
+  Dura 6s, chama `NeedsManager.replenish("ESPERANCA", 10)` ao completar. 5 frases
+  fallback categoria `reza` adicionadas a `game/data/phrases_fallback.json`.
+  3 testes GUT em `game/tests/unit/test_rant_pray.gd`.
+- `WaveAction` (T-131): naufrago acena quando `Events.event_started` emite 'boat'
+  ou 'seagull'; dura `WAVE_DURATION = 5s`, devolve RUNNING durante a acenagem e
+  SUCCESS no fim. Frases fallback categoria `acenar` (5 frases PT-PT) em
+  `phrases_fallback.json`.
+- `HumAction` (T-133): naufrago cantarola autonomamente durante `HUM_DURATION = 8s`;
+  trigger sem evento externo (usar TEDIO >= 50 na arvore). Frases fallback categoria
+  `cantarolar` (5 frases PT-PT) em `phrases_fallback.json`.
+- 4 testes GUT em `game/tests/unit/test_wave_hum.gd`:
+  `test_wave_triggers_on_boat_event`, `test_wave_triggers_on_seagull_event`,
+  `test_wave_completes_in_5s`, `test_hum_completes_in_8s`.
 - `LLMDirector` gera arcos originais via Ollama (T-117): quando TEDIO >= 65,
   nenhum arco activo e pelo menos 1 dia desde o ultimo arco, o director pede
   ao Ollama um arco novo com prompt que inclui titulos de arcos ja completados
