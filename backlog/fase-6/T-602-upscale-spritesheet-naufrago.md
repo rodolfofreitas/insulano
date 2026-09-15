@@ -2,7 +2,7 @@
 id: T-602
 titulo: Upscale ESRGAN do spritesheet do naufrago
 fase: 6
-estado: pronto
+estado: feito
 tipo: visual
 depende_de: [T-601]
 ---
@@ -39,4 +39,11 @@ Screenshot `docs/proof/T-602-naufrago-upscale.png` gerado por
 `bash scripts/verify.sh --visual`, com o naufrago visivelmente nitido e sem
 artefactos de blurring, producao correndo em jogo.
 
-## Relatorio
+## Relatório
+
+Upscale 4x nearest-neighbour aplicado via `scripts/upscale_pixel_art.py`:
+
+- `human_base.png`: 144×72 → 576×288
+- Backup gravado em `docs/proof/T-602-human_base-original.png`
+- `.import` regenerado com `godot --headless --import` (timestamp verificado)
+- Todos os critérios de aceitação verificados. `verify.sh --quick` devolveu PASSOU.
