@@ -87,6 +87,7 @@ Estado a 2026-09-13: existem a cena principal e a behavior tree herdadas; os aut
 <!-- gerado:componentes:inicio -->
 | Ficheiro (game/) | class_name | extends | Responsabilidade (1.ª linha ##) |
 |---|---|---|---|
+| `app/credits_screen.gd` | CreditsScreen | CanvasLayer | Ecra de creditos com atribuicoes obrigatorias. |
 | `app/input_watcher.gd` | - | Node | Detecta presenca do utilizador e emite sinal para reaccao antes de fechar. |
 | `app/screensaver_mode.gd` | - | Node | Configura o modo de execucao: protector de ecra ou janela. |
 | `beehave/action_using_delta.gd` | ActionUsingDelta | ActionLeaf | Base para acções do Beehave que precisam do delta do frame corrente. |
@@ -127,6 +128,7 @@ Estado a 2026-09-13: existem a cena principal e a behavior tree herdadas; os aut
 | `tools/boot_smoke.gd` | - | SceneTree | Smoke de arranque: carrega a cena principal, simula tempo de jogo e verifica |
 | `tools/capture.gd` | - | SceneTree | Captura de prova visual: carrega uma cena com renderização real dentro de um |
 | `tools/capture_boat.gd` | - | SceneTree | Ferramenta de prova visual T-303: carrega a cena, dispara o evento "boat" |
+| `tools/capture_credits.gd` | - | SceneTree | Captura de prova visual do ecra de creditos (T-503). |
 | `tools/capture_seagull.gd` | - | SceneTree | Captura de prova visual da gaivota (T-302). |
 | `tools/fps_rain.gd` | - | SceneTree | Mede FPS durante 10s com chuva activa (T-305). |
 | `ui/speech_bubble.gd` | SpeechBubble | PanelContainer | Balão de fala do personagem: fundo opaco e legível sobre qualquer fundo da |
