@@ -67,7 +67,8 @@ func _on_hour_changed(_h: int) -> void:
 
 
 func _update_alpha() -> void:
-	if has_node("/root/Clock"):
+	# is_inside_tree() evita o erro em testes que instanciam o no fora da arvore activa
+	if is_inside_tree() and has_node("/root/Clock"):
 		_alpha = sky_alpha_for_hour(Clock.hour_float())
 	else:
 		_alpha = 0.0
