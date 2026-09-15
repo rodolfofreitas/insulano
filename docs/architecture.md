@@ -124,6 +124,7 @@ Estado a 2026-09-13: existem a cena principal e a behavior tree herdadas; os aut
 | `llm/prompt_builder.gd` | PromptBuilder | RefCounted | Monta o prompt enviado ao Ollama a partir do template partilhado |
 | `llm/simple_director.gd` | SimpleDirector | Resource | Director deterministico sem LLM: maquina de estados com 5 arcos narrativos. |
 | `need_bar.gd` | NeedBar | ProgressBar | Barra de progresso que reflecte uma necessidade (`need_name`) de `target`. |
+| `object/campfire_object.gd` | CampfireObject | Node2D | Fogueira com particulas CPUParticles2D e luz nocturna PointLight2D. |
 | `object/general_usable_object.gd` | GeneralUsableObject | UsableObject | Objecto utilizável que declara, em `satisfying_needs`, quais necessidades trata. |
 | `object/need_replentishing_unsable.gd` | NeedReplentishingUsable | GeneralUsableObject | Objecto que repõe uma necessidade enquanto durar (ex.: o peixe apanhado). |
 | `object/usable_object.gd` | UsableObject | Node2D | Base de qualquer objecto que a behavior tree pode usar para satisfazer necessidades. |
@@ -144,6 +145,7 @@ Estado a 2026-09-13: existem a cena principal e a behavior tree herdadas; os aut
 | `world/needs_manager.gd` | - | Node | Autoload NeedsManager: gere as necessidades SOLIDAO, TEDIO e ESPERANCA do naufrago. |
 | `world/night_sky.gd` | NightSky | Node2D | Estrelas e lua desenhadas com _draw(), sem assets novos. |
 | `world/rain.gd` | Rain | Node2D | Efeito de chuva com CPUParticles2D. |
+| `world/session_data.gd` | - | Node | Persistencia de sessao: dias sobrevividos, peixes apanhados, arcos completados. |
 | `world/weather_service.gd` | WeatherService | Node | Servico de tempo: devolve condicao meteorologica com variacao aleatoria natural. |
 <!-- gerado:componentes:fim -->
 

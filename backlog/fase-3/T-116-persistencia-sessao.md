@@ -31,6 +31,12 @@ do naufrago com base no tempo decorrido desde a ultima sessao.
 - Fases de evolucao do naufrago (Fase I-V -- v1.x)
 - Eventos lendarios unicos (v1.x)
 
-## Prova exigida
+## Relatório
 
-- Teste GUT com `INSULANO_FAKE_TIME` simulando ausencia de 3 dias: confirmar comportamento correcto
+- `game/world/session_data.gd`: autoload SessionData, escrita atomica tmp+rename, `schema_version=1`.
+- `game/world/game_clock.gd`: adicionado sinal `day_changed(day: int)` e tracking de `_last_day`.
+- `game/beehave/fishing_action.gd`: chamada a `SessionData.record_fish_caught()` ao apanhar peixe.
+- `game/project.godot`: registo do autoload `SessionData`.
+- `game/tests/unit/test_session_data.gd`: 4 testes GUT (save cria ficheiro, fish count persiste, sem duplicados, schema_version).
+- `CHANGELOG.md`: entrada em [Nao lancado].
+
