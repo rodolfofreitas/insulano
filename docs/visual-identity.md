@@ -6,6 +6,17 @@ Repositorio: `~/Programacao/Kaeto/Insulano`. Todos os caminhos sao relativos a e
 
 ---
 
+> NOTA (ADR-013, 2026-09-15): A direccao visual foi actualizada.
+> Estilo-alvo: mix Graveyard Keeper + Stardew Valley (pixel art indie original).
+> NAO tentar imitar o Johnny Castaway de 1992 pixel a pixel.
+> Stardew Valley: charme, expressividade, 'feito com amor'.
+> Graveyard Keeper: personalidade indie, atmosfera unica.
+> Johnny Castaway: referencia de COMPORTAMENTO apenas.
+> Tamanho sprite: ~32x48px (nao 64x96px). Ver ADR-013 em docs/decisions.md.
+> Este documento precisa de ser revisto com a nova direccao antes da Fase 7.
+
+---
+
 ## 1. Referencia Visual e Objectivo
 
 ### 1.1 Johnny Castaway como inspiracao legal

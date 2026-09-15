@@ -39,6 +39,20 @@ python3 scripts/llm_eval.py          # eval das frases contra o Ollama
 - Commits `tipo(T-NNN): descrição` em inglês ou português, um por tarefa, com o pre-commit activo
   (`git config core.hooksPath .githooks`).
 
+## Direccao Visual (ADR-013)
+
+Estilo: mix **Graveyard Keeper + Stardew Valley**. Pixel art indie original.
+Nao imitar o Johnny Castaway de 1992 -- criar algo com alma propria.
+
+| Referencia | O que trazer |
+|---|---|
+| Stardew Valley | charme, expressividade, paleta saturada harmoniosa, 'feito com amor' |
+| Graveyard Keeper | personalidade indie, atmosfera, animacoes fluidas |
+| Johnny Castaway | referencia de COMPORTAMENTO (variedade, eventos) -- NAO visual |
+
+Sprites: ~32x48px. Paleta quente/tropical. Cada frame conta.
+Ver docs/decisions.md (ADR-013) e docs/gauntlet/bars.md.
+
 ## Legal
 
 Código base MIT (Doubi, `game/LICENSE-guy-on-island.md`), tileset Tiny Islands CC0, sprites

@@ -236,7 +236,13 @@ Contrato de comportamento:
 | Latência LLM | p50 até 4 s, p95 até 8 s (eval) | medido: p50 2,82 s, p95 4,42 s em CPU (ADR-006) |
 | Rede externa | só wttr.in, desligado por defeito | privacidade (T-306) |
 
-## 10. Costuras de teste
+## 10. Direccao Visual
+
+Direccao visual: ADR-013 (Stardew Valley + Graveyard Keeper). Ver docs/gauntlet/bars.md.
+Nao imitar Johnny Castaway visualmente. JC = referencia de comportamento apenas.
+Sprites do naufrago: ~32x48px. Paleta quente/tropical.
+
+## 11. Costuras de teste
 
 | Costura | Como se usa |
 |---|---|

@@ -53,7 +53,8 @@ comportamento autónomo e fale com um LLM local.
 | RNF-4 | Frases em pt-PT, 2 a 15 palavras, sem conteúdo proibido | `PhraseFilter` e eval com taxa de aceitação de pelo menos 90% |
 | RNF-5 | Latência de frase p50 até 4 s, p95 até 8 s no modelo configurado | `scripts/llm_eval.py` |
 | RNF-6 | 60 fps estáveis na máquina de referência em modo protector | medição na T-109 e T-501 |
-| RNF-7 | Todos os assets com licença registada e créditos visíveis | `docs/assets-licencas.md`, ecrã de créditos (T-503) |
+| RNF-7 | Identidade visual: pixel art indie, mix Graveyard Keeper e Stardew Valley (ADR-013) | criterio: um jogador de Stardew Valley reconhece o estilo; sprites ~32x48px |
+| RNF-8 | Todos os assets com licença registada e créditos visíveis | `docs/assets-licencas.md`, ecrã de créditos (T-503) |
 
 ## 6. Critérios de sucesso por fase
 
