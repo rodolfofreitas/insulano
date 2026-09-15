@@ -44,7 +44,10 @@ func _setup_screensaver() -> void:
 	if has_node("/root/InputWatcher"):
 		InputWatcher.set_mode("screensaver")
 	_active = true
+	## Activar modo acelerado no Clock (Clock._ready() corre antes e nao encontrou
+	## o Screensaver ainda -- aqui e o momento certo para activar).
 	if is_inside_tree() and has_node("/root/Clock"):
+		Clock._activate_accelerated_mode()
 		Clock.hour_changed.connect(_on_hour_changed_screensaver)
 
 

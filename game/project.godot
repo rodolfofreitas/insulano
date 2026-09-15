@@ -27,6 +27,7 @@ InputWatcher="*res://app/input_watcher.gd"
 ArcHistory="*res://world/arc_history.gd"
 Events="*res://events/event_director.gd"
 Screensaver="*res://app/screensaver_mode.gd"
+SessionData="*res://world/session_data.gd"
 
 [editor_plugins]
 
