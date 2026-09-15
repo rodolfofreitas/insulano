@@ -41,6 +41,13 @@ Nota: Johnny Castaway fica como barra de COMPORTAMENTO (variedade, timing, surpr
 | Stardew Valley farm timelapse 5min | YouTube: 'Stardew Valley timelapse' -- screenshot a cada 30s | Insulano a correr 5min |
 | Johnny Castaway full run 5min | YouTube: 'Johnny Castaway screensaver full gameplay' | variedade de eventos |
 
+## Dimensao Visual -- Fogueira
+
+| Barra | Como fazer fetch | Comparavel com |
+|---|---|---|
+| Stardew Valley fogueira de acampamento | screenshot in-game ou https://stardewvalleywiki.com/Campfire | CampfireObject particulas |
+| Graveyard Keeper fogueira | screenshot in-game | estilo e atmosfera |
+
 ## Regras de preflight
 
 Antes de qualquer ronda de gauntlet:

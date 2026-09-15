@@ -1,0 +1,89 @@
+{
+  "_schema_version": 1,
+  "_comment": "Arcos base (T-114). Cada arco tem tipo, condicoes de activacao e fases; cada fase tem id, actividades possiveis e efeitos nas necessidades (delta aplicado ao entrar na fase). Ler docs/narrative-design.md secção 2 e docs/llm-director.md secção 2.",
+  "arcs": {
+    "jangada": {
+      "tipo": "CICLICO",
+      "condicoes_activacao": {},
+      "fases": [
+        {
+          "id": "encontra_madeira",
+          "activities": ["recolher_madeira", "procurar_destrocos_na_praia"],
+          "effects": {"ESPERANCA": 30}
+        },
+        {
+          "id": "construir",
+          "activities": ["construir_jangada", "amarrar_cordas", "afiar_ferramenta"],
+          "effects": {}
+        },
+        {
+          "id": "cerimonia_lancamento",
+          "activities": ["cerimonia_de_lancamento", "discurso_de_despedida"],
+          "effects": {}
+        },
+        {
+          "id": "afunda",
+          "activities": ["jangada_afunda", "nadar_de_volta_a_praia"],
+          "effects": {"ESPERANCA": -40}
+        },
+        {
+          "id": "devastacao",
+          "activities": ["lamentar_a_perda", "olhar_para_os_destrocos"],
+          "effects": {}
+        }
+      ]
+    },
+    "companheiro": {
+      "tipo": "CICLICO",
+      "condicoes_activacao": {"SOLIDAO": {"min": 70}},
+      "fases": [
+        {
+          "id": "encontra_objecto",
+          "activities": ["encontrar_objecto_na_praia", "dar_nome_ao_objecto"],
+          "effects": {}
+        },
+        {
+          "id": "constroi_amizade",
+          "activities": ["conversar_com_companheiro", "jantar_a_dois", "ensinar_companheiro_a_pescar"],
+          "effects": {}
+        },
+        {
+          "id": "companheiro_desaparece",
+          "activities": ["procurar_companheiro", "chamar_por_ele"],
+          "effects": {}
+        },
+        {
+          "id": "luto",
+          "activities": ["lamentar_perda_do_companheiro", "recordar_bons_momentos"],
+          "effects": {}
+        }
+      ]
+    },
+    "sinalizacao": {
+      "tipo": "CICLICO",
+      "condicoes_activacao": {},
+      "fases": [
+        {
+          "id": "decide_fazer_fogo",
+          "activities": ["decidir_fazer_sinal", "planear_fogo_de_sinalizacao"],
+          "effects": {}
+        },
+        {
+          "id": "reune_madeira",
+          "activities": ["reunir_madeira", "empilhar_lenha"],
+          "effects": {}
+        },
+        {
+          "id": "acende_fumo",
+          "activities": ["acender_fogo_de_sinalizacao", "observar_o_fumo"],
+          "effects": {}
+        },
+        {
+          "id": "barco_passa_sem_parar",
+          "activities": ["acenar_desesperadamente", "gritar_por_socorro"],
+          "effects": {"ESPERANCA": -20}
+        }
+      ]
+    }
+  }
+}

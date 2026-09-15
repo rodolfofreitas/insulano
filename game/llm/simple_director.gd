@@ -24,8 +24,17 @@ const ARC_AVULSO: String = "avulso"
 ## Quando null, usa o autoload via Engine.
 var needs_manager: Node = null
 
+## ArcManager que faz a maquina de estados de fases dos arcos base (T-114).
+## Pode ser injectado (ex.: partilhado com o EventDirector); quando null,
+## cria e guarda a sua propria instancia lida de arc_definitions.json.
+var arc_manager: ArcManager = null
+
 ## Dados de frases carregados do JSON.
 var _phrases: Dictionary = {}
+
+## Instancia por defeito do ArcManager, criada preguicosamente se "arc_manager"
+## nunca foi injectado.
+var _default_arc_manager: ArcManager = null
 
 ## Ultimo arco activo (para alternar jangada/diario em TEDIO alto).
 var _last_tedio_arc: String = ARC_DIARIO
@@ -61,6 +70,16 @@ func _get_needs_manager() -> Node:
 	if Engine.has_singleton("NeedsManager"):
 		return Engine.get_singleton("NeedsManager")
 	return null
+
+
+## Devolve o ArcManager activo: o injectado em "arc_manager", ou uma instancia
+## por defeito criada na primeira chamada (carregada de arc_definitions.json).
+func _get_arc_manager() -> ArcManager:
+	if arc_manager != null:
+		return arc_manager
+	if _default_arc_manager == null:
+		_default_arc_manager = ArcManager.new()
+	return _default_arc_manager
 
 
 ## Determina o arco activo com base nos valores actuais das necessidades.
@@ -115,7 +134,9 @@ func _pick_phrase(arc: String) -> String:
 
 
 ## Devolve a directiva actual para o EventDirector executar.
-## O arco e escolhido com base nos thresholds das necessidades.
+## O arco e escolhido com base nos thresholds das necessidades; se o arco
+## escolhido tiver definicao de fases (T-114, arc_definitions.json), avanca
+## a maquina de estados de fases e aplica os efeitos da fase nas necessidades.
 func get_directive() -> DirectorDirective:
 	var arc := _select_arc()
 	var directive := DirectorDirective.new()
@@ -130,8 +151,27 @@ func get_directive() -> DirectorDirective:
 		directive.tone = "neutro"
 
 	directive.phrase_context_extra = {"phrase": _pick_phrase(arc)}
+	_apply_arc_phase(arc, directive)
 	print(LOG_PREFIX + " arc=" + arc + " tone=" + directive.tone)
 	return directive
+
+
+## Se "arc" tiver fases definidas em arc_definitions.json, avanca-as (aplicando
+## os efeitos da fase nas necessidades) e escreve a actividade e o id da fase
+## na directiva. Arcos sem definicao (ex.: "avulso", "diario") ficam com a
+## actividade/tom vindos de simple_director_phrases.json, sem alteracao.
+func _apply_arc_phase(arc: String, directive: DirectorDirective) -> void:
+	var manager := _get_arc_manager()
+	if not manager.has_arc(arc):
+		return
+	var fase: Dictionary = manager.advance_phase(arc, _get_needs_manager())
+	if fase.is_empty():
+		return
+	var activities: Array = fase.get("activities", [])
+	if not activities.is_empty():
+		directive.activity = activities[randi() % activities.size()]
+	directive.phrase_context_extra["fase_id"] = fase.get("id", "")
+	directive.phrase_context_extra["fase_index"] = fase.get("index", 0)
 
 
 ## Devolve true sempre -- SimpleDirector esta sempre disponivel (sem dependencia de Ollama).

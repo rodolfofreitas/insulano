@@ -6,6 +6,16 @@ Entradas em linguagem de utilizador, não de commit. Cada tarefa acrescenta a su
 ## [Não lançado]
 
 ### Adicionado
+- `ArcManager` e `arc_definitions.json` (T-114): maquina de estados de fases para os 3
+  arcos base com eventos mapeados. "A Jangada" (5 fases CICLICO: `encontra_madeira` ->
+  `construir` -> `cerimonia_lancamento` -> `afunda` -> `devastacao`; ESPERANCA +30 na
+  1a fase, -40 na fase `afunda`). "O Companheiro" (4 fases CICLICO, condicao de
+  activacao SOLIDAO >= 70). "A Sinalizacao" (4 fases CICLICO; ESPERANCA -20 na fase
+  `barco_passa_sem_parar`). `ArcManager.advance_phase(arc_id, needs_manager)` aplica os
+  efeitos da fase actual e avanca o indice, voltando a 0 apos a ultima fase (arcos
+  ciclicos). `SimpleDirector` (T-111) passa a delegar no `ArcManager` quando o arco
+  escolhido tem definicao: usa uma actividade da fase actual em vez da actividade fixa
+  de `simple_director_phrases.json` e expoe `fase_id`/`fase_index` na directiva.
 - `AmbientAudio` (T-504): sons ambiente CC0 da ilha. `ocean_waves.ogg` toca em loop continuo sempre (volume -6dB). `wind_breeze.ogg` entra em loop quando `Weather.current()` e `clouds`, `rain` ou `storm`. `rain_storm.ogg` loop em `rain` ou `storm`. `seagulls.ogg` dispara com `Events.event_started('seagull')` e para com `Events.event_finished('seagull')` (sem loop). Setting `insulano/audio/enabled` (defeito `true`) e `insulano/audio/volume_db` (defeito 0.0) controlam o som globalmente. Todos os sons CC0 registados em `docs/assets-licencas.md`, aprovados pelo Rodolfo antes do download.
 - `CreditsScreen` (T-503): ecra de creditos com atribuicoes obrigatorias de todos os assets e bibliotecas. Gerado a partir de `game/data/credits.json` com as entradas: sprites do personagem (Antifarea e Clint Bellanger, CC-BY 3.0), tileset Tiny Islands (Majadroid, CC0), codigo base Guy on Island (Doubi, MIT), Godot Engine (Juan Linietsky e Ariel Manzur, MIT), Beehave (bitbrain, MIT), GUT (bitwes, MIT). Aparece ao arrancar com `-- --credits`, ou automaticamente durante 5s no inicio de cada hora em modo screensaver. Instanciado na cena principal como `CreditsScreen` (CanvasLayer, layer 10). Prova visual em `docs/proof/T-503-creditos.png`.
 - Export Windows reproduzivel (T-507): `scripts/export.sh` exporta agora `dist/windows/insulano.exe` (PE32+ x86_64, ~105 MiB) em sequencia apos o Linux, com saida INDETERMINADO (exit 3) quando os templates Windows faltam. Runbook actualizado com comandos de export, teste via Wine e teste via VM QEMU (dockurr/windows). Arranque em Windows nao verificado nesta sessao (Wine nao instalado, VM nao iniciada); exe validado como PE32+ valido.

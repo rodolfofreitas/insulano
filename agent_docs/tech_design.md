@@ -203,6 +203,21 @@ Contrato de comportamento:
 
 ## 6. Eventos e clima (Fase 3)
 
+- `ArcManager` (T-114), `game/llm/arc_manager.gd`, `RefCounted`: maquina de estados de
+  fases dos arcos base, lida de `game/data/arc_definitions.json`
+  (`arcs.<id> = {tipo, condicoes_activacao, fases: [{id, activities, effects}]}`).
+  `has_arc(id)`, `arc_type(id)`, `is_activation_condition_met(id, needs_manager)`
+  (regras `min`/`max` por necessidade; dicionario vazio = sempre activavel),
+  `current_phase(id) -> Dictionary` (nao avanca; inclui `index` e `total`),
+  `advance_phase(id, needs_manager) -> Dictionary` (aplica `effects` da fase actual ao
+  `needs_manager` por `get_value`/`set_value`, devolve essa fase e avanca o indice; arcos
+  `CICLICO` voltam a 0 depois da ultima fase), `reset_phase(id)`. Os 3 arcos base:
+  "A Jangada" (5 fases, ESPERANCA +30 na 1a, -40 na fase `afunda`), "O Companheiro"
+  (4 fases, `condicoes_activacao = {SOLIDAO: {min: 70}}`), "A Sinalizacao" (4 fases,
+  ESPERANCA -20 na fase `barco_passa_sem_parar`). `SimpleDirector` (T-111) usa uma
+  instancia (injectavel via `arc_manager`, lazy por defeito) para avancar a fase do arco
+  escolhido em cada `get_directive()`, sobrepondo a `activity` e escrevendo `fase_id`/
+  `fase_index` em `phrase_context_extra`.
 - `EventDirector` (T-301): `signal event_started(kind: String, data: Dictionary)`,
   `signal event_finished(kind: String)`; configuração em `game/data/events.json`
   (`kind`, `weight`, `min_interval_s`, `duration_s`); `RandomNumberGenerator` com seed de settings.

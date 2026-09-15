@@ -70,6 +70,23 @@ comportamento autónomo e fale com um LLM local.
 **Fase 4:** Páscoa correcta de 2026 a 2030; cenas de Natal e Ano Novo.
 **Fase 5:** modo protector, créditos, build Windows, publicação (com o Rodolfo).
 
+### UC-9: Naufrago cozinha e come
+
+Fluxo principal:
+1. Fome >= 85 (urgencia)
+2. Naufrago pesca e apanha peixe (has_fish = true)
+3. Naufrago recolhe lenha (animacao 3s)
+4. Naufrago acende fogueira (MakeCampfireAction)
+5. Naufrago assa o peixe (CookFishAction, ~8s)
+6. Naufrago come com satisfacao (fome -60pts)
+7. Fogueira arde mais 60s e extingue-se
+
+Variante: sem lenha disponivel (v1.x) -> naufrago come cru (-20pts, frase de resignacao)
+
+Criterio observavel: o naufrago nunca chama `need.replenish()` directamente em `fishing_action.gd`;
+a fogueira e visivel de noite; testes GUT `test_cook_fish_reduces_hunger_60pts` e
+`test_raw_fish_never_eaten_directly` passam (T-119, T-120, T-121).
+
 ## 7. Fora de âmbito (v0.x)
 
 - Interacção directa com o personagem

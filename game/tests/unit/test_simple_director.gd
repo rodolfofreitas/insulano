@@ -105,3 +105,36 @@ func test_directive_fields_populated() -> void:
 	assert_ne(directive.arc_id, "", "arc_id nao pode estar vazio")
 	assert_ne(directive.activity, "", "activity nao pode estar vazia")
 	assert_ne(directive.tone, "", "tone nao pode estar vazio")
+
+
+## Com o arco companheiro activo (T-114), chamadas sucessivas devem avancar de
+## fase em fase, expondo o id da fase em phrase_context_extra.
+func test_transita_fases_do_arco_companheiro() -> void:
+	fake_nm.set_value("SOLIDAO", 80.0)
+	fake_nm.set_value("TEDIO", 30.0)
+	fake_nm.set_value("ESPERANCA", 55.0)
+	var fases_vistas: Array = []
+	for i: int in range(4):
+		var directive: DirectorDirective = director.get_directive()
+		assert_eq(directive.arc_id, "companheiro")
+		var fase_id: String = directive.phrase_context_extra.get("fase_id", "")
+		assert_ne(fase_id, "", "fase_id deve estar preenchido para um arco com definicao")
+		fases_vistas.append(fase_id)
+	# As 4 fases do arco companheiro nao se devem repetir num ciclo completo.
+	var unicas: Dictionary = {}
+	for f: String in fases_vistas:
+		unicas[f] = true
+	assert_eq(unicas.size(), 4, "As 4 chamadas devem percorrer 4 fases distintas")
+
+
+## O ciclo da Jangada aplica ESPERANCA +30 ao entrar na 1a fase da maquina de
+## estados exposta pelo ArcManager, mesmo quando accionado via SimpleDirector.
+func test_arc_manager_partilhado_aplica_efeitos_da_jangada() -> void:
+	fake_nm.set_value("ESPERANCA", 55.0)
+	fake_nm.set_value("SOLIDAO", 40.0)
+	fake_nm.set_value("TEDIO", 65.0)
+	# Forcar seleccao de jangada em vez de diario.
+	director._last_tedio_arc = "diario"
+	var directive: DirectorDirective = director.get_directive()
+	assert_eq(directive.arc_id, "jangada", "TEDIO alto alternando deve seleccionar jangada")
+	assert_eq(fake_nm.get_value("ESPERANCA"), 85.0, "ESPERANCA deve subir 30 na 1a fase da jangada")

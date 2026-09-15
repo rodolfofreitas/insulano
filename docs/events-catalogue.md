@@ -287,6 +287,27 @@ Os eventos LENDÁRIOS têm **peso narrativo** - recomenda-se guardar em `save_da
 
 ---
 
+---
+
+## Eventos da Fogueira (Feature T-119/T-120/T-121)
+
+Condicao de acesso: `CampfireObject` implementado (T-119) e comportamento de cozedura activo (T-120).
+
+| # | Raridade | Nome Curto | Descricao | Frase do Naufrago |
+|---|---|---|---|---|
+| CF01 | COMUM | **Fogueira ao Anoitecer** | O naufrago recolhe lenha enquanto o ceu escurece, acende a fogueira sem ter peixe, senta-se a olhar para as chamas. Nao tem nada para assar -- e so pelo calor e pela companhia. | *"Nao e so para o peixe. E tambem para isso."* |
+| CF02 | RARO | **A Fogueira Atrai Algo** | A fogueira arde de noite. Ao longe, um barco desacelera. As luzes do barco ficam paradas durante 30 segundos. Depois retomam o rumo. O naufrago fica de pe a olhar. | *"Viu-me. Tinha de ter visto. Ou entao... o que e que viram?"* |
+| CF03 | MUITO_RARO | **O Vento Apaga a Fogueira** | Um golpe de vento repentino apaga a fogueira que o naufrago construiu com tanto cuidado. Ele fica immovel a olhar para o fumo que sobe. Suspira lentamente. Nao recomeça logo. | *"Claro. A natureza tem opiniao propria."* |
+| CF04 | LENDARIO | **A Fogueira que Nao Apaga** | Por razoes desconhecidas (humidade, madeira seca, boa sorte), a fogueira arde a noite toda sem se apagar. De manha o naufrago acorda, ve as brasas ainda vivas, e fica de joelhos na areia com a cabeca baixa durante um momento. | *"Sobreviveu. Nos dois sobrevivemos."* |
+
+Notas de condicao:
+- CF01: `!blackboard["has_fish"] && DayNightCycle.is_night` (o naufrago acende por calor, nao por fome)
+- CF02: `CampfireObject.is_lit && DayNightCycle.is_night` -- trigger raro num timer nocturno
+- CF03: `CampfireObject.is_lit` -- trigger por WeatherService (brisa) ou evento aleatorio
+- CF04: `CampfireObject.is_lit` durante toda a noite sem interrupcao -- verificar ao amanhecer
+
+---
+
 > *"A ilha ensina o que a cidade esqueceu: que o tempo é vasto, o oceano é paciente, e um coco por dia mantém o niilismo afastado. Quase."*
 > - O Náufrago, dia sem número
 

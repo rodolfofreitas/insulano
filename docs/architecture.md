@@ -112,6 +112,7 @@ Estado a 2026-09-13: existem a cena principal e a behavior tree herdadas; os aut
 | `fishing_spot.gd` | - | Node2D | Marcador visual de um ponto de pesca, com círculo vermelho só no editor. |
 | `guy/direction.gd` | Direction | Object | Uma das quatro direcções cardinais, usada para escolher animação (walk_up, |
 | `guy/guy.gd` | Guy | Character | O naufrago jogavel: um Character que perde fome e energia com o tempo. |
+| `llm/arc_manager.gd` | ArcManager | RefCounted | Maquina de estados de fases para os arcos narrativos definidos em |
 | `llm/director_directive.gd` | DirectorDirective | Resource | Instrucao do director para o EventDirector: que arco, actividade e tom usar. |
 | `llm/fallback_phrases.gd` | FallbackPhrases | RefCounted | Escolhe frases fixas em português de Portugal quando não há resposta do |
 | `llm/i_director.gd` | IDirector | Resource | Contrato que SimpleDirector e LLMDirector satisfazem. |
