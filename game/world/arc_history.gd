@@ -11,8 +11,10 @@ var completed_arcs: Array = []
 var active_arc: Dictionary = {}
 var schema_version: int = SCHEMA_VERSION
 
+
 func _ready() -> void:
 	load_history()
+
 
 ## Carrega o historico do disco. Em caso de erro retorna estado vazio.
 func load_history() -> void:
@@ -34,12 +36,11 @@ func load_history() -> void:
 	completed_arcs = data.get("completed_arcs", [])
 	active_arc = data.get("active_arc", {})
 
+
 ## Guarda o historico de forma atomica (tmp + rename).
 func save_history() -> void:
 	var data := {
-		"schema_version": SCHEMA_VERSION,
-		"completed_arcs": completed_arcs,
-		"active_arc": active_arc
+		"schema_version": SCHEMA_VERSION, "completed_arcs": completed_arcs, "active_arc": active_arc
 	}
 	var f := FileAccess.open(TMP_PATH, FileAccess.WRITE)
 	if not f:
@@ -48,9 +49,9 @@ func save_history() -> void:
 	f.store_string(JSON.stringify(data))
 	f.close()
 	DirAccess.rename_absolute(
-		ProjectSettings.globalize_path(TMP_PATH),
-		ProjectSettings.globalize_path(SAVE_PATH)
+		ProjectSettings.globalize_path(TMP_PATH), ProjectSettings.globalize_path(SAVE_PATH)
 	)
+
 
 ## Adiciona arco completo. Descarta os mais antigos se > MAX_ARCS.
 func add_completed(arc: Dictionary) -> void:
@@ -58,6 +59,7 @@ func add_completed(arc: Dictionary) -> void:
 	if completed_arcs.size() > MAX_ARCS:
 		completed_arcs = completed_arcs.slice(completed_arcs.size() - MAX_ARCS)
 	save_history()
+
 
 ## Ultimos n titulos para contexto do LLM.
 func get_recent_titles(n: int) -> Array[String]:

@@ -123,7 +123,10 @@ if [ "$QUICK" -eq 0 ]; then
     # porta morta (T-106): força o SayGeneratedAction a cair sempre no
     # fallback, sem depender de nenhum Ollama real a responder (nem sequer
     # a existir) para esta prova ser determinística.
+    # INSULANO_FAKE_TIME=10:00 (T-203): garante hora diurna para que o personagem
+    # nao durma durante o smoke de arranque (IsNightCondition devolve FAILURE).
     INSULANO_LLM_URL="http://127.0.0.1:9" \
+    INSULANO_FAKE_TIME="2026-01-15T10:00" \
       timeout 300 "$GODOT" --headless --fixed-fps 60 --path game -s res://tools/boot_smoke.gd > reports/boot.log 2>&1
     boot_exit=$?
     if [ "$boot_exit" -eq 0 ] && ! log_has_script_errors reports/boot.log; then

@@ -22,13 +22,9 @@ func after_each() -> void:
 
 func _cleanup_files() -> void:
 	if FileAccess.file_exists("user://arc_history.json"):
-		DirAccess.remove_absolute(
-			ProjectSettings.globalize_path("user://arc_history.json")
-		)
+		DirAccess.remove_absolute(ProjectSettings.globalize_path("user://arc_history.json"))
 	if FileAccess.file_exists("user://arc_history.tmp.json"):
-		DirAccess.remove_absolute(
-			ProjectSettings.globalize_path("user://arc_history.tmp.json")
-		)
+		DirAccess.remove_absolute(ProjectSettings.globalize_path("user://arc_history.tmp.json"))
 
 
 ## Escrever JSON corrompido em user://arc_history.json, chamar load_history(),
@@ -39,7 +35,8 @@ func test_atomic_write_survives_corruption() -> void:
 	f.close()
 	arc_history.load_history()
 	assert_eq(
-		arc_history.completed_arcs.size(), 0,
+		arc_history.completed_arcs.size(),
+		0,
 		"Estado corrompido deve ser ignorado e completados ficam vazios"
 	)
 
@@ -49,8 +46,7 @@ func test_max_50_arcs_enforced() -> void:
 	for i in range(55):
 		arc_history.add_completed({"titulo": "Arco %d" % i, "id": i})
 	assert_eq(
-		arc_history.completed_arcs.size(), 50,
-		"Deve manter exactamente 50 arcos apos adicionar 55"
+		arc_history.completed_arcs.size(), 50, "Deve manter exactamente 50 arcos apos adicionar 55"
 	)
 
 
@@ -66,12 +62,12 @@ func test_schema_mismatch_resets() -> void:
 	f.close()
 	arc_history.load_history()
 	assert_eq(
-		arc_history.completed_arcs.size(), 0,
+		arc_history.completed_arcs.size(),
+		0,
 		"Schema mismatch deve resetar completed_arcs para vazio"
 	)
 	assert_eq(
-		arc_history.active_arc.size(), 0,
-		"Schema mismatch deve resetar active_arc para vazio"
+		arc_history.active_arc.size(), 0, "Schema mismatch deve resetar active_arc para vazio"
 	)
 
 

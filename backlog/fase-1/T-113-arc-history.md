@@ -38,7 +38,7 @@ atomica (write-to-temp + rename), limite de 50 arcos, schema_version e reset gra
 - Teste GUT `test_atomic_write_survives_corruption`: escrever ficheiro corrupto manualmente, confirmar que carrega estado vazio
 - Teste GUT `test_max_50_arcs_enforced`
 
-## Relatorio
+## Relatório
 
 Commit: `9586ac1` -- `feat(T-113): ArcHistory com escrita atomica e schema_version`
 

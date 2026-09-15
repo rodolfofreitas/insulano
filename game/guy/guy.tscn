@@ -19,10 +19,19 @@
 [ext_resource type="Script" uid="uid://c78ixkheqb01m" path="res://beehave/fishing_action.gd" id="16_gumv8"]
 [ext_resource type="Script" path="res://beehave/say_generated_action.gd" id="16_xaydb"]
 [ext_resource type="Script" path="res://ui/speech_bubble.gd" id="17_spchb"]
+[ext_resource type="Script" path="res://beehave/is_night_condition.gd" id="18_nght"]
+[ext_resource type="Script" path="res://beehave/sleep_action.gd" id="19_slpa"]
 
 [sub_resource type="Resource" id="Resource_6ukov"]
 script = ExtResource("2_kijpv")
 name = "hunger"
+max_value = 100
+current_value = 100.0
+metadata/_custom_type_script = "uid://bl18dw6qsoh5k"
+
+[sub_resource type="Resource" id="Resource_energy"]
+script = ExtResource("2_kijpv")
+name = "energy"
 max_value = 100
 current_value = 100.0
 metadata/_custom_type_script = "uid://bl18dw6qsoh5k"
@@ -287,7 +296,7 @@ radius = 700.0
 
 [node name="Guy" type="CharacterBody2D" node_paths=PackedStringArray("navigation_agent", "animated_sprite", "speech_bubble")]
 script = ExtResource("1_87sjq")
-needs = Array[ExtResource("2_kijpv")]([SubResource("Resource_6ukov")])
+needs = Array[ExtResource("2_kijpv")]([SubResource("Resource_6ukov"), SubResource("Resource_energy")])
 navigation_agent = NodePath("NavigationAgent2D")
 animated_sprite = NodePath("AnimatedSprite2D")
 speech_bubble = NodePath("SpeechBubble")
@@ -347,6 +356,16 @@ actor = NodePath("..")
 [node name="SelectorComposite" type="Node" parent="BeehaveTree"]
 script = ExtResource("6_0epj7")
 metadata/_custom_type_script = "uid://0ttvdp350u7a"
+
+[node name="SleepSequence" type="Node" parent="BeehaveTree/SelectorComposite"]
+script = ExtResource("3_jtfwu")
+metadata/_custom_type_script = "uid://bqxgkfgggm606"
+
+[node name="IsNightCondition" type="Node" parent="BeehaveTree/SelectorComposite/SleepSequence"]
+script = ExtResource("18_nght")
+
+[node name="SleepAction" type="Node" parent="BeehaveTree/SelectorComposite/SleepSequence"]
+script = ExtResource("19_slpa")
 
 [node name="NeedFulfillingComposite" type="Node" parent="BeehaveTree/SelectorComposite"]
 script = ExtResource("3_jtfwu")
