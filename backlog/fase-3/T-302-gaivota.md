@@ -2,7 +2,7 @@
 id: T-302
 titulo: Gaivota atravessa o ecrã e o náufrago comenta
 fase: 3
-estado: pronto
+estado: feito
 tipo: visual
 depende_de: [T-301, T-106]
 ---
@@ -32,4 +32,14 @@ Quando o EventDirector lança o evento `seagull`, uma gaivota atravessa o céu e
 - PNG em docs/proof/, testes GUT nomeados, entrada no registo de assets se houver PNG.
 
 ## Relatório
-(preenchido pelo executor)
+- `game/events/seagull.gd` criado: Node2D que escuta Events.event_started("seagull"), atravessa o ecra
+  em duration_s segundos (por defeito 12s), visual desenhado em _draw() com asas animadas via _process,
+  emite Events.event_finished("seagull") ao sair. Pede frase ao LLMBridge com contexto
+  action="ver uma gaivota a passar", categoria fallback "seagull".
+- `phrases_fallback.json` categoria "seagull" ja existia com 5 frases PT-PT (suficiente).
+- `game/tests/integration/test_seagull.gd`: 6 testes GUT, todos a passar (139 total).
+- Instanciado em EventsLayer (CanvasLayer, layer=5) na test_scene.tscn.
+- `docs/proof/T-302-gaivota.png` capturado com gaivota visivel a meio do ecra.
+- Autoload Events registado em project.godot.
+- Asset registado em docs/assets-licencas.md como CC0.
+- CHANGELOG actualizado em [Nao lancado].

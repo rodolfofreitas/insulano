@@ -60,10 +60,7 @@ func test_boat_ignores_other_events() -> void:
 func test_fallback_phrase() -> void:
 	var fallback := FallbackPhrases.from_file(FALLBACK_PATH)
 	## Categorias disponíveis devem incluir "boat".
-	assert_true(
-		fallback.categories().has("boat"),
-		"FallbackPhrases deve ter a categoria 'boat'"
-	)
+	assert_true(fallback.categories().has("boat"), "FallbackPhrases deve ter a categoria 'boat'")
 
 	## 10 picks da categoria "boat" devem devolver frases nao vazias.
 	for _i: int in range(10):

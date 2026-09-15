@@ -8,9 +8,10 @@ Inventário feito a 2026-09-13 com
 
 ## Arte
 
-| Ficheiro (em `game/`) | Autor | Licença | Fonte | Obrigação | Estado |
+| Ficheiro (em `game/`) | Autor | Licenca | Fonte | Obrigacao | Estado |
 |---|---|---|---|---|---|
-| `world/Tiny-Islands-by-Majadroid/tilemap.png`, `tilemap-separated.png` | Maik Hoffmann (Majadroid) | CC0 | [OpenGameArt](https://opengameart.org/content/tiny-islands-16x16-tilemap), confirmado em `INFO.txt` | nenhuma (atribuição apreciada) | confirmado |
+| `events/seagull.gd` (visual desenhado em codigo) | Hermes/agente | CC0 | desenhada em codigo GDScript, sem assets externos (seagull_drawn: 2026-09-15) | nenhuma | confirmado |
+| `world/Tiny-Islands-by-Majadroid/tilemap.png`, `tilemap-separated.png` | Maik Hoffmann (Majadroid) | CC0 | [OpenGameArt](https://opengameart.org/content/tiny-islands-16x16-tilemap), confirmado em `INFO.txt` | nenhuma (atribuicao apreciada) | confirmado |
 | `world/Tiny-Islands-by-Majadroid/buttons.png`, `sample-scene.png` | Majadroid | CC0 | idem | nenhuma; não usados em jogo, candidatos a remover do export | confirmado |
 | `world/Tiny-Islands-by-Majadroid/Majadroid Brand Resources/*.png` | Majadroid | logótipos da marca do autor, fora do pacote CC0 | idem | não distribuir como parte do jogo | por confirmar: excluir do export |
 | `character/human_base.png` | Antifarea e Clint Bellanger, adaptado por Doubi | CC-BY 3.0 | [OpenGameArt](https://opengameart.org/content/16x18-character-base-template-collage) | crédito visível no jogo e na página de publicação | confirmado pela base, crédito pendente (T-503) |

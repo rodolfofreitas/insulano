@@ -125,6 +125,8 @@ Estado a 2026-09-13: existem a cena principal e a behavior tree herdadas; os aut
 | `object/usable_object_container.gd` | UsableObjectContainer | UsableObject | Agrupa vários objectos utilizáveis num só nó (ex.: uma prateleira com comida). |
 | `tools/boot_smoke.gd` | - | SceneTree | Smoke de arranque: carrega a cena principal, simula tempo de jogo e verifica |
 | `tools/capture.gd` | - | SceneTree | Captura de prova visual: carrega uma cena com renderização real dentro de um |
+| `tools/capture_boat.gd` | - | SceneTree | Ferramenta de prova visual T-303: carrega a cena, dispara o evento "boat" |
+| `tools/capture_seagull.gd` | - | SceneTree | Captura de prova visual da gaivota (T-302). |
 | `tools/fps_rain.gd` | - | SceneTree | Mede FPS durante 10s com chuva activa (T-305). |
 | `ui/speech_bubble.gd` | SpeechBubble | PanelContainer | Balão de fala do personagem: fundo opaco e legível sobre qualquer fundo da |
 | `world/arc_history.gd` | - | Node | Persistencia de arcos entre sessoes. Escrita atomica: tmp + rename. |
