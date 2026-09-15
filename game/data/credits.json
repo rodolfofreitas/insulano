@@ -1,0 +1,10 @@
+{
+  "credits": [
+    {"category": "Personagem", "name": "Antifarea e Clint Bellanger", "asset": "Sprites do personagem", "license": "CC-BY 3.0", "url": "https://opengameart.org/content/lpc-character-bases"},
+    {"category": "Ilha", "name": "Majadroid", "asset": "Tileset Tiny Islands", "license": "CC0", "url": "https://majadroid.itch.io/tiny-islands"},
+    {"category": "Codigo base", "name": "Doubi", "asset": "Guy on Island", "license": "MIT", "url": "https://github.com/doubi/guy-on-island"},
+    {"category": "Motor", "name": "Juan Linietsky e Ariel Manzur", "asset": "Godot Engine", "license": "MIT", "url": "https://godotengine.org"},
+    {"category": "Ferramentas", "name": "bitbrain", "asset": "Beehave", "license": "MIT", "url": "https://github.com/bitbrain/beehave"},
+    {"category": "Ferramentas", "name": "bitwes", "asset": "GUT", "license": "MIT", "url": "https://github.com/bitwes/Gut"}
+  ]
+}

@@ -44,11 +44,36 @@ func _setup_screensaver() -> void:
 	if has_node("/root/InputWatcher"):
 		InputWatcher.set_mode("screensaver")
 	_active = true
+	if is_inside_tree() and has_node("/root/Clock"):
+		Clock.hour_changed.connect(_on_hour_changed_screensaver)
 
 
 func _open_credits() -> void:
-	# Sera implementado quando a cena de creditos existir (T-503)
-	pass
+	## Mostra o ecra de creditos ao arrancar com --credits.
+	var credits_node: Node = _find_credits_screen()
+	if credits_node != null and credits_node.has_method("show_credits"):
+		credits_node.show_credits(false)
+
+
+## Chamado quando Clock emite hour_changed em modo screensaver.
+## Mostra os creditos durante 5s no inicio de cada hora.
+func _on_hour_changed_screensaver(_hour: int) -> void:
+	var credits_node: Node = _find_credits_screen()
+	if credits_node != null and credits_node.has_method("show_credits"):
+		credits_node.show_credits(true)
+
+
+## Procura CreditsScreen na arvore de cenas activa.
+func _find_credits_screen() -> Node:
+	if not is_inside_tree():
+		return null
+	var root_node: Node = get_tree().current_scene
+	if root_node == null:
+		return null
+	for child in root_node.get_children():
+		if child is CreditsScreen:
+			return child
+	return null
 
 
 func _process(delta: float) -> void:
