@@ -16,7 +16,33 @@ um comando sem data é proposto e ainda não foi provado.
 | Eval do LLM | `python3 scripts/llm_eval.py --proof` | 2026-09-13 |
 | Próxima tarefa | `python3 scripts/backlog.py next` | 2026-09-13 |
 | Binário exportado | `dist/linux/insulano.x86_64` | 2026-09-14 (T-004) |
-| Modo protector | `dist/linux/insulano.x86_64 --screensaver` | - (T-501) |
+| Modo protector | `dist/linux/insulano.x86_64 -- --screensaver` | - (T-501) |
+
+## Modos de execucao (T-501)
+
+O Insulano suporta dois modos de execucao, escolhidos por argumento de linha de comandos passado apos `--`:
+
+| Modo | Argumento | Comportamento |
+|---|---|---|
+| Janela (por omissao) | `--windowed` / `-w` ou nenhum | Janela normal; input nao termina o jogo |
+| Protector de ecra | `--screensaver` / `-s` | Ecra inteiro, cursor escondido; input termina o jogo apos graca de 1s |
+| Creditos | `--credits` | Reservado (T-503) |
+
+Exemplos:
+
+```bash
+# Modo janela (qualquer dos seguintes e equivalente)
+$(mise which godot) --path game
+$(mise which godot) --path game -- --windowed
+dist/linux/insulano.x86_64 -- --windowed
+
+# Modo protector de ecra
+dist/linux/insulano.x86_64 -- --screensaver
+dist/linux/insulano.x86_64 -- -s
+```
+
+O autoload `Screensaver` le os argumentos em `_ready()` e configura o `InputWatcher` adequadamente.
+Em modo protector, o `InputWatcher` fecha o processo apos 150ms de graca para a animacao de reaccao.
 
 ## Variáveis de ambiente
 
@@ -85,6 +111,80 @@ Aplicação local, sem telemetria. Onde olhar:
 
 ### `docs FALHOU` com `[componentes] desactualizado`
 - Correcção: `python3 scripts/check_docs.py --fix` e commit do `docs/architecture.md`.
+
+## Export Windows (T-507)
+
+### Comando de export
+
+```bash
+# Export Windows via scripts/export.sh (exporta Linux + Windows em sequencia)
+bash scripts/export.sh
+# Saida esperada:
+#   PASSOU: dist/linux/insulano.x86_64 exportado e arrancou 600 frames sem erros de script
+#   >> export Windows
+#   PASSOU: dist/windows/insulano.exe
+# Ficheiros gerados: dist/windows/insulano.exe (PE32+ x86_64) + insulano.pck
+```
+
+Export directo (so Windows):
+
+```bash
+GODOT="$(mise which godot)"
+mkdir -p dist/windows reports
+"$GODOT" --headless --path game --export-release 'Windows Desktop' dist/windows/insulano.exe \
+  2>&1 | tee reports/export-windows.log
+ls -lh dist/windows/
+```
+
+Resultado (2026-09-15, T-507): `insulano.exe` PE32+ x86_64, 105 MiB; `insulano.pck` 2.0 MiB.
+Templates Windows confirmados em `~/.local/share/godot/export_templates/4.7.2.stable/`
+(`windows_release_x86_64.exe` presente).
+
+### Como testar com Wine
+
+Wine nao esta instalado nesta maquina (Arch Linux). Para instalar:
+
+```bash
+sudo pacman -S wine wine-mono wine-gecko
+```
+
+Depois correr:
+
+```bash
+WINEDEBUG=-all wine dist/windows/insulano.exe -- --headless --quit-after 60 \
+  2>&1 | tee reports/windows-boot.log | head -20
+```
+
+Se o jogo arrancar sem `SCRIPT ERROR` no log, o boot esta bom.
+Para testar modo protector: `wine dist/windows/insulano.exe -- --screensaver`
+(deve abrir em ecra inteiro e fechar ao mover o rato).
+
+### Como testar com a VM QEMU (dockurr/windows)
+
+A maquina tem uma VM Windows golden gerida por `~/VMs/docker/scripts/fleet.sh`.
+**Regra: golden e clones nao correm ao mesmo tempo.**
+
+```bash
+# Ver estado da VM
+~/VMs/docker/scripts/fleet.sh status
+
+# Copiar o exe para a VM (depois de iniciar)
+~/VMs/docker/scripts/fleet.sh start golden
+# aguardar arranque (~60s)
+scp dist/windows/insulano.exe user@<vm-ip>:Desktop/
+
+# Correr na VM (via RDP ou SSH com display)
+# Na VM: abrir PowerShell e correr:
+#   .\insulano.exe --headless --quit-after 60
+# Verificar ausencia de erros na janela de terminal
+
+# Parar a VM apos testes
+~/VMs/docker/scripts/fleet.sh stop golden
+```
+
+Estado actual (2026-09-15): Wine nao instalado; VM nao iniciada durante este export.
+Arranque em Windows: **INDETERMINADO** por falta de ambiente de execucao Windows nesta sessao.
+O exe foi verificado como PE32+ valido (`file dist/windows/insulano.exe`).
 
 ## Rollback
 
