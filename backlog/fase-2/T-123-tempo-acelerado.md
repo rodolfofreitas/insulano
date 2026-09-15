@@ -2,7 +2,7 @@
 id: T-123
 titulo: Tempo acelerado -- ciclo de 30 minutos ancorado na hora real
 fase: 2
-estado: pronto
+estado: feito
 tipo: codigo
 depende_de: [T-201]
 ---
@@ -63,6 +63,23 @@ game_hour_float = (_game_time_s / GAME_DAY_DURATION_S) * 24.0
 - Output do teste GUT com os dois testes a passar
 - Screenshot docs/proof/T-123-ciclo-noite.png: abrir com INSULANO_FAKE_TIME=2026-09-15T22:00, 5min depois deve estar de madrugada
 
-## Relatorio
+## Relatório
 
-(preenchido pelo executor)
+Implementado em `game/world/game_clock.gd`:
+
+- Constante `GAME_DAY_DURATION_S = 1800.0` (30 minutos reais = 24h de jogo).
+- Metodo `_activate_accelerated_mode()`: ancora o ciclo na hora real/fake e activa `_accelerated = true`.
+- `_process()`: se `_accelerated`, incrementa `_game_elapsed` e calcula `_game_time_s` com modulo.
+- `hour_float()`: em modo acelerado usa `_game_time_s`; em modo janela usa `now()` (hora real).
+- `INSULANO_FAKE_TIME` continua a funcionar (afecta `now()` e o calculo da ancora).
+
+Ordem dos autoloads: `Clock._ready()` verifica `has_node('/root/Screensaver')`; como o Screensaver
+carrega a seguir, `Screensaver._setup_screensaver()` chama `Clock._activate_accelerated_mode()`.
+
+Testes: `game/tests/unit/test_game_clock_accelerated.gd` com 3 casos:
+- `test_screensaver_cycle_30min`: ancora a 14h, simular 1800s, voltar a ~14h.
+- `test_anchor_14h`: INSULANO_FAKE_TIME=14h, game_hour inicial ~14.0.
+- `test_window_mode_real_time`: modo janela, hour_float() reflecte hora real sem aceleracao.
+
+Prova visual: `docs/proof/T-123-ciclo-noite.png` -- arranque as 22:00, apos 300s simulados
+hora_jogo=2.00 periodo=madrugada. `verify.sh`: PASSOU (245 testes GUT, lint limpo, boot smoke ok).
