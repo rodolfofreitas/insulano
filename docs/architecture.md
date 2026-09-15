@@ -92,12 +92,14 @@ Estado a 2026-09-13: existem a cena principal e a behavior tree herdadas; os aut
 | `app/screensaver_mode.gd` | - | Node | Configura o modo de execucao: protector de ecra ou janela. |
 | `audio/ambient_audio.gd` | - | Node | Gere os sons ambiente da ilha. |
 | `beehave/action_using_delta.gd` | ActionUsingDelta | ActionLeaf | Base para acções do Beehave que precisam do delta do frame corrente. |
+| `beehave/cook_fish_action.gd` | CookFishAction | ActionLeaf | Assa o peixe na fogueira e come com satisfacao. |
 | `beehave/find_group_spot_condition.gd` | FindGroupSpotCondition | ConditionLeaf | Escolhe ao acaso um nó do grupo `group_name` e grava a posição no blackboard. |
 | `beehave/find_random_spot_condition.gd` | FindRandomSpotCondition | ConditionLeaf | Escolhe um ponto aleatório navegável do `NavigationServer2D` e grava-o no blackboard. |
 | `beehave/find_usable_for_need_condition.gd` | FundUsableForNeedCondition | ConditionLeaf | Encontra, entre os objectos utilizáveis dentro de `search_area`, o que melhor |
 | `beehave/fishing_action.gd` | FishingAction | ActionUsingDelta | Acção de pescar: mostra a cana, espera um tempo aleatório e faz nascer um peixe. |
 | `beehave/go_to_usable_action.gd` | GoToUsableAction | ActionLeaf | Move o actor até à posição em `blackboard_key`, usando o `NavigationAgent2D` do Character. |
 | `beehave/is_night_condition.gd` | IsNightCondition | ConditionLeaf | SUCCESS quando Clock.period() e 'noite' ou 'madrugada'. |
+| `beehave/make_campfire_action.gd` | MakeCampfireAction | ActionLeaf | Recolhe lenha e acende a fogueira. |
 | `beehave/need_low_condition.gd` | NeedLowCondition | ConditionLeaf | Sorteia, para cada necessidade do actor, se está baixa o suficiente para tratar agora. |
 | `beehave/say_generated_action.gd` | SayGeneratedAction | ActionLeaf | Pede uma frase ao LLMBridge (ou fallback) e di-la em `character.talking_text` (tech_design §4.6). |
 | `beehave/set_delta_on_blackboard.gd` | SetDeltaOnBlackboardAction | ActionLeaf | Escreve o delta do frame corrente no blackboard, para outras folhas o lerem. |
@@ -135,10 +137,12 @@ Estado a 2026-09-13: existem a cena principal e a behavior tree herdadas; os aut
 | `tools/capture_boat.gd` | - | SceneTree | Ferramenta de prova visual T-303: carrega a cena, dispara o evento "boat" |
 | `tools/capture_campfire.gd` | - | SceneTree | Captura de prova especifica para CampfireObject (T-119). |
 | `tools/capture_credits.gd` | - | SceneTree | Captura de prova visual do ecra de creditos (T-503). |
+| `tools/capture_night_cycle.gd` | - | SceneTree | Captura de prova T-123: modo screensaver com INSULANO_FAKE_TIME=2026-09-15T22:00, |
 | `tools/capture_seagull.gd` | - | SceneTree | Captura de prova visual da gaivota (T-302). |
 | `tools/fps_rain.gd` | - | SceneTree | Mede FPS durante 10s com chuva activa (T-305). |
 | `ui/speech_bubble.gd` | SpeechBubble | PanelContainer | Balão de fala do personagem: fundo opaco e legível sobre qualquer fundo da |
 | `world/arc_history.gd` | - | Node | Persistencia de arcos entre sessoes. Escrita atomica: tmp + rename. |
+| `world/cloud_layer.gd` | CloudLayer | Node2D | Camada de nuvens que se move da direita para a esquerda. |
 | `world/day_night.gd` | DayNight | CanvasModulate | Aplica a cor da hora actual a toda a cena via CanvasModulate. |
 | `world/game_clock.gd` | GameClock | Node | Relogio do jogo: fonte unica da hora, com suporte a hora simulada para testes. |
 | `world/holiday_calendar.gd` | HolidayCalendar | RefCounted | Calendario de feriados: datas fixas e moveis calculadas pela Pascoa. |

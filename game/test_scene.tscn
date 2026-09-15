@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=4 uid="uid://v8dup1iis1nx"]
+[gd_scene load_steps=13 format=4 uid="uid://v8dup1iis1nx"]
 
 [ext_resource type="Script" uid="uid://txnygka40jug" path="res://app/credits_screen.gd" id="11_cred"]
 
@@ -12,6 +12,7 @@
 [ext_resource type="Script" path="res://events/boat.gd" id="9_boat"]
 [ext_resource type="Script" path="res://world/holiday_scenes.gd" id="10_hscn"]
 [ext_resource type="Script" path="res://object/campfire_object.gd" id="12_cmpf"]
+[ext_resource type="Script" path="res://world/cloud_layer.gd" id="13_cldly"]
 
 [node name="TestWorld" type="Node2D"]
 
@@ -19,7 +20,12 @@
 layer = 1
 
 [node name="NightSky" type="Node2D" parent="SkyLayer"]
+z_index = 0
 script = ExtResource("6_nsky")
+
+[node name="CloudLayer" type="Node2D" parent="SkyLayer"]
+z_index = 1
+script = ExtResource("13_cldly")
 
 [node name="DayNight" type="CanvasModulate" parent="."]
 script = ExtResource("5_daynt")

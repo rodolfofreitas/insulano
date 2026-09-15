@@ -2,7 +2,7 @@
 id: T-134
 titulo: Parallax background -- 5 camadas de profundidade
 fase: 2
-estado: pronto
+estado: feito
 tipo: visual
 depende_de: [T-202, T-204]
 ---
@@ -68,4 +68,14 @@ com emissao horizontal.
 
 ## Relatório
 
-(preenchido pelo executor)
+Implementado em 2026-09-15 por agente T-134.
+
+- `game/world/cloud_layer.gd`: CloudLayer (Node2D) com 4 nuvens procedurais (3 circulos sobrepostos
+  por nuvem), movimento 15 px/s, wrap-around, alpha 0.7 dia / 0.2 noite via Clock.hour_changed.
+- `game/test_scene.tscn`: NightSky (Z=0) + CloudLayer (Z=1) adicionados ao SkyLayer (CanvasLayer 1).
+- `game/tests/integration/test_cloud_layer.gd`: 3 testes -- movimento, wrap, alpha dia/noite.
+- `docs/proof/T-134-parallax-dia.png` + `T-134-parallax-noite.png`: capturas com INSULANO_FAKE_TIME.
+- GUT: 245 testes, todos a passar (inclui os 3 novos de CloudLayer).
+- Lint e gdformat: limpos nos novos ficheiros.
+- Nota: verify.sh reporta falhas pre-existentes de outra tarefa em curso (llm_director.gd T-117,
+  nao relacionadas com T-134). Os ficheiros de T-134 estao limpos.

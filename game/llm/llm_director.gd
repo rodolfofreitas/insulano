@@ -251,44 +251,41 @@ func _generate_arc_prompt() -> String:
 
 
 ## Valida o dicionario de um arco gerado pelo LLM (T-117):
-## - tem \"titulo\" (string nao vazia)
-## - tem \"fases\" (array com >= 2 entradas)
+## - tem "titulo" (string nao vazia)
+## - tem "fases" (array com >= 2 entradas)
 ## - titulo nao repete nenhum arco em ArcHistory (case-insensitive normalizado)
-## - cada fase tem \"nome\" e \"actividade\"
+## - cada fase tem "nome" e "actividade"
 ## Devolve false em qualquer desvio.
 func _validate_arc(data: Dictionary) -> bool:
-	if not data.has("titulo"):
+	var titulo_var: Variant = data.get("titulo", null)
+	if typeof(titulo_var) != TYPE_STRING or String(titulo_var).strip_edges().is_empty():
 		return false
-	if typeof(data["titulo"]) != TYPE_STRING:
+	var fases_var: Variant = data.get("fases", null)
+	if typeof(fases_var) != TYPE_ARRAY or (fases_var as Array).size() < 2:
 		return false
-	var titulo: String = String(data["titulo"]).strip_edges()
-	if titulo.is_empty():
-		return false
-	if not data.has("fases"):
-		return false
-	if typeof(data["fases"]) != TYPE_ARRAY:
-		return false
-	var fases: Array = data["fases"]
-	if fases.size() < 2:
-		return false
-	for fase in fases:
-		if typeof(fase) != TYPE_DICTIONARY:
+	for fase: Variant in fases_var as Array:
+		if (
+			typeof(fase) != TYPE_DICTIONARY
+			or not (fase as Dictionary).has("nome")
+			or not (fase as Dictionary).has("actividade")
+		):
 			return false
-		if not fase.has("nome") or not fase.has("actividade"):
-			return false
-	var titulo_norm: String = titulo.to_lower()
+	var titulo_norm: String = String(titulo_var).strip_edges().to_lower()
 	var history := _get_arc_history()
 	if history != null and "completed_arcs" in history:
-		for arc in history.completed_arcs:
-			var arc_titulo: String = String(arc.get("titulo", "")).strip_edges().to_lower()
-			if arc_titulo == titulo_norm:
+		for arc: Variant in history.completed_arcs:
+			if (
+				String((arc as Dictionary).get("titulo", "")).strip_edges().to_lower()
+				== titulo_norm
+			):
 				return false
-	if "active_arc" in history and not history.active_arc.is_empty():
-		var active_titulo: String = (
-			String(history.active_arc.get("titulo", "")).strip_edges().to_lower()
-		)
-		if active_titulo == titulo_norm:
-			return false
+	if (
+		history != null
+		and "active_arc" in history
+		and not history.active_arc.is_empty()
+		and String(history.active_arc.get("titulo", "")).strip_edges().to_lower() == titulo_norm
+	):
+		return false
 	return true
 
 
