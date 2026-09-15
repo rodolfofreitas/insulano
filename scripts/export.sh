@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Export Linux headless do Insulano e arranque do binário exportado.
+# Export Linux e Windows headless do Insulano e arranque do binário Linux exportado.
 # Saída: 0 PASSOU, 1 FALHOU, 3 INDETERMINADO (export templates em falta).
 # Instalação dos templates: docs/runbook.md, secção "Export templates".
 set -uo pipefail
@@ -34,3 +34,26 @@ if grep -E -q 'SCRIPT ERROR|Parse Error|Failed to load script' reports/export-ru
   exit 1
 fi
 echo "PASSOU: dist/linux/insulano.x86_64 exportado e arrancou 600 frames sem erros de script"
+
+# --- Export Windows ---
+mkdir -p dist/windows
+
+# Verificar template Windows
+if [ ! -f "$TEMPLATES/windows_release_x86_64.exe" ]; then
+  echo "INDETERMINADO: faltam export templates Windows em $TEMPLATES"
+  exit 3
+fi
+
+echo ">> export Windows"
+"$GODOT" --headless --path game --export-release 'Windows Desktop' "$ROOT/dist/windows/insulano.exe" > reports/export-windows.log 2>&1
+if [ $? -ne 0 ]; then
+  echo "FALHOU: export Windows (ver reports/export-windows.log)"
+  exit 1
+fi
+
+# Verificar que o ficheiro existe
+if [ ! -f dist/windows/insulano.exe ]; then
+  echo "FALHOU: insulano.exe nao encontrado"
+  exit 1
+fi
+echo "PASSOU: dist/windows/insulano.exe"
