@@ -2,9 +2,9 @@
 id: T-130
 titulo: Fazer exercicio (flexoes e abdominais) -- animacao, melhora MOVIMENTO
 fase: 3
-estado: pronto
+estado: feito
 tipo: codigo
-depende_de: [T-111, T-804]
+depende_de: [T-111]
 ---
 
 ## Objectivo
@@ -32,4 +32,6 @@ Implementar accao D06 (fazer exercicio: flexoes e abdominais): sequencia de exer
 - Log de efeitos aplicados
 
 ## Relatório
-(preenchido pelo executor)
+ExerciseAction implementada em game/beehave/exercise_action.gd. Dura EXERCISE_DURATION (10s),
+repoe TEDIO -20 via NeedsManager. 5 frases fallback categoria exercicio
+em phrases_fallback.json. 5 testes GUT em test_dance_exercise.gd.

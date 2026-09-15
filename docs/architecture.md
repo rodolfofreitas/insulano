@@ -93,6 +93,9 @@ Estado a 2026-09-13: existem a cena principal e a behavior tree herdadas; os aut
 | `audio/ambient_audio.gd` | - | Node | Gere os sons ambiente da ilha. |
 | `beehave/action_using_delta.gd` | ActionUsingDelta | ActionLeaf | Base para acções do Beehave que precisam do delta do frame corrente. |
 | `beehave/cook_fish_action.gd` | CookFishAction | ActionLeaf | Assa o peixe na fogueira e come com satisfacao. |
+| `beehave/dance_action.gd` | DanceAction | ActionLeaf | Naufrago danca de alegria. Trigger: ESPERANCA >= 80. |
+| `beehave/drink_coconut_action.gd` | DrinkCoconutAction | ActionLeaf | Naufrago parte um coco e bebe a agua. SEDE -30pts, FOME -10pts. |
+| `beehave/exercise_action.gd` | ExerciseAction | ActionLeaf | Naufrago faz flexoes ou abdominais. TEDIO -20, ENERGIA +10. |
 | `beehave/find_group_spot_condition.gd` | FindGroupSpotCondition | ConditionLeaf | Escolhe ao acaso um nó do grupo `group_name` e grava a posição no blackboard. |
 | `beehave/find_random_spot_condition.gd` | FindRandomSpotCondition | ConditionLeaf | Escolhe um ponto aleatório navegável do `NavigationServer2D` e grava-o no blackboard. |
 | `beehave/find_usable_for_need_condition.gd` | FundUsableForNeedCondition | ConditionLeaf | Encontra, entre os objectos utilizáveis dentro de `search_area`, o que melhor |
@@ -100,13 +103,16 @@ Estado a 2026-09-13: existem a cena principal e a behavior tree herdadas; os aut
 | `beehave/go_to_usable_action.gd` | GoToUsableAction | ActionLeaf | Move o actor até à posição em `blackboard_key`, usando o `NavigationAgent2D` do Character. |
 | `beehave/hum_action.gd` | HumAction | ActionLeaf | Naufrago cantarola quando TEDIO >= 50. |
 | `beehave/is_night_condition.gd` | IsNightCondition | ConditionLeaf | SUCCESS quando Clock.period() e 'noite' ou 'madrugada'. |
+| `beehave/jump_tree_action.gd` | JumpTreeAction | ActionLeaf | Naufrago trepa a palmeira e salta para o mar. TEDIO -30pts. |
 | `beehave/make_campfire_action.gd` | MakeCampfireAction | ActionLeaf | Recolhe lenha e acende a fogueira. |
 | `beehave/need_low_condition.gd` | NeedLowCondition | ConditionLeaf | Sorteia, para cada necessidade do actor, se está baixa o suficiente para tratar agora. |
 | `beehave/pray_action.gd` | PrayAction | ActionLeaf | Naufrago reza ou medita. Melhora ESPERANCA +10. |
 | `beehave/rant_action.gd` | RantAction | ActionLeaf | Naufrago xinga o oceano quando TEDIO >= 60 ou ESPERANCA <= 30. |
+| `beehave/run_action.gd` | RunAction | ActionLeaf | Naufrago corre pela praia. Reduz TEDIO -15 e melhora MOVIMENTO. |
 | `beehave/say_generated_action.gd` | SayGeneratedAction | ActionLeaf | Pede uma frase ao LLMBridge (ou fallback) e di-la em `character.talking_text` (tech_design §4.6). |
 | `beehave/set_delta_on_blackboard.gd` | SetDeltaOnBlackboardAction | ActionLeaf | Escreve o delta do frame corrente no blackboard, para outras folhas o lerem. |
 | `beehave/sleep_action.gd` | SleepAction | ActionUsingDelta | Faz o personagem dormir: energia recupera, velocidade zero. |
+| `beehave/swim_action.gd` | SwimAction | ActionLeaf | Naufrago nada no oceano. Melhora TEDIO -20 e CALOR -15 (se existir). |
 | `beehave/use_usable_action.gd` | UseUsableAction | ActionUsingDelta | Usa o objecto em `object_blackboard_key` enquanto a necessidade associada não estiver satisfeita. |
 | `beehave/watch_ocean_action.gd` | WatchOceanAction | ActionUsingDelta | Faz o actor "olhar o mar" durante um tempo aleatório entre os dois limites. |
 | `beehave/wave_action.gd` | WaveAction | ActionLeaf | Naufrago acena quando aparece barco ou gaivota. |

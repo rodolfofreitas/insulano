@@ -6,6 +6,35 @@ Entradas em linguagem de utilizador, não de commit. Cada tarefa acrescenta a su
 ## [Não lançado]
 
 ### Adicionado
+- `DrinkCoconutAction` (T-126): naufrago parte um coco e bebe a agua. FOME -10pts ao completar.
+  Duracao 5s, cooldown 4h de jogo (240s acelerado). Trigger: SEDE >= 60 ou TEDIO >= 40.
+  5 frases fallback categoria `beber_coco` em `game/data/phrases_fallback.json`.
+- `JumpTreeAction` (T-127): naufrago trepa a palmeira e salta para o mar. TEDIO -30pts,
+  ESPERANCA +5pts ao completar. Duracao 8s, cooldown 1 dia de jogo (1800s). RARO.
+  Trigger: TEDIO >= 70. 5 frases fallback categoria `saltar_arvore` em `phrases_fallback.json`.
+- 6 testes GUT em `game/tests/unit/test_drink_jump.gd`:
+  `test_drink_reduces_hunger`, `test_drink_completes_in_5s`, `test_drink_cooldown_blocks_second_use`,
+  `test_jump_reduces_tedio_30pts`, `test_jump_completes_in_8s`, `test_jump_cooldown_1_day`.
+- `DanceAction` (T-129): naufrago danca de alegria quando ESPERANCA >= 80.
+  Dura 8s, repoe SOLIDAO -10 e TEDIO -20 ao terminar. 5 frases fallback
+  categoria `dancar` adicionadas a `game/data/phrases_fallback.json`.
+- `ExerciseAction` (T-130): naufrago faz flexoes/abdominais quando TEDIO >= 55.
+  Dura 10s, repoe TEDIO -20 ao terminar. 5 frases fallback categoria `exercicio`
+  adicionadas a `game/data/phrases_fallback.json`.
+- 5 testes GUT em `game/tests/unit/test_dance_exercise.gd`:
+  `test_dance_reduces_tedio_20`, `test_dance_reduces_solidao_10`,
+  `test_dance_completes_in_8s`, `test_exercise_reduces_tedio_20`,
+  `test_exercise_completes_in_10s`.
+- `SwimAction` (T-124): naufrago nada no oceano durante 10s quando TEDIO >= 60
+  ou hora entre 11h-16h. Repoe TEDIO 20pts e CALOR 15pts (se existir) ao completar.
+  CPUParticles2D splash ao entrar na agua. 5 frases fallback categoria `nadar`
+  adicionadas a `game/data/phrases_fallback.json`.
+- `RunAction` (T-125): naufrago corre pela praia durante 6s quando TEDIO >= 50.
+  Repoe TEDIO 15pts ao completar. Mais rapido que andar. 5 frases fallback categoria
+  `correr` adicionadas a `game/data/phrases_fallback.json`.
+- 4 testes GUT em `game/tests/unit/test_swim_run.gd`:
+  `test_swim_reduces_tedio`, `test_swim_completes_in_10s`,
+  `test_run_reduces_tedio`, `test_run_completes_in_6s`.
 - `ImaginaryCompanion` (T-118): companheiro imaginario com ciclo de vida completo
   (ABSENT -> ALIVE -> MOURNING -> ABSENT). Nasce quando SOLIDAO >= 100, perde-se
   via evento `tide_takes_companion` (MUITO_RARO, peso 1). Nome e objecto aleatorios

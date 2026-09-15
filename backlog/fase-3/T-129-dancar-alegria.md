@@ -2,9 +2,9 @@
 id: T-129
 titulo: Dancar de alegria -- trigger ESPERANCA > 80, animacao de danca
 fase: 3
-estado: pronto
+estado: feito
 tipo: codigo
-depende_de: [T-111, T-804]
+depende_de: [T-111]
 ---
 
 ## Objectivo
@@ -34,4 +34,6 @@ Implementar accao D07 (dancar sozinho na praia): trigger automatico quando ESPER
 - Screenshot em docs/proof/T-129-dance.png
 
 ## Relatório
-(preenchido pelo executor)
+DanceAction implementada em game/beehave/dance_action.gd. Dura DANCE_DURATION (8s),
+repoe SOLIDAO -10 e TEDIO -20 via NeedsManager. 5 frases fallback categoria dancar
+em phrases_fallback.json. 5 testes GUT em test_dance_exercise.gd.
