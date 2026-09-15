@@ -2,7 +2,7 @@
 id: T-111
 titulo: SimpleDirector -- director deterministico sem LLM com maquina de estados de arcos
 fase: 1
-estado: pronto
+estado: feito
 tipo: codigo
 depende_de: [T-110]
 ---
@@ -37,3 +37,26 @@ e uma tabela de frases. O jogo deve ser completamente interessante sem Ollama.
 
 - Smoke de 30s com SimpleDirector activo e arco visivel no log
 - Teste de frases: 10 picks sem repeticao imediata
+
+## Relatorio
+
+Implementado em `game/llm/simple_director.gd` (class_name SimpleDirector, extends Resource).
+Satisfaz IDirector por duck typing (get_directive, is_available).
+
+Maquina de estados com 5 arcos:
+- jangada (tom esperancoso, activity construir_jangada)
+- companheiro (tom emocional, activity falar_com_companheiro)
+- sinalizacao (tom frustrado, activity fazer_sinal)
+- diario (tom melancolico, activity escrever_diario)
+- avulso (tom neutro, activity descansar)
+
+Transicoes: ESPERANCA<=25 -> avulso (prioridade maxima), SOLIDAO>=70 -> companheiro,
+TEDIO>=65 -> alterna jangada/diario. Valores neutros -> avulso.
+
+Frases: 10 por arco em `game/data/simple_director_phrases.json`. Sem repeticao
+imediata: _pick_phrase() exclui a ultima frase usada antes de escolher aleatoriamente.
+
+Testes GUT: 6 testes em `game/tests/unit/test_simple_director.gd`.
+FakeNeedsManager injectado via `director.needs_manager` para isolamento total.
+Testes cobrem: transicao por SOLIDAO, crise ESPERANCA, 10 picks sem repeticao, fallback
+avulso, is_available, campos preenchidos. Todos os 98 testes GUT passaram. verify.sh PASSOU.
