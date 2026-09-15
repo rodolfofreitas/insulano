@@ -2,7 +2,7 @@
 id: T-132
 titulo: Rezar/meditar -- animacao joelhos, melhora ESPERANCA +10
 fase: 3
-estado: pronto
+estado: feito
 tipo: codigo
 depende_de: [T-111]
 ---
@@ -33,4 +33,6 @@ Implementar accao F01 (rezar de manha) e meditacao: o naufrago ajoelha-se, fecha
 - GUT: hora=6.5 -> pray_morning activo
 
 ## Relatório
-(preenchido pelo executor)
+- `game/beehave/pray_action.gd` criado com PrayAction (6s, ESPERANCA +10).
+- 5 frases fallback categoria `reza` adicionadas a `game/data/phrases_fallback.json`.
+- 3 testes GUT em `game/tests/unit/test_rant_pray.gd`.

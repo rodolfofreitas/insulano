@@ -28,6 +28,7 @@ ArcHistory="*res://world/arc_history.gd"
 Events="*res://events/event_director.gd"
 Screensaver="*res://app/screensaver_mode.gd"
 SessionData="*res://world/session_data.gd"
+Companion="*res://world/imaginary_companion.gd"
 
 [editor_plugins]
 

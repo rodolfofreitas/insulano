@@ -81,6 +81,16 @@
       "requires_condition": "weather_rain",
       "arc_id":           null,
       "phrase_action":    "apanhar chuva forte"
+    },
+    {
+      "id":               "tide_takes_companion",
+      "kind":             "tide_takes_companion",
+      "weight":           1,
+      "min_interval_s":   7200,
+      "duration_s":       10,
+      "requires_condition": null,
+      "arc_id":           null,
+      "phrase_action":    "ver a mare levar o companheiro"
     }
   ]
 }

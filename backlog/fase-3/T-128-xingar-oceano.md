@@ -2,7 +2,7 @@
 id: T-128
 titulo: Xingar o oceano -- frase LLM categoria='furia', animacao bracos ao ar
 fase: 3
-estado: pronto
+estado: feito
 tipo: codigo
 depende_de: [T-106, T-111]
 ---
@@ -33,4 +33,6 @@ Implementar accao C02 (xingar o oceano): o naufrago vai ate a beira-mar, levanta
 - Screenshot do speech bubble com xingamento
 
 ## Relatório
-(preenchido pelo executor)
+- `game/beehave/rant_action.gd` criado com RantAction (4s, categoria furia).
+- 5 frases fallback categoria `furia` adicionadas a `game/data/phrases_fallback.json`.
+- 3 testes GUT em `game/tests/unit/test_rant_pray.gd`.
