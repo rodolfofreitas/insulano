@@ -129,22 +129,34 @@ utilizador via `mise` ou `uvx`.
 
 ## 7. Agentes e skills do projecto
 
-| Nome | Tipo | Para quê |
+| Nome | Tipo | Para que |
 |---|---|---|
-| `/insulano-loop` | skill | corre o loop da secção 2 até uma condição de paragem |
-| `/insulano-task` | skill | executa uma única tarefa (passos 2 a 9) |
-| `/insulano-verify` | skill | corre e interpreta os portões, sem falsos verdes |
-| `/insulano-docs-sync` | skill | scan, generate, check da documentação contra o código |
-| `/insulano-new-task` | skill | escreve tarefas novas com critérios binários |
-| `/insulano-asset` | skill | adiciona um asset com licença registada (ou marca `humano`) |
+| `/insulano-loop` | skill Claude Code | corre o loop da seccao 2 ate uma condicao de paragem |
+| `/insulano-task` | skill Claude Code | executa uma unica tarefa (passos 2 a 9) |
+| `/insulano-verify` | skill Claude Code | corre e interpreta os portoes, sem falsos verdes |
+| `/insulano-docs-sync` | skill Claude Code | scan, generate, check da documentacao contra o codigo |
+| `/insulano-new-task` | skill Claude Code | escreve tarefas novas com criterios binarios |
+| `/insulano-asset` | skill Claude Code | adiciona um asset com licenca registada (ou marca humano) |
+| `insulano` | skill Hermes | loop autonomo Hermes com agentes paralelos; contexto completo |
 | `insulano-builder` | agente | implementa uma tarefa em GDScript com testes primeiro |
-| `insulano-reviewer` | agente | revisão adversarial do diff contra contratos e regras invariantes |
-| `insulano-verifier` | agente | corre `verify.sh`, lê logs e imagens, devolve veredicto sem corrigir |
-| `insulano-docs-keeper` | agente | detecta e corrige deriva entre docs e código |
-| `insulano-llm-tuner` | agente | afina prompt e regras com o eval como métrica |
+| `insulano-reviewer` | agente | revisao adversarial do diff contra contratos e regras invariantes |
+| `insulano-verifier` | agente | corre verify.sh, le logs e imagens, devolve veredicto sem corrigir |
+| `insulano-docs-keeper` | agente | detecta e corrige deriva entre docs e codigo |
+| `insulano-llm-tuner` | agente | afina prompt e regras com o eval como metrica |
 
-O construtor não se julga: quem implementou não declara o próprio veredicto final; o
-`insulano-verifier` (ou o Hermes) confirma.
+O construtor nao se julga: quem implementou nao declara o proprio veredicto final;
+o `insulano-verifier` (ou o Hermes) confirma.
+
+### Hermes vs Claude Code
+
+| | Hermes (`insulano` skill) | Claude Code (`/insulano-loop`) |
+|---|---|---|
+| Paralelismo | Vagas de agentes em paralelo | Loop sequencial |
+| Velocidade | Mais rapido (madrugada) | Mais lento mas interactivo |
+| Stop hooks | Nao afectado | Hook `feedback-sempre-quadro-de-selecao` pode interromper |
+| Quando usar | Sessoes autonomas, utilizador ausente | Exploratorio, utilizador a acompanhar |
+
+Para iniciar o loop Hermes: dizer "Continua o backlog do Insulano".
 
 ## 8. Integração com a fábrica
 
