@@ -5,6 +5,8 @@ Entradas em linguagem de utilizador, não de commit. Cada tarefa acrescenta a su
 
 ## [Não lançado]
 
+## [0.1.0] - 2026-09-14
+
 ### Adicionado
 - Projecto jogável em `game/`, a partir do Guy on Island, a correr em Godot 4.7.2.
 - Portão de verificação único (`scripts/verify.sh`): documentação, backlog, lint, testes, arranque, imagem, LLM e export.

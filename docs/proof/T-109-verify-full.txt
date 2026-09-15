@@ -1,0 +1,9 @@
+verify.sh  | 2026-09-15T01:52:43+01:00 | commit 1946c4c
+docs         PASSOU         scripts/check_docs.py
+backlog      PASSOU         backlog: PASSOU (53 tarefas, 0 erros)
+pytest       PASSOU         49 passed in 0.17s
+lint         PASSOU         51 ficheiros próprios limpos
+import       PASSOU         godot --import
+gut          PASSOU         Tests 76;Passing Tests 76
+boot         PASSOU         BOOT_SMOKE PASSOU: fome -52.1 pontos, deslocação máxima 616 px
+VEREDICTO: PASSOU

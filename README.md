@@ -12,9 +12,9 @@ decide o que fazer pelas próprias necessidades e comenta a vida com frases gera
 
 ## Estado
 
-Fase 0 (fundação) em curso. O jogo herdado da base arranca, tem testes e o harness de desenvolvimento
-autónomo está montado e verificado. As frases ainda são as fixas em inglês da base. Estado vivo por
-tarefa: `python3 scripts/backlog.py list`.
+**v0.1.0 (2026-09-14)** -- Fase 1 completa. O náufrago fala português de Portugal gerado pelo Ollama
+local, com fallback provado para frases fixas quando o Ollama não responde. Binário Linux exportado.
+Estado vivo por tarefa: `python3 scripts/backlog.py list`.
 
 ## Pré-requisitos
 
