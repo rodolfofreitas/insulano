@@ -6,6 +6,11 @@ Entradas em linguagem de utilizador, não de commit. Cada tarefa acrescenta a su
 ## [Não lançado]
 
 ### Adicionado
+- `CampfireObject` (T-119): fogueira visual com `CPUParticles2D` para chamas (laranja/amarelo)
+  e fumo (cinzento), e `PointLight2D` nocturno. `ignite()` acende e emite sinal `lit`;
+  `extinguish()` apaga e emite `extinguished`. Luz activa apenas de noite (via `Clock.period()`
+  -- periodos `noite`, `madrugada`, `anoitecer`). Instanciado na cena de teste perto do local
+  de pesca (posicao 300, 340).
 - `LLMDirector` (T-115): director narrativo via Ollama que substitui o `SimpleDirector`
   através do contrato `IDirector` (`get_directive`/`is_available`, mesma interface).
   Um único pedido ao Ollama por ciclo (`LLM.request_completion`, novo método do
