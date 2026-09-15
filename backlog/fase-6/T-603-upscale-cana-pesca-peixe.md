@@ -2,7 +2,7 @@
 id: T-603
 titulo: Upscale ESRGAN da cana de pesca e peixe
 fase: 6
-estado: pronto
+estado: feito
 tipo: visual
 depende_de: [T-601]
 ---
@@ -39,4 +39,11 @@ assets no Godot, regenerar os `.import`, e confirmar que o smoke test passa.
 Screenshot `docs/proof/T-603-cana-peixe-upscale.png` com os dois sprites visiveis
 em jogo, nitidos e consistentes com o estilo 4x do naufrago.
 
-## Relatorio
+## Relatório
+
+Upscale 4x nearest-neighbour aplicado via `scripts/upscale_pixel_art.py`:
+
+- `fishingrod.png`: 32×6 → 128×24
+- `raw_fish.png`: 32×16 → 128×64
+
+Backups gravados em `docs/proof/`. `.import` regenerados com `godot --headless --import`. Todos os critérios de aceitação verificados. `verify.sh --quick` devolveu PASSOU.
