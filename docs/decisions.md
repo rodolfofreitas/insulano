@@ -186,3 +186,26 @@ renomeável por causa de testes) e uma decisão nova, nunca um `.gdlintrc` de pr
 **Consequencias:** A chuva na ilha e independente do tempo real. O utilizador que queira clima real pode configurar manualmente em V2. O WeatherService mantem a mesma API (current(), weather_changed) para que a V2 seja transparente para o resto do codigo.
 
 **V2 -- o que considerar:** servico proprio, OpenWeatherMap (API key), Open-Meteo (gratuito sem chave), ou wttr.in com localizacao explicita configurada pelo utilizador.
+
+## ADR-013: direccao visual -- mix Graveyard Keeper + Stardew Valley
+
+**Data:** 2026-09-15
+**Decisor:** Rodolfo (dono do projecto)
+
+**Contexto:** A direccao visual inicial apontava para imitar o Johnny Castaway de 1992.
+O JC foi criado com constrangimentos de hardware de 1992. Imita-lo seria derivativo e inferior.
+
+**Decisao:** Pixel art indie original no estilo mix Graveyard Keeper + Stardew Valley.
+- Stardew Valley: charme, calor, sprites expressivos, paleta saturada harmoniosa
+- Graveyard Keeper: personalidade indie, atmosfera unica, animacoes fluidas
+- Johnny Castaway: barra de COMPORTAMENTO (variedade, timing, eventos) -- NAO visual
+
+**Motivo:** Criar algo original que faca as pessoas parar para olhar, como faziam com o Stardew.
+O Insulano deve ter alma propria, nao ser uma copia actualizada do JC.
+
+**Consequencias:**
+- Barra do Gauntlet visual: Stardew Valley + Graveyard Keeper (barras fetchable, modernas)
+- Barra do Gauntlet comportamento: Johnny Castaway continua como referencia de eventos/timing
+- docs/visual-identity.md a actualizar com nova direccao (tamanho sprite, paleta, estilo)
+- Fase 7 (redesenho): naufrago ~32x48px indie, NAO 64x96px a imitar JC
+- ComfyUI Caminho B (SD1.5 + LoRA pixel art indie) ganha mais importancia

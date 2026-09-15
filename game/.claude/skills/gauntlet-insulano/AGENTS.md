@@ -18,8 +18,8 @@ Stack: GDScript 4 + Beehave + Ollama local.
 | Slot | Valor |
 |---|---|
 | THING | [peca especifica: sprite, animacao, comportamento, frase] |
-| REFERENCE | Johnny Castaway -- sprites em docs/reference/johnny-castaway/ ou live em spriters-resource.com |
-| TIER | ao nivel do original Sierra 1992 -- detalhado, fluido, expressivo |
+| REFERENCE | **Visual:** Stardew Valley farmer sprite + Graveyard Keeper personagem. **Comportamento:** Johnny Castaway gameplay (variedade/timing). Ver docs/gauntlet/bars.md |
+| TIER | nivel pixel art indie moderno -- expressivo, fluido, original (NAO imitar JC 1992) |
 | CHECK | visualmente (screenshot lado-a-lado) ou comportamento (gameplay 30s lado-a-lado) |
 | STACK | GDScript 4, Godot 4.7.2, Beehave, CPUParticles2D |
 
