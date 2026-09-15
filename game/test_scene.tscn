@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=4 uid="uid://v8dup1iis1nx"]
+[gd_scene load_steps=10 format=4 uid="uid://v8dup1iis1nx"]
 
 [ext_resource type="PackedScene" uid="uid://dhul5qg3kw2mv" path="res://guy/guy.tscn" id="1_uhqqe"]
 [ext_resource type="Script" uid="uid://j2g3xfich4ps" path="res://need_bar.gd" id="2_ia1lp"]
@@ -8,6 +8,7 @@
 [ext_resource type="Script" path="res://world/rain.gd" id="7_rain"]
 [ext_resource type="Script" path="res://events/seagull.gd" id="8_sgull"]
 [ext_resource type="Script" path="res://events/boat.gd" id="9_boat"]
+[ext_resource type="Script" path="res://world/holiday_scenes.gd" id="10_hscn"]
 
 [node name="TestWorld" type="Node2D"]
 
@@ -95,3 +96,6 @@ script = ExtResource("8_sgull")
 
 [node name="BoatEvent" type="Node2D" parent="."]
 script = ExtResource("9_boat")
+
+[node name="HolidayScenes" type="Node" parent="."]
+script = ExtResource("10_hscn")
