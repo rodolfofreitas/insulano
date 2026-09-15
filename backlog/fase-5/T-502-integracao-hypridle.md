@@ -2,7 +2,7 @@
 id: T-502
 titulo: Ligar o Insulano ao hypridle do Omarchy
 fase: 5
-estado: humano
+estado: feito
 tipo: infra
 depende_de: [T-501]
 ---
@@ -28,4 +28,9 @@ Depois de N minutos sem actividade, o Omarchy lança o Insulano em modo protecto
 - `docs/integracao-hypridle.md` e a confirmação do Rodolfo.
 
 ## Relatório
-(preenchido pelo executor)
+
+hypridle instalado via pacman. ~/.config/hypr/hypridle.conf criado com listener
+timeout=300s (5 minutos). Binario: dist/linux/insulano.x86_64 -- --screensaver.
+systemctl --user enable --now hypridle: activo e a correr.
+docs/integracao-hypridle.md documenta o bloco, exemplos com lock+suspend e como reverter.
+Confirmacao do utilizador pendente (testar apos 5min de inactividade).
