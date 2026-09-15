@@ -2,7 +2,7 @@
 id: T-119
 titulo: CampfireObject -- fogueira com particulas e luz
 fase: 1
-estado: pronto
+estado: feito
 tipo: visual
 depende_de: [T-113]
 ---
@@ -53,6 +53,12 @@ Ver design completo em `docs/features/fogueira-assar-peixe.md` §3.1 e §3.2.
 - SmokePuff visivel no screenshot nocturno ao acender
 - verify.sh PASSOU (lint + gut + docs)
 
-## Relatorio
+## Relatório
 
-_A preencher pelo agente apos implementacao._
+Implementado em 2026-09-15 pelo agente Hermes.
+- `game/object/campfire_object.gd`: CampfireObject com CPUParticles2D (chamas + fumo) e PointLight2D nocturno.
+- `game/tests/integration/test_campfire.gd`: 4 testes GUT (todos passaram).
+- `game/test_scene.tscn`: CampfireObject instanciado na posicao (300, 340).
+- `game/tools/capture_campfire.gd`: script auxiliar de captura com ignite() automatico.
+- Provas visuais: docs/proof/T-119-fogueira-noite.png e T-119-fogueira-dia.png.
+- verify.sh PASSOU (228/228 testes, lint limpo).
