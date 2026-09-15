@@ -2,7 +2,7 @@
 id: T-304
 titulo: WeatherService opcional com wttr.in e fallback
 fase: 3
-estado: pronto
+estado: feito
 tipo: codigo
 depende_de: [T-001]
 ---
@@ -34,3 +34,22 @@ O jogo pode saber o tempo real lá fora (desligado por defeito), traduzido para 
 
 ## Relatório
 (preenchido pelo executor)
+
+## Relatório
+
+Implementado em 2026-09-15 por agente Hermes.
+
+Ficheiros criados:
+- `game/world/weather_service.gd` (WeatherService, autoload Weather)
+- `game/tests/unit/test_weather_service.gd` (5 testes GUT)
+- `game/tests/fixtures/wttr_sol.json` (weatherCode=113, clear)
+- `game/tests/fixtures/wttr_chuva.json` (weatherCode=302, rain)
+- `game/tests/fixtures/wttr_trovoada.json` (weatherCode=389, storm)
+
+Ficheiros modificados:
+- `game/project.godot`: autoload Weather + settings insulano/weather/enabled=false e insulano/weather/location=""
+- `CHANGELOG.md`: entrada em [Nao lancado]
+
+verify.sh: PASSOU (125/125 testes GUT). Commit: feat(T-304).
+
+Fixture command: `curl 'https://wttr.in/Lisbon?format=j1'` (estrutura real, dados sinteticos).
