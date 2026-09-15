@@ -2,7 +2,7 @@
 id: T-402
 titulo: Cenas de feriado para Natal e Ano Novo
 fase: 4
-estado: pronto
+estado: feito
 tipo: visual
 depende_de: [T-401, T-202, T-106]
 ---
@@ -32,4 +32,5 @@ No Natal a ilha tem decoração e o náufrago usa gorro; na véspera e no dia de
 - Os 3 PNG em docs/proof/ com a descrição de cada um e os testes GUT nomeados.
 
 ## Relatório
-(preenchido pelo executor)
+
+Implementado `game/world/holiday_scenes.gd` (Node) que consulta `HolidayCalendar.holidays_on(Clock.now())` em `_ready()` e em cada `Clock.hour_changed`. Para feriados `christmas`/`christmas_eve` activa gorro vermelho (desenhado em GDScript via classe interna `_HatDrawer` com `_draw()`) e estrelas decorativas (classe `_SnowflakeLayer`). Para `fireworks`/`fireworks_eve` activa `CPUParticles2D` com cores variadas apenas quando hora >= 20, desligando de dia. O campo `primary_holiday_name` fica disponivel para PhraseContext.holiday. Testado com 4 testes GUT (4/4 passed). Screenshots em `docs/proof/T-402-*.png`. Falha GUT pre-existente em `test_env_var_dead_port_yields_fallback_within_timeout` confirmada como anterior a esta tarefa.
