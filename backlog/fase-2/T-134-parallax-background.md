@@ -1,0 +1,71 @@
+---
+id: T-134
+titulo: Parallax background -- 5 camadas de profundidade
+fase: 2
+estado: pronto
+tipo: visual
+depende_de: [T-202, T-204]
+---
+
+## Objectivo
+
+Adicionar ParallaxBackground ao test_scene.tscn com 5 camadas de profundidade,
+transformando a vista lateral plana numa cena com profundidade cinematografica.
+Sprites existentes reutilizados. Nenhum sprite novo obrigatorio.
+
+## Camadas (fundo para frente)
+
+1. **Ceu/estrelas** -- NightSky.gd ja existe (T-204). Integrar como camada 0.
+2. **Nuvens** -- CPUParticles2D ou sprite branco que se move lentamente da direita para a esquerda.
+   Velocidade: 10px/s. Visivel de dia, quase invisivel de noite.
+3. **Horizonte do oceano** -- faixa azul no meio do ecra, parallax_offset_v muito lento.
+4. **Ilha (areia + palmeiras)** -- o que existe actualmente, sem alteracoes.
+5. **Naufrago** -- primeiro plano, sem alteracoes.
+
+## Implementacao
+
+Usar Godot ParallaxBackground + ParallaxLayer:
+
+```gdscript
+# Na cena principal, adicionar:
+ParallaxBackground
+  ParallaxLayer (motion_scale=(0.1, 0.05))  # ceu -- muito lento
+  ParallaxLayer (motion_scale=(0.2, 0.0))   # nuvens
+  ParallaxLayer (motion_scale=(0.4, 0.0))   # horizonte
+  ParallaxLayer (motion_scale=(1.0, 0.0))   # ilha (actual)
+  ParallaxLayer (motion_scale=(1.0, 0.0))   # naufrago (actual)
+```
+
+Para nuvens: sprite simples branco/cinza claro arrastado por tween ou CPUParticles2D
+com emissao horizontal.
+
+## Critérios de aceitação
+
+- [ ] ParallaxBackground com pelo menos 3 camadas activas
+- [ ] Nuvens vissiveis de dia, subtis de noite
+- [ ] A camada do naufrago e da ilha nao mudam de comportamento
+- [ ] Screenshot docs/proof/T-124-parallax-dia.png e T-124-parallax-noite.png
+- [ ] verify.sh PASSOU (incluindo --visual)
+
+## Ler antes
+
+- docs/decisions.md ADR-014 (parallax escolhido)
+- game/world/night_sky.gd (T-204) -- integrar como camada 0
+- game/world/day_night.gd (T-202) -- paleta por hora
+- game/test_scene.tscn -- cena actual a modificar
+
+## Fora de âmbito
+
+- Oceano animado com ondas (Fase 7, T-707)
+- Montanhas ao longe (Fase 7)
+- Reflexos no oceano (Fase 7)
+- Parallax no eixo Y (Fase 7)
+
+## Prova exigida
+
+- Screenshots dia e noite com parallax visivel
+- Sem regressoes nos testes existentes
+
+## Relatório
+
+(preenchido pelo executor)

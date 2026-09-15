@@ -238,3 +238,27 @@ a decisao formalmente.
 a GPU do Ollama, encolher o prompt do director para reduzir o custo de avaliacao, ou aceitar
 o p50 actual e reescrever formalmente a "Prova exigida" da T-115 para o valor medido. A
 T-115 nao deve passar a `estado: feito` sem essa ratificacao.
+
+## ADR-014: perspectiva de camera -- parallax com profundidade
+
+**Data:** 2026-09-15
+**Decisor:** Rodolfo
+
+**Decisao:** Parallax com 5 camadas em vez de vista lateral simples.
+
+**Camadas (fundo para frente):**
+1. Estrelas / ceu nocturno (ja existe, NightSky)
+2. Nuvens (novas -- movimento lento)
+3. Horizonte do oceano (parado ou quase)
+4. Ilha com palmeiras (primeiro plano)
+5. Naufrago (primeiro plano)
+
+**Motivo:** Maximo impacto visual com minimo trabalho. Sprites existentes reutilizados.
+Mantem o horizonte (barcos ao longe, por-do-sol, estrelas). Sem redesenhar nada de raiz.
+
+**Consequencias:**
+- Adicionar ParallaxBackground ao test_scene.tscn com 3-4 ParallaxLayer
+- Nuvens novas: CPUParticles2D ou sprite animado que atravessa o ecra lentamente
+- Oceano: camada separada com ligeiro parallax
+- Fase 7 pode expandir para mais camadas (montanhas ao longe, reflexos no oceano)
+- NAO muda a arquitectura do naufrago nem dos sprites actuais
