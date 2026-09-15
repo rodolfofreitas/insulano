@@ -33,11 +33,13 @@ func _ready() -> void:
 	_wind.stop()
 	_rain.stop()
 	if is_inside_tree() and has_node("/root/Weather"):
-		Weather.weather_changed.connect(_on_weather_changed)
-		_on_weather_changed(Weather.current())
+		var weather: Node = get_node("/root/Weather")
+		weather.weather_changed.connect(_on_weather_changed)
+		_on_weather_changed(weather.current())
 	if is_inside_tree() and has_node("/root/Events"):
-		Events.event_started.connect(_on_event_started)
-		Events.event_finished.connect(_on_event_finished)
+		var events: Node = get_node("/root/Events")
+		events.event_started.connect(_on_event_started)
+		events.event_finished.connect(_on_event_finished)
 
 
 func _make_player(path: String, loop: bool, vol: float) -> AudioStreamPlayer:
