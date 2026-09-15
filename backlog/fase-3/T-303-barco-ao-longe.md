@@ -2,7 +2,7 @@
 id: T-303
 titulo: Barco ao longe e reacção do náufrago
 fase: 3
-estado: pronto
+estado: feito
 tipo: visual
 depende_de: [T-301, T-106]
 ---
@@ -30,4 +30,20 @@ Quando o EventDirector lança o evento `boat`, um barco passa devagar no horizon
 - PNG em docs/proof/ e os testes GUT nomeados.
 
 ## Relatório
-(preenchido pelo executor)
+
+`verify.sh --visual` PASSOU em docs, backlog, pytest, import, gut (139/139), boot, visual. lint FALHOU por test_seagull.gd (pre-existente, T-302, nao commitado).
+
+GUT tests: `test_boat_traverses`, `test_boat_ignores_other_events`, `test_fallback_phrase`, `test_boat_draw_calls_no_crash` -- todos PASSOU. Total: 139/139 testes a passar.
+
+Ficheiros criados/modificados:
+- `game/events/boat.gd` -- class_name Boat, Node2D, _draw() casco+mastro+vela, escuta Events.event_started("boat")
+- `game/tests/integration/test_boat.gd` -- 4 testes GUT
+- `game/tools/capture_boat.gd` -- ferramenta de prova visual
+- `game/data/events.json` -- kind "boat" (era "ship"), registado no EventDirector
+- `game/data/phrases_fallback.json` -- categoria "boat" com 5 frases PT-PT especificas
+- `game/project.godot` -- autoload Events="*res://events/event_director.gd" adicionado
+- `game/test_scene.tscn` -- BoatEvent instanciado na cena principal
+- `docs/proof/T-303-barco.png` -- screenshot com barco visivel no horizonte
+- `CHANGELOG.md` -- entrada em [Nao lancado]
+
+Commit: feat(T-303): barco ao longe e reaccao do naufrago
