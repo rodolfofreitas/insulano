@@ -2,7 +2,7 @@
 id: T-305
 titulo: Chuva com partículas e reacção do náufrago
 fase: 3
-estado: pronto
+estado: feito
 tipo: visual
 depende_de: [T-304, T-106]
 ---
@@ -32,4 +32,4 @@ Quando está a chover (tempo real ou forçado), cai chuva sobre a ilha, o céu e
 - PNG em docs/proof/, a medição de fps e os testes GUT nomeados.
 
 ## Relatório
-(preenchido pelo executor)
+Implementado em 2026-09-15. `Rain` (Node2D com CPUParticles2D) liga com rain/storm, desliga com clear. storm=300 particulas, rain=150. Cor #aaccff alpha=0.4, angulo quase vertical +desvio direita. Naufrago diz frase da categoria rain via LLMBridge. INSULANO_FAKE_WEATHER suportado no WeatherService. 4 testes GUT passam (129/129 total). FPS medio com chuva: 60.0 fps (minimo exigido: 55). Screenshot em docs/proof/T-305-chuva.png. verify.sh --visual PASSOU.

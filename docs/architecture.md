@@ -103,8 +103,9 @@ Estado a 2026-09-13: existem a cena principal e a behavior tree herdadas; os aut
 | `beehave/watch_ocean_action.gd` | WatchOceanAction | ActionUsingDelta | Faz o actor "olhar o mar" durante um tempo aleatório entre os dois limites. |
 | `character/character.gd` | Character | CharacterBody2D | Personagem base: necessidades, navegação, animação por direcção e balão de fala. |
 | `character/need.gd` | Need | Resource | Um recurso de necessidade (fome, energia, ...) com valor actual e máximo. |
+| `events/boat.gd` | Boat | Node2D | Barco que atravessa o horizonte quando Events emite event_started("boat"). |
 | `events/event_director.gd` | EventDirector | Node | Director de eventos: agenda e dispara eventos aleatorios com seed. |
-| `events/seagull.gd` | SeagullEvent | Node2D | Gaivota que atravessa o ecra da esquerda para a direita (ou vice-versa) |
+| `events/seagull.gd` | SeagullEvent | Node2D | Gaivota que atravessa o ecra quando o EventDirector dispara "seagull". |
 | `fishing_spot.gd` | - | Node2D | Marcador visual de um ponto de pesca, com círculo vermelho só no editor. |
 | `guy/direction.gd` | Direction | Object | Uma das quatro direcções cardinais, usada para escolher animação (walk_up, |
 | `guy/guy.gd` | Guy | Character | O naufrago jogavel: um Character que perde fome e energia com o tempo. |
