@@ -104,7 +104,7 @@ utilizador via `mise` ou `uvx`.
 | `game/` | projecto Godot (`project.godot`), código, cenas, dados e testes |
 | `game/data/` | JSON de dados e o template do prompt (fonte única, partilhada com o eval) |
 | `game/tests/unit`, `game/tests/integration` | testes GUT; `game/tests/fixtures` com casos partilhados |
-| `game/tools/` | `boot_smoke.gd` (smoke headless) e `capture.gd` (screenshot) |
+| `game/tools/` | `boot_smoke.gd` (smoke headless), `capture.gd` (screenshot) e `arc_smoke.gd` (smoke reprodutível do ArcManager/SimpleDirector, T-114) |
 | `scripts/` | `verify.sh`, `check_docs.py`, `backlog.py`, `llm_eval.py`, `export.sh` e os seus testes |
 | `evals/` | contextos de avaliação das frases do LLM |
 | `backlog/` | tarefas por fase, estado do loop |

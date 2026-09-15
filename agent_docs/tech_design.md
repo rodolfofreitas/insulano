@@ -203,21 +203,32 @@ Contrato de comportamento:
 
 ## 6. Eventos e clima (Fase 3)
 
-- `ArcManager` (T-114), `game/llm/arc_manager.gd`, `RefCounted`: maquina de estados de
+- `ArcManager` (T-114), `game/llm/arc_manager.gd`, `RefCounted`: máquina de estados de
   fases dos arcos base, lida de `game/data/arc_definitions.json`
-  (`arcs.<id> = {tipo, condicoes_activacao, fases: [{id, activities, effects}]}`).
-  `has_arc(id)`, `arc_type(id)`, `is_activation_condition_met(id, needs_manager)`
-  (regras `min`/`max` por necessidade; dicionario vazio = sempre activavel),
-  `current_phase(id) -> Dictionary` (nao avanca; inclui `index` e `total`),
-  `advance_phase(id, needs_manager) -> Dictionary` (aplica `effects` da fase actual ao
-  `needs_manager` por `get_value`/`set_value`, devolve essa fase e avanca o indice; arcos
-  `CICLICO` voltam a 0 depois da ultima fase), `reset_phase(id)`. Os 3 arcos base:
-  "A Jangada" (5 fases, ESPERANCA +30 na 1a, -40 na fase `afunda`), "O Companheiro"
-  (4 fases, `condicoes_activacao = {SOLIDAO: {min: 70}}`), "A Sinalizacao" (4 fases,
-  ESPERANCA -20 na fase `barco_passa_sem_parar`). `SimpleDirector` (T-111) usa uma
-  instancia (injectavel via `arc_manager`, lazy por defeito) para avancar a fase do arco
+  (`arcs.<id> = {tipo, condicoes_activacao, fases: [{id, activities, effects}]}`; cada
+  `activities` é uma lista de códigos reais de `docs/events-catalogue.md`, ex.: `R13`,
+  `C16`, `MR06`, `L05`, nunca nomes livres inventados). `has_arc(id)`, `arc_type(id)`
+  (`"CICLICO"`, `"UNICO"` ou `""`), `is_activation_condition_met(id, needs_manager)`
+  (regras `min`/`max` por necessidade; dicionário vazio = sempre activável; guarda
+  `has_method` antes de chamar `get_value`), `current_phase(id) -> Dictionary` (não
+  avança; inclui `index` e `total`), `advance_phase(id, needs_manager) -> Dictionary`
+  (aplica `effects` da fase actual ao `needs_manager` por `get_value`/`set_value`,
+  devolve essa fase e avança o índice; arcos `CICLICO` voltam a 0 depois da última
+  fase; arcos `UNICO` ficam parados no último índice e não reaplicam efeitos nas
+  chamadas seguintes, que devolvem `{}`), `is_finished(id) -> bool` (só fica `true`
+  para arcos `UNICO` depois de `advance_phase` processar a última fase),
+  `reset_phase(id)` (volta ao índice 0 e limpa `is_finished`). Os 3 arcos base, todos
+  `CICLICO`: "A Jangada" (5 fases, ESPERANCA +30 na 1a fase, TEDIO -30 na fase
+  `construir`, ESPERANCA -40 na fase `afunda`), "O Companheiro" (4 fases,
+  `condicoes_activacao = {SOLIDAO: {min: 70}}`), "A Sinalização" (4 fases, ESPERANCA
+  -20 na fase `barco_passa_sem_parar`). `SimpleDirector` (T-111) usa uma instância
+  (injectável via `arc_manager`, lazy por defeito) para avançar a fase do arco
   escolhido em cada `get_directive()`, sobrepondo a `activity` e escrevendo `fase_id`/
-  `fase_index` em `phrase_context_extra`.
+  `fase_index` em `phrase_context_extra`; a activação do arco "companheiro" pergunta a
+  este `ArcManager` (`is_activation_condition_met`) em vez de repetir o limiar SOLIDAO
+  >= 70 numa constante própria, fonte única em `arc_definitions.json`. A escolha de
+  frase (`_pick_phrase`) e de actividade de fase usam um `RandomNumberGenerator`
+  injectável (`director.rng`), costura de teste para determinismo (AGENTS.md §6.6).
 - `EventDirector` (T-301): `signal event_started(kind: String, data: Dictionary)`,
   `signal event_finished(kind: String)`; configuração em `game/data/events.json`
   (`kind`, `weight`, `min_interval_s`, `duration_s`); `RandomNumberGenerator` com seed de settings.

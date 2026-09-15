@@ -1,6 +1,6 @@
 {
   "_schema_version": 1,
-  "_comment": "Arcos base (T-114). Cada arco tem tipo, condicoes de activacao e fases; cada fase tem id, actividades possiveis e efeitos nas necessidades (delta aplicado ao entrar na fase). Ler docs/narrative-design.md secção 2 e docs/llm-director.md secção 2.",
+  "_comment": "Arcos base (T-114). Cada arco tem tipo, condicoes de activacao e fases; cada fase tem id, uma lista de codigos reais do catalogo (docs/events-catalogue.md, secoes COMUM=Cxx, RARO=Rxx, MUITO_RARO=MRxx, LENDARIO=Lxx) e efeitos nas necessidades (delta aplicado ao entrar na fase). O catalogo nao tem um codigo dedicado por micro-fase da jangada: R13 e MR26 descrevem o ciclo inteiro construir->lancar->afundar, por isso repetem-se nessas 3 fases (e honesto: e o mesmo evento narrativo visto em fases diferentes, nao um codigo inventado). Ler docs/narrative-design.md secção 2 e docs/llm-director.md secção 2.",
   "arcs": {
     "jangada": {
       "tipo": "CICLICO",
@@ -8,27 +8,32 @@
       "fases": [
         {
           "id": "encontra_madeira",
-          "activities": ["recolher_madeira", "procurar_destrocos_na_praia"],
+          "activities": ["C16"],
+          "_activities_desc": "C16 Recolher Lenha -- reune madeira e destrocos para a jangada",
           "effects": {"ESPERANCA": 30}
         },
         {
           "id": "construir",
-          "activities": ["construir_jangada", "amarrar_cordas", "afiar_ferramenta"],
-          "effects": {}
+          "activities": ["R13"],
+          "_activities_desc": "R13 Naufragio de Pequenas Esperancas -- constroi a jangada de paus e folhas",
+          "effects": {"TEDIO": -30}
         },
         {
           "id": "cerimonia_lancamento",
-          "activities": ["cerimonia_de_lancamento", "discurso_de_despedida"],
+          "activities": ["R13"],
+          "_activities_desc": "R13 -- bota a jangada ao mar com cerimonia",
           "effects": {}
         },
         {
           "id": "afunda",
-          "activities": ["jangada_afunda", "nadar_de_volta_a_praia"],
+          "activities": ["R13", "MR26"],
+          "_activities_desc": "R13 afunda em 3 segundos / MR26 Jangada 2.0 flutua 5m e afunda",
           "effects": {"ESPERANCA": -40}
         },
         {
           "id": "devastacao",
-          "activities": ["lamentar_a_perda", "olhar_para_os_destrocos"],
+          "activities": ["R13"],
+          "_activities_desc": "R13 -- reaccao a jangada afundada (\"fase dois: revisao completa do conceito\")",
           "effects": {}
         }
       ]
@@ -39,22 +44,26 @@
       "fases": [
         {
           "id": "encontra_objecto",
-          "activities": ["encontrar_objecto_na_praia", "dar_nome_ao_objecto"],
+          "activities": ["R10", "MR04"],
+          "_activities_desc": "R10 Encontrar Objecto na Praia / MR04 Objecto Inexplicavel",
           "effects": {}
         },
         {
           "id": "constroi_amizade",
-          "activities": ["conversar_com_companheiro", "jantar_a_dois", "ensinar_companheiro_a_pescar"],
+          "activities": ["MR06", "MR19", "MR34"],
+          "_activities_desc": "MR06 Construir Mascote / MR19 Dialogo com a Mascote / MR34 Aniversario da Mascote",
           "effects": {}
         },
         {
           "id": "companheiro_desaparece",
-          "activities": ["procurar_companheiro", "chamar_por_ele"],
+          "activities": ["L05"],
+          "_activities_desc": "L05 Mascote Parte -- a mascote-pedra cai ao mar numa mare alta",
           "effects": {}
         },
         {
           "id": "luto",
-          "activities": ["lamentar_perda_do_companheiro", "recordar_bons_momentos"],
+          "activities": ["L05"],
+          "_activities_desc": "L05 -- reaccao a perda da mascote (\"Adeus... foste o melhor amigo que uma pedra poderia ser\")",
           "effects": {}
         }
       ]
@@ -65,22 +74,26 @@
       "fases": [
         {
           "id": "decide_fazer_fogo",
-          "activities": ["decidir_fazer_sinal", "planear_fogo_de_sinalizacao"],
+          "activities": ["R19"],
+          "_activities_desc": "R19 Sinal de SOS nas Pedras -- decide tentar um sinal",
           "effects": {}
         },
         {
           "id": "reune_madeira",
-          "activities": ["reunir_madeira", "empilhar_lenha"],
+          "activities": ["C16"],
+          "_activities_desc": "C16 Recolher Lenha",
           "effects": {}
         },
         {
           "id": "acende_fumo",
-          "activities": ["acender_fogo_de_sinalizacao", "observar_o_fumo"],
+          "activities": ["C14", "C48"],
+          "_activities_desc": "C14 Acender Fogueira / C48 Fazer Sinal de Fumo",
           "effects": {}
         },
         {
           "id": "barco_passa_sem_parar",
-          "activities": ["acenar_desesperadamente", "gritar_por_socorro"],
+          "activities": ["MR01", "R01"],
+          "_activities_desc": "MR01 Navio Que Para! (mas parte outra vez) / R01 Barco no Horizonte",
           "effects": {"ESPERANCA": -20}
         }
       ]

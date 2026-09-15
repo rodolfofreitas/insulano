@@ -4,6 +4,10 @@ extends GutTest
 
 const ArcManagerScript = preload("res://llm/arc_manager.gd")
 
+## Caminho de um JSON temporario usado so pelos testes de arco UNICO, para nao
+## alterar os 3 arcos base entregues por esta tarefa (arc_definitions.json).
+const UNICO_PATH: String = "user://test_arc_unico_tmp.json"
+
 
 ## NeedsManager simulado para testes sem autoload.
 class FakeNeedsManager:
@@ -91,6 +95,16 @@ func test_jangada_esperanca_sobe_30_ao_iniciar() -> void:
 	assert_eq(fake_nm.get_value("ESPERANCA"), 85.0, "ESPERANCA deve subir 30 na fase inicial")
 
 
+## TEDIO desce 30 na fase "construir" da Jangada (docs/narrative-design.md:47:
+## "TEDIO -30 durante construcao").
+func test_jangada_tedio_desce_30_ao_construir() -> void:
+	fake_nm.set_value("TEDIO", 60.0)
+	arc_manager.advance_phase("jangada", fake_nm)  # fase 0 (encontra_madeira)
+	var fase: Dictionary = arc_manager.advance_phase("jangada", fake_nm)  # fase 1 (construir)
+	assert_eq(fase.get("id", ""), "construir", "A 2a fase (indice 1) e a de construcao")
+	assert_eq(fake_nm.get_value("TEDIO"), 30.0, "TEDIO deve descer 30 durante a construcao")
+
+
 ## ESPERANCA desce 40 na fase em que a jangada afunda (4a fase, indice 3).
 func test_jangada_esperanca_desce_40_ao_afundar() -> void:
 	fake_nm.set_value("ESPERANCA", 55.0)
@@ -157,3 +171,113 @@ func test_arco_desconhecido_devolve_fase_vazia() -> void:
 	assert_true(fase.is_empty(), "arco inexistente devolve dicionario vazio")
 	var avancada: Dictionary = arc_manager.advance_phase("arco_que_nao_existe", fake_nm)
 	assert_true(avancada.is_empty(), "advance_phase de arco inexistente devolve dicionario vazio")
+
+
+## Um arco UNICO (ex.: "O Naufragio", docs/narrative-design.md:57 -- ainda nao
+## definido em arc_definitions.json, fora do ambito da T-114, que so entrega 3
+## arcos CICLICO) nao pode reciclar como um CICLICO: tem de ficar parado na
+## ultima fase e sinalizar fim via is_finished(), sem reaplicar os efeitos
+## dessa fase em chamadas seguintes. Usa UNICO_PATH (JSON temporario) para nao
+## alterar os 3 arcos base entregues por esta tarefa.
+func _write_arco_unico_json() -> void:
+	var data := {
+		"arcs":
+		{
+			"teste_unico":
+			{
+				"tipo": "UNICO",
+				"condicoes_activacao": {},
+				"fases":
+				[
+					{"id": "inicio", "activities": ["X1"], "effects": {"ESPERANCA": 5}},
+					{"id": "fim", "activities": ["X2"], "effects": {"ESPERANCA": -99}}
+				]
+			}
+		}
+	}
+	var f := FileAccess.open(UNICO_PATH, FileAccess.WRITE)
+	f.store_string(JSON.stringify(data))
+	f.close()
+
+
+func _cleanup_unico_json() -> void:
+	if FileAccess.file_exists(UNICO_PATH):
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(UNICO_PATH))
+
+
+## Um arco UNICO fica parado no indice da ultima fase depois de a processar,
+## em vez de voltar ao indice 0 como um CICLICO.
+func test_arco_unico_fica_na_ultima_fase_sem_reciclar() -> void:
+	_write_arco_unico_json()
+	var unico_manager: RefCounted = ArcManagerScript.new(UNICO_PATH)
+
+	unico_manager.advance_phase("teste_unico", fake_nm)  # fase "inicio"
+	var fase_final: Dictionary = unico_manager.advance_phase("teste_unico", fake_nm)  # fase "fim"
+	assert_eq(fase_final.get("id", ""), "fim", "2a chamada processa a ultima fase")
+	assert_eq(
+		unico_manager.phase_index("teste_unico"),
+		1,
+		"UNICO fica parado no indice da ultima fase (1), nao recicla para 0"
+	)
+	_cleanup_unico_json()
+
+
+## is_finished() so fica true depois de um arco UNICO processar a ultima fase,
+## e chamadas seguintes de advance_phase nao reaplicam os efeitos dela.
+func test_arco_unico_is_finished_e_nao_reaplica_efeitos() -> void:
+	_write_arco_unico_json()
+	var unico_manager: RefCounted = ArcManagerScript.new(UNICO_PATH)
+
+	assert_false(
+		unico_manager.is_finished("teste_unico"), "arco ainda nao comecou, nao pode estar terminado"
+	)
+	unico_manager.advance_phase("teste_unico", fake_nm)  # fase "inicio", ESPERANCA +5
+	assert_false(
+		unico_manager.is_finished("teste_unico"), "so entrou na 1a fase, ainda nao terminou"
+	)
+
+	fake_nm.set_value("ESPERANCA", 50.0)
+	unico_manager.advance_phase("teste_unico", fake_nm)  # fase "fim", ESPERANCA -99
+	assert_true(
+		unico_manager.is_finished("teste_unico"), "processou a ultima fase, tem de terminar"
+	)
+	assert_eq(
+		fake_nm.get_value("ESPERANCA"), -49.0, "efeito da ultima fase aplicado exactamente uma vez"
+	)
+
+	# Chamadas seguintes nao fazem nada: nem avancam, nem reaplicam efeitos.
+	var resultado: Dictionary = unico_manager.advance_phase("teste_unico", fake_nm)
+	assert_true(resultado.is_empty(), "arco terminado devolve {} em vez de repetir a ultima fase")
+	assert_eq(
+		fake_nm.get_value("ESPERANCA"),
+		-49.0,
+		"efeito da ultima fase NAO pode ser reaplicado depois de terminado"
+	)
+	_cleanup_unico_json()
+
+
+## reset_phase() tambem limpa is_finished(), permitindo retomar um arco UNICO
+## do inicio (ex.: um novo "Naufragio" gerado mais tarde pela IA, T-115+).
+func test_arco_unico_reset_phase_limpa_is_finished() -> void:
+	_write_arco_unico_json()
+	var unico_manager: RefCounted = ArcManagerScript.new(UNICO_PATH)
+
+	unico_manager.advance_phase("teste_unico", fake_nm)
+	unico_manager.advance_phase("teste_unico", fake_nm)
+	assert_true(unico_manager.is_finished("teste_unico"))
+
+	unico_manager.reset_phase("teste_unico")
+	assert_false(unico_manager.is_finished("teste_unico"), "reset_phase limpa is_finished")
+	assert_eq(unico_manager.phase_index("teste_unico"), 0, "reset_phase volta ao indice 0")
+	_cleanup_unico_json()
+
+
+## CICLICO nunca fica "terminado": is_finished() e sempre false, mesmo depois
+## de varios ciclos completos (contraste directo com o comportamento UNICO).
+func test_arco_ciclico_nunca_fica_terminado() -> void:
+	for i in range(20):
+		arc_manager.advance_phase("jangada", fake_nm)
+	assert_false(
+		arc_manager.is_finished("jangada"),
+		"arco CICLICO nunca fica terminado, mesmo apos varios ciclos"
+	)

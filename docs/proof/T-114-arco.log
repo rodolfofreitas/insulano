@@ -1,0 +1,66 @@
+# T-114 -- prova de fumo reproduzivel (ArcManager + SimpleDirector)
+#
+# Gerado por: godot --headless --path game -s res://tools/arc_smoke.gd
+# 3a ronda (correccao do insulano-reviewer): acrescentada a seccao 'sinalizacao',
+# antes ausente porque ARC_SINALIZACAO nunca era seleccionado em codigo de producao.
+# Corrido 2 vezes de seguida para confirmar reprodutibilidade (needs_manager fixo por
+# seccao + rng com seed 20260915); o conteudo (fora dos avisos de ObjectDB/recursos do
+# motor, que nao sao deterministicos) foi identico nas 2 corridas.
+# Data: 2026-09-15T15:05:20+01:00
+#
+==================================================================
+
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+=== T-114 ARC SMOKE: arco 'companheiro' (SOLIDAO=80, activa por condicao) ===
+[Insulano/Director] Frases carregadas: ["jangada", "companheiro", "sinalizacao", "diario", "avulso"]
+[Insulano/Director] arc=companheiro tone=emocional
+ciclo 00: arc=companheiro fase=encontra_objecto(0) activity=MR04
+[Insulano/Director] arc=companheiro tone=emocional
+ciclo 01: arc=companheiro fase=constroi_amizade(1) activity=MR34
+[Insulano/Director] arc=companheiro tone=emocional
+ciclo 02: arc=companheiro fase=companheiro_desaparece(2) activity=L05
+[Insulano/Director] arc=companheiro tone=emocional
+ciclo 03: arc=companheiro fase=luto(3) activity=L05
+[Insulano/Director] arc=companheiro tone=emocional
+ciclo 04: arc=companheiro fase=encontra_objecto(0) activity=R10
+[Insulano/Director] arc=companheiro tone=emocional
+ciclo 05: arc=companheiro fase=constroi_amizade(1) activity=MR34
+[Insulano/Director] arc=companheiro tone=emocional
+ciclo 06: arc=companheiro fase=companheiro_desaparece(2) activity=L05
+[Insulano/Director] arc=companheiro tone=emocional
+ciclo 07: arc=companheiro fase=luto(3) activity=L05
+[Insulano/Director] arc=companheiro tone=emocional
+ciclo 08: arc=companheiro fase=encontra_objecto(0) activity=MR04
+[Insulano/Director] arc=companheiro tone=emocional
+ciclo 09: arc=companheiro fase=constroi_amizade(1) activity=MR34
+=== T-114 ARC SMOKE: arco 'jangada' (rotacao de TEDIO alto, isolada) ===
+[Insulano/Director] Frases carregadas: ["jangada", "companheiro", "sinalizacao", "diario", "avulso"]
+[Insulano/Director] arc=jangada tone=esperancoso
+ciclo 00: arc=jangada fase=encontra_madeira(0) activity=C16 ESPERANCA 55.0 -> 85.0
+[Insulano/Director] arc=jangada tone=esperancoso
+ciclo 01: arc=jangada fase=construir(1) activity=R13 ESPERANCA 85.0 -> 85.0
+[Insulano/Director] arc=jangada tone=esperancoso
+ciclo 02: arc=jangada fase=cerimonia_lancamento(2) activity=R13 ESPERANCA 85.0 -> 85.0
+[Insulano/Director] arc=jangada tone=esperancoso
+ciclo 03: arc=jangada fase=afunda(3) activity=MR26 ESPERANCA 85.0 -> 45.0
+[Insulano/Director] arc=jangada tone=esperancoso
+ciclo 04: arc=jangada fase=devastacao(4) activity=R13 ESPERANCA 45.0 -> 45.0
+=== T-114 ARC SMOKE: arco 'sinalizacao' (rotacao de TEDIO alto, isolada) ===
+[Insulano/Director] Frases carregadas: ["jangada", "companheiro", "sinalizacao", "diario", "avulso"]
+[Insulano/Director] arc=sinalizacao tone=frustrado
+ciclo 00: arc=sinalizacao fase=decide_fazer_fogo(0) activity=R19 ESPERANCA 55.0 -> 55.0
+[Insulano/Director] arc=sinalizacao tone=frustrado
+ciclo 01: arc=sinalizacao fase=reune_madeira(1) activity=C16 ESPERANCA 55.0 -> 55.0
+[Insulano/Director] arc=sinalizacao tone=frustrado
+ciclo 02: arc=sinalizacao fase=acende_fumo(2) activity=C48 ESPERANCA 55.0 -> 55.0
+[Insulano/Director] arc=sinalizacao tone=frustrado
+ciclo 03: arc=sinalizacao fase=barco_passa_sem_parar(3) activity=R01 ESPERANCA 55.0 -> 35.0
+=== fim ===
+[Insulano/Needs] NeedsManager pronto. Necessidades: ["SOLIDAO", "TEDIO", "ESPERANCA"]
+ERROR: Capture not registered: 'beehave'.
+   at: unregister_message_capture (core/debugger/engine_debugger.cpp:62)
+WARNING: 9 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 2 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

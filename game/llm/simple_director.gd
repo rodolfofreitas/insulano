@@ -8,8 +8,11 @@ extends Resource
 const PHRASES_PATH: String = "res://data/simple_director_phrases.json"
 const LOG_PREFIX: String = "[Insulano/Director]"
 
-## Limiares de transicao de arco.
-const THRESHOLD_SOLIDAO: float = 70.0
+## Limiares de transição de arco. SOLIDAO não entra aqui: a condição de
+## activação do arco "companheiro" vive em arc_definitions.json
+## (condicoes_activacao.SOLIDAO.min) e é consultada via ArcManager
+## (_get_arc_manager().is_activation_condition_met), para o limiar ter uma
+## única fonte de verdade em vez de duplicado numa constante deste ficheiro.
 const THRESHOLD_TEDIO: float = 65.0
 const THRESHOLD_ESPERANCA: float = 25.0
 
@@ -20,9 +23,23 @@ const ARC_SINALIZACAO: String = "sinalizacao"
 const ARC_DIARIO: String = "diario"
 const ARC_AVULSO: String = "avulso"
 
+## Rotação de variedade quando TEDIO >= THRESHOLD_TEDIO (ver _select_arc):
+## jangada, sinalização e diário não têm condição de activação própria em
+## arc_definitions.json (ao contrário do companheiro, que depende de SOLIDAO),
+## por isso partilham o mesmo gatilho -- TEDIO alto -- e alternam entre si
+## para dar variedade, em vez de o mesmo arco repetir sempre. Ordem fixa e
+## determinística: cada chamada avança um passo nesta lista a partir de
+## _last_tedio_arc (round-robin, nunca aleatório).
+const TEDIO_ROTATION: Array[String] = [ARC_JANGADA, ARC_SINALIZACAO, ARC_DIARIO]
+
 ## Referencia ao NeedsManager (pode ser substituida em testes).
 ## Quando null, usa o autoload via Engine.
 var needs_manager: Node = null
+
+## Gerador de aleatoriedade usado para escolher frase e actividade de fase.
+## Injectável para testes determinísticos (AGENTS.md §6.6: aleatoriedade tem
+## de ter costura de teste); sem seed explícita comporta-se como randi().
+var rng: RandomNumberGenerator = RandomNumberGenerator.new()
 
 ## ArcManager que faz a maquina de estados de fases dos arcos base (T-114).
 ## Pode ser injectado (ex.: partilhado com o EventDirector); quando null,
@@ -36,7 +53,10 @@ var _phrases: Dictionary = {}
 ## nunca foi injectado.
 var _default_arc_manager: ArcManager = null
 
-## Ultimo arco activo (para alternar jangada/diario em TEDIO alto).
+## Ultimo arco devolvido pela rotacao de TEDIO alto (ver TEDIO_ROTATION);
+## comeca em ARC_DIARIO para a 1a chamada com TEDIO alto cair em ARC_JANGADA
+## (posicao seguinte a diario na rotacao), igual ao comportamento anterior a
+## sinalizacao entrar na rotacao (T-114, 3a ronda).
 var _last_tedio_arc: String = ARC_DIARIO
 
 ## Ultima frase usada por arco (para evitar repeticao imediata).
@@ -83,28 +103,45 @@ func _get_arc_manager() -> ArcManager:
 
 
 ## Determina o arco activo com base nos valores actuais das necessidades.
-## Prioridade: ESPERANCA critica > SOLIDAO urgente > TEDIO urgente > avulso.
+## Prioridade: ESPERANCA critica > SOLIDAO urgente (companheiro) > TEDIO
+## urgente (rotacao jangada/sinalizacao/diario) > avulso.
 func _select_arc() -> String:
 	var nm := _get_needs_manager()
 	if nm == null:
 		return ARC_AVULSO
 
-	var solidao: float = nm.get_value("SOLIDAO")
 	var tedio: float = nm.get_value("TEDIO")
 	var esperanca: float = nm.get_value("ESPERANCA")
 
 	if esperanca <= THRESHOLD_ESPERANCA:
 		return ARC_AVULSO
-	if solidao >= THRESHOLD_SOLIDAO:
+	# has_arc() primeiro: is_activation_condition_met() devolve true quando o
+	# arco NAO existe (arc_manager.gd, "condicao vazia = sempre activavel" e
+	# a mesma regra para "arco desconhecido"), por isso, sem esta guarda, um
+	# arc_definitions.json em falta ou invalido fazia _arcs ficar {} e este
+	# ramo devolvia "companheiro" SEMPRE, para qualquer SOLIDAO, em silencio
+	# (bloqueante do insulano-reviewer, 3a ronda da T-114).
+	var manager := _get_arc_manager()  # nome distinto do var "arc_manager" (campo injectavel)
+	if (
+		manager.has_arc(ARC_COMPANHEIRO)
+		and manager.is_activation_condition_met(ARC_COMPANHEIRO, nm)
+	):
 		return ARC_COMPANHEIRO
 	if tedio >= THRESHOLD_TEDIO:
-		# Alternar entre jangada e diario para variedade.
-		if _last_tedio_arc == ARC_DIARIO:
-			_last_tedio_arc = ARC_JANGADA
-		else:
-			_last_tedio_arc = ARC_DIARIO
-		return _last_tedio_arc
+		return _next_tedio_arc()
 	return ARC_AVULSO
+
+
+## Avanca um passo em TEDIO_ROTATION a partir de _last_tedio_arc (round-robin
+## determinístico: jangada -> sinalizacao -> diario -> jangada -> ...) e
+## devolve o arco seguinte. Arco desconhecido em _last_tedio_arc (nunca
+## deveria acontecer fora de testes) reinicia a rotacao do principio.
+func _next_tedio_arc() -> String:
+	var idx: int = TEDIO_ROTATION.find(_last_tedio_arc)
+	if idx == -1:
+		idx = TEDIO_ROTATION.size() - 1
+	_last_tedio_arc = TEDIO_ROTATION[(idx + 1) % TEDIO_ROTATION.size()]
+	return _last_tedio_arc
 
 
 ## Escolhe uma frase do arco indicado sem repetir a ultima usada.
@@ -128,7 +165,7 @@ func _pick_phrase(arc: String) -> String:
 	if candidatas.is_empty():
 		candidatas = lista.duplicate()
 
-	var escolha: String = candidatas[randi() % candidatas.size()]
+	var escolha: String = candidatas[rng.randi() % candidatas.size()]
 	_last_phrase[arc] = escolha
 	return escolha
 
@@ -137,6 +174,13 @@ func _pick_phrase(arc: String) -> String:
 ## O arco e escolhido com base nos thresholds das necessidades; se o arco
 ## escolhido tiver definicao de fases (T-114, arc_definitions.json), avanca
 ## a maquina de estados de fases e aplica os efeitos da fase nas necessidades.
+## AVISO (efeito lateral intencional): esta chamada MUDA o estado do
+## needs_manager quando a fase tem "effects" (ex.: ESPERANCA +30 ao iniciar a
+## Jangada) -- get_directive() não é uma leitura pura, é "avança um tick do
+## arco". Chamar duas vezes seguidas não devolve a mesma fase nem o mesmo
+## estado de necessidades; para observar sem mover estado usar
+## `arc_manager.current_phase(arc_id)` directamente (não avança, não aplica
+## efeitos).
 func get_directive() -> DirectorDirective:
 	var arc := _select_arc()
 	var directive := DirectorDirective.new()
@@ -169,7 +213,7 @@ func _apply_arc_phase(arc: String, directive: DirectorDirective) -> void:
 		return
 	var activities: Array = fase.get("activities", [])
 	if not activities.is_empty():
-		directive.activity = activities[randi() % activities.size()]
+		directive.activity = activities[rng.randi() % activities.size()]
 	directive.phrase_context_extra["fase_id"] = fase.get("id", "")
 	directive.phrase_context_extra["fase_index"] = fase.get("index", 0)
 
