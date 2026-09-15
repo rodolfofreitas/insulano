@@ -1,0 +1,82 @@
+{
+	"jangada": {
+		"tone": "esperancoso",
+		"activity": "construir_jangada",
+		"phrases": [
+			"Hoje e o dia. Aquela madeira ali serve perfeitamente.",
+			"Uma tabua de cada vez. A jangada vai nascer.",
+			"O vento esta a mudar de direcao. E um sinal.",
+			"Com esta jangada chego la. Tenho a certeza.",
+			"Preciso de mais corda. Ha sempre mais corda algures.",
+			"A mares cheias corro o rio. Ou o oceano, neste caso.",
+			"Cada no que ato e um passo mais perto de casa.",
+			"Ela vai flutuar. Vai. Estou a calcular bem desta vez.",
+			"O horizonte esta limpo. Perfeito para a travessia.",
+			"So falta a vela. Uma folha de palmeira serve."
+		]
+	},
+	"companheiro": {
+		"tone": "emocional",
+		"activity": "falar_com_companheiro",
+		"phrases": [
+			"Nunca me abandones. Precisamos um do outro.",
+			"Sabes que sem ti esta ilha era diferente.",
+			"Hoje pareces mais silencioso. Esta tudo bem contigo?",
+			"Obrigado por estares aqui. A serio.",
+			"A minha mae ia adorar-te. Ela gostava de pessoas caladas.",
+			"Amanha fazemos algo especial. Prometo.",
+			"Nao e o mesmo sem ti por perto.",
+			"Ja te contei como era a minha vida antes? Deixa-me contar.",
+			"Tu entendes-me de uma maneira que os outros nunca entenderam.",
+			"Fica. Por favor, fica sempre."
+		]
+	},
+	"sinalizacao": {
+		"tone": "frustrado",
+		"activity": "fazer_sinal",
+		"phrases": [
+			"Outra vez. Veem o fumo e nao param. Outro barco!",
+			"Grito, aceno, fico vermelho -- e nada. Absolutamente nada.",
+			"Talvez o fumo nao chegue alto o suficiente. Preciso de mais madeira.",
+			"Aquele capitao vai ter de me ouvir mais cedo ou mais tarde.",
+			"A proxima vez ponho fogo a metade da ilha. Vao ver.",
+			"Nao e possivel. Sao cegos? Todos cegos?",
+			"Tres vezes. Tres vezes vi barcos e tres vezes nao pararam.",
+			"Bom. Fica assim. Encontro outro barco.",
+			"O sinal de fumo estava perfeito. Perfeito! E ignoraram-no.",
+			"Amanha acordo mais cedo e faco o fumo mais grosso."
+		]
+	},
+	"diario": {
+		"tone": "melancolico",
+		"activity": "escrever_diario",
+		"phrases": [
+			"Dia... quanto? Vou riscar mais uma vez na pedra.",
+			"Hoje nao aconteceu nada. Ou aconteceu e eu ja nao me lembro.",
+			"Pergunto-me se alguem se lembra de mim la fora.",
+			"As pedras sao uma boa forma de guardar o tempo. Ate a maré subir.",
+			"Escrevi o mesmo que ontem. E o de amanha vai ser igual.",
+			"Havia uma musica que eu adorava. Ja nao me lembro da letra.",
+			"O sol nasceu. O sol vai descer. O sol vai nascer outra vez.",
+			"Registro: o coqueiro da direita perdeu outro coco. Importantes noticias.",
+			"Talvez comece um diario de verdade. Se tivesse papel.",
+			"Que dia da semana e hoje? Deve ser quinta. Parece quinta."
+		]
+	},
+	"avulso": {
+		"tone": "neutro",
+		"activity": "descansar",
+		"phrases": [
+			"Hmm.",
+			"Bom dia.",
+			"A maré esta a subir.",
+			"Preciso de comer alguma coisa.",
+			"As nuvens estao engraçadas hoje.",
+			"Deve haver peixe por ali.",
+			"Vou dar uma volta.",
+			"Nada de especial por enquanto.",
+			"O vento mudou.",
+			"Que calor."
+		]
+	}
+}
