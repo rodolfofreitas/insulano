@@ -1,10 +1,14 @@
-[gd_scene load_steps=4 format=4 uid="uid://v8dup1iis1nx"]
+[gd_scene load_steps=5 format=4 uid="uid://v8dup1iis1nx"]
 
 [ext_resource type="PackedScene" uid="uid://dhul5qg3kw2mv" path="res://guy/guy.tscn" id="1_uhqqe"]
 [ext_resource type="Script" uid="uid://j2g3xfich4ps" path="res://need_bar.gd" id="2_ia1lp"]
 [ext_resource type="TileSet" uid="uid://dtf8iskqsmmgd" path="res://world/world_tileset.tres" id="4_coq8p"]
+[ext_resource type="Script" path="res://world/day_night.gd" id="5_daynt"]
 
 [node name="TestWorld" type="Node2D"]
+
+[node name="DayNight" type="CanvasModulate" parent="."]
+script = ExtResource("5_daynt")
 
 [node name="TileMap" type="Node2D" parent="."]
 

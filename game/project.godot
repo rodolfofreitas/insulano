@@ -22,6 +22,7 @@ BeehaveGlobalDebugger="*res://addons/beehave/debug/global_debugger.gd"
 LLM="*res://llm/llm_bridge.gd"
 NeedsManager="*res://world/needs_manager.gd"
 Clock="*res://world/game_clock.gd"
+InputWatcher="*res://app/input_watcher.gd"
 
 [editor_plugins]
 

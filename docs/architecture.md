@@ -87,6 +87,7 @@ Estado a 2026-09-13: existem a cena principal e a behavior tree herdadas; os aut
 <!-- gerado:componentes:inicio -->
 | Ficheiro (game/) | class_name | extends | Responsabilidade (1.ª linha ##) |
 |---|---|---|---|
+| `app/input_watcher.gd` | - | Node | Detecta presenca do utilizador e emite sinal para reaccao antes de fechar. |
 | `beehave/action_using_delta.gd` | ActionUsingDelta | ActionLeaf | Base para acções do Beehave que precisam do delta do frame corrente. |
 | `beehave/find_group_spot_condition.gd` | FindGroupSpotCondition | ConditionLeaf | Escolhe ao acaso um nó do grupo `group_name` e grava a posição no blackboard. |
 | `beehave/find_random_spot_condition.gd` | FindRandomSpotCondition | ConditionLeaf | Escolhe um ponto aleatório navegável do `NavigationServer2D` e grava-o no blackboard. |
@@ -111,6 +112,7 @@ Estado a 2026-09-13: existem a cena principal e a behavior tree herdadas; os aut
 | `llm/phrase_context.gd` | PhraseContext | RefCounted | Contexto tipado que descreve a situação do náufrago num dado momento. |
 | `llm/phrase_filter.gd` | PhraseFilter | RefCounted | Aceita ou rejeita frases geradas pelo LLM segundo game/data/phrase_rules.json |
 | `llm/prompt_builder.gd` | PromptBuilder | RefCounted | Monta o prompt enviado ao Ollama a partir do template partilhado |
+| `llm/simple_director.gd` | SimpleDirector | Resource | Director deterministico sem LLM: maquina de estados com 5 arcos narrativos. |
 | `need_bar.gd` | NeedBar | ProgressBar | Barra de progresso que reflecte uma necessidade (`need_name`) de `target`. |
 | `object/general_usable_object.gd` | GeneralUsableObject | UsableObject | Objecto utilizável que declara, em `satisfying_needs`, quais necessidades trata. |
 | `object/need_replentishing_unsable.gd` | NeedReplentishingUsable | GeneralUsableObject | Objecto que repõe uma necessidade enquanto durar (ex.: o peixe apanhado). |
@@ -119,6 +121,7 @@ Estado a 2026-09-13: existem a cena principal e a behavior tree herdadas; os aut
 | `tools/boot_smoke.gd` | - | SceneTree | Smoke de arranque: carrega a cena principal, simula tempo de jogo e verifica |
 | `tools/capture.gd` | - | SceneTree | Captura de prova visual: carrega uma cena com renderização real dentro de um |
 | `ui/speech_bubble.gd` | SpeechBubble | PanelContainer | Balão de fala do personagem: fundo opaco e legível sobre qualquer fundo da |
+| `world/day_night.gd` | DayNight | CanvasModulate | Aplica a cor da hora actual a toda a cena via CanvasModulate. |
 | `world/game_clock.gd` | GameClock | Node | Relogio do jogo: fonte unica da hora, com suporte a hora simulada para testes. |
 | `world/needs_manager.gd` | - | Node | Autoload NeedsManager: gere as necessidades SOLIDAO, TEDIO e ESPERANCA do naufrago. |
 <!-- gerado:componentes:fim -->

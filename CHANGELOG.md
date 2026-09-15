@@ -6,6 +6,9 @@ Entradas em linguagem de utilizador, não de commit. Cada tarefa acrescenta a su
 ## [Não lançado]
 
 ### Adicionado
+- `SimpleDirector` (T-111): director deterministico sem LLM com maquina de estados de 5 arcos (jangada, companheiro, sinalizacao, diario, avulso). Transicoes baseadas nos thresholds do NeedsManager (SOLIDAO>=70 -> companheiro, TEDIO>=65 -> jangada/diario alternados, ESPERANCA<=25 -> avulso). Frases PT-PT em `game/data/simple_director_phrases.json` (10 por arco), sem repeticao imediata. `is_available()` devolve sempre true -- sem dependencia de Ollama. Satisfaz o contrato IDirector por duck typing.
+- `DayNight` (T-202): ciclo dia/noite via `CanvasModulate`. Interpola linearmente entre 13 pontos de `game/data/day_night_palette.json` (madrugada azul-escura ate luz quente de manha, por-do-sol em tons laranjas, noite profunda apos as 22h). Transicao suave (lerp a 2.0/s). Instanciado na cena principal.
+- `InputWatcher` (T-112): autoload que detecta presenca do utilizador (rato, teclado, clique) e emite sinal `presence_detected` com tipo (suave/brusco/clique/tecla). Acumula delta de rato em 3 frames com minimo de 6px para evitar jitter do Wayland. Em modo `--screensaver` fecha apos 150ms de graca para animacao de reaccao; em modo `--window` nunca fecha por input.
 - `GameClock` (T-201): autoload `Clock`, fonte unica da hora do sistema. API publica: `now()`, `hour_float()`, `period()`, `signal hour_changed`. Suporta override via variavel de ambiente `INSULANO_FAKE_TIME` (formato `AAAA-MM-DDTHH:MM`) e setting `insulano/debug/fake_time`, sem mexer no relogio da maquina. Valor invalido regista aviso e usa hora real.
 
 ## [0.1.0] - 2026-09-14
