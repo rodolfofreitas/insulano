@@ -2,6 +2,8 @@
 
 ## Visão Geral
 
+> **PRINCÍPIO FUNDAMENTAL:** O náufrago NUNCA morre. Fome, sede e todas as necessidades são motivadores de comportamento e fontes de drama emocional -- não ameaças de morte. "Crise" significa o comportamento mais expressivo e caricato, não um estado terminal. O Insulano é entretenimento eterno: ele está sempre lá.
+
 O Insulano deixa de ser um autómato faminto e torna-se uma *pessoa*: alguém que sente solidão, que se aborrece, que ainda tem esperança (ou não). Cada necessidade é um eixo psicológico independente, mas todas interagem, criando um espaço de comportamentos rico e imprevisível.
 
 ---
