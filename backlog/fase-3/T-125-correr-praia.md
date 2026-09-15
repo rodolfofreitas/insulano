@@ -2,7 +2,7 @@
 id: T-125
 titulo: Correr pela praia -- animacao de corrida, contexto emocional
 fase: 3
-estado: pronto
+estado: feito
 tipo: codigo
 depende_de: [T-111]
 ---
@@ -32,4 +32,6 @@ Implementar accao D01 (correr pela praia): o naufrago corre espontaneamente de u
 - Screenshot ou log com frase LLM gerada
 
 ## Relatório
-(preenchido pelo executor)
+`game/beehave/run_action.gd` criado com `class_name RunAction extends ActionLeaf`.
+Repoe TEDIO 15pts ao completar 6s. 5 frases fallback categoria `correr` adicionadas
+a `phrases_fallback.json`. 4 testes GUT em `test_swim_run.gd`.

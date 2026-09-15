@@ -2,7 +2,7 @@
 id: T-124
 titulo: Nadar livremente -- animacao de natacao, splash, estado a nadar
 fase: 3
-estado: pronto
+estado: feito
 tipo: codigo
 depende_de: [T-111, T-304]
 ---
@@ -34,4 +34,6 @@ Implementar accao D02 (nadar livremente): o naufrago entra no oceano, nada com a
 - GUT test para SwimAction com condicoes de entrada e saida
 
 ## Relatório
-(preenchido pelo executor)
+`game/beehave/swim_action.gd` criado com `class_name SwimAction extends ActionLeaf`.
+Repoe TEDIO 20pts e CALOR 15pts ao completar 10s. 5 frases fallback categoria `nadar`
+adicionadas a `phrases_fallback.json`. 4 testes GUT em `test_swim_run.gd`.

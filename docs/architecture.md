@@ -112,7 +112,7 @@ Estado a 2026-09-13: existem a cena principal e a behavior tree herdadas; os aut
 | `beehave/say_generated_action.gd` | SayGeneratedAction | ActionLeaf | Pede uma frase ao LLMBridge (ou fallback) e di-la em `character.talking_text` (tech_design §4.6). |
 | `beehave/set_delta_on_blackboard.gd` | SetDeltaOnBlackboardAction | ActionLeaf | Escreve o delta do frame corrente no blackboard, para outras folhas o lerem. |
 | `beehave/sleep_action.gd` | SleepAction | ActionUsingDelta | Faz o personagem dormir: energia recupera, velocidade zero. |
-| `beehave/swim_action.gd` | SwimAction | ActionLeaf | Naufrago nada no oceano. Melhora TEDIO -20 e CALOR -15 (se existir). |
+| `beehave/swim_action.gd` | SwimAction | ActionLeaf | Naufrago nada no oceano. Melhora TEDIO -20. |
 | `beehave/use_usable_action.gd` | UseUsableAction | ActionUsingDelta | Usa o objecto em `object_blackboard_key` enquanto a necessidade associada não estiver satisfeita. |
 | `beehave/watch_ocean_action.gd` | WatchOceanAction | ActionUsingDelta | Faz o actor "olhar o mar" durante um tempo aleatório entre os dois limites. |
 | `beehave/wave_action.gd` | WaveAction | ActionLeaf | Naufrago acena quando aparece barco ou gaivota. |
