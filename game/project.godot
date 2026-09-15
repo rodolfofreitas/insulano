@@ -23,6 +23,7 @@ LLM="*res://llm/llm_bridge.gd"
 NeedsManager="*res://world/needs_manager.gd"
 Clock="*res://world/game_clock.gd"
 InputWatcher="*res://app/input_watcher.gd"
+ArcHistory="*res://world/arc_history.gd"
 
 [editor_plugins]
 

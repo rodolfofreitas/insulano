@@ -94,16 +94,18 @@ Estado a 2026-09-13: existem a cena principal e a behavior tree herdadas; os aut
 | `beehave/find_usable_for_need_condition.gd` | FundUsableForNeedCondition | ConditionLeaf | Encontra, entre os objectos utilizáveis dentro de `search_area`, o que melhor |
 | `beehave/fishing_action.gd` | FishingAction | ActionUsingDelta | Acção de pescar: mostra a cana, espera um tempo aleatório e faz nascer um peixe. |
 | `beehave/go_to_usable_action.gd` | GoToUsableAction | ActionLeaf | Move o actor até à posição em `blackboard_key`, usando o `NavigationAgent2D` do Character. |
+| `beehave/is_night_condition.gd` | IsNightCondition | ConditionLeaf | SUCCESS quando Clock.period() e 'noite' ou 'madrugada'. |
 | `beehave/need_low_condition.gd` | NeedLowCondition | ConditionLeaf | Sorteia, para cada necessidade do actor, se está baixa o suficiente para tratar agora. |
 | `beehave/say_generated_action.gd` | SayGeneratedAction | ActionLeaf | Pede uma frase ao LLMBridge (ou fallback) e di-la em `character.talking_text` (tech_design §4.6). |
 | `beehave/set_delta_on_blackboard.gd` | SetDeltaOnBlackboardAction | ActionLeaf | Escreve o delta do frame corrente no blackboard, para outras folhas o lerem. |
+| `beehave/sleep_action.gd` | SleepAction | ActionUsingDelta | Faz o personagem dormir: energia recupera, velocidade zero. |
 | `beehave/use_usable_action.gd` | UseUsableAction | ActionUsingDelta | Usa o objecto em `object_blackboard_key` enquanto a necessidade associada não estiver satisfeita. |
 | `beehave/watch_ocean_action.gd` | WatchOceanAction | ActionUsingDelta | Faz o actor "olhar o mar" durante um tempo aleatório entre os dois limites. |
 | `character/character.gd` | Character | CharacterBody2D | Personagem base: necessidades, navegação, animação por direcção e balão de fala. |
 | `character/need.gd` | Need | Resource | Um recurso de necessidade (fome, energia, ...) com valor actual e máximo. |
 | `fishing_spot.gd` | - | Node2D | Marcador visual de um ponto de pesca, com círculo vermelho só no editor. |
 | `guy/direction.gd` | Direction | Object | Uma das quatro direcções cardinais, usada para escolher animação (walk_up, |
-| `guy/guy.gd` | Guy | Character | O náufrago jogável: um Character que perde fome com o tempo. |
+| `guy/guy.gd` | Guy | Character | O naufrago jogavel: um Character que perde fome e energia com o tempo. |
 | `llm/director_directive.gd` | DirectorDirective | Resource | Instrucao do director para o EventDirector: que arco, actividade e tom usar. |
 | `llm/fallback_phrases.gd` | FallbackPhrases | RefCounted | Escolhe frases fixas em português de Portugal quando não há resposta do |
 | `llm/i_director.gd` | IDirector | Resource | Contrato que SimpleDirector e LLMDirector satisfazem. |
@@ -121,9 +123,11 @@ Estado a 2026-09-13: existem a cena principal e a behavior tree herdadas; os aut
 | `tools/boot_smoke.gd` | - | SceneTree | Smoke de arranque: carrega a cena principal, simula tempo de jogo e verifica |
 | `tools/capture.gd` | - | SceneTree | Captura de prova visual: carrega uma cena com renderização real dentro de um |
 | `ui/speech_bubble.gd` | SpeechBubble | PanelContainer | Balão de fala do personagem: fundo opaco e legível sobre qualquer fundo da |
+| `world/arc_history.gd` | - | Node | Persistencia de arcos entre sessoes. Escrita atomica: tmp + rename. |
 | `world/day_night.gd` | DayNight | CanvasModulate | Aplica a cor da hora actual a toda a cena via CanvasModulate. |
 | `world/game_clock.gd` | GameClock | Node | Relogio do jogo: fonte unica da hora, com suporte a hora simulada para testes. |
 | `world/needs_manager.gd` | - | Node | Autoload NeedsManager: gere as necessidades SOLIDAO, TEDIO e ESPERANCA do naufrago. |
+| `world/night_sky.gd` | NightSky | Node2D | Estrelas e lua desenhadas com _draw(), sem assets novos. |
 <!-- gerado:componentes:fim -->
 
 ## 5. Vista de runtime
