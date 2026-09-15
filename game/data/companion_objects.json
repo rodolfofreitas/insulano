@@ -1,0 +1,17 @@
+{
+  "_comment": "Objectos que o naufrago pode usar como companheiro imaginario. Minimo 10.",
+  "objects": [
+    "coco",
+    "tabua",
+    "destroco",
+    "garrafa",
+    "boia",
+    "capacete",
+    "pedra com cara",
+    "vela partida",
+    "remo partido",
+    "lata velha",
+    "osso de baleia",
+    "caixa de madeira"
+  ]
+}

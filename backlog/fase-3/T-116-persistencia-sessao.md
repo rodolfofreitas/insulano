@@ -2,7 +2,7 @@
 id: T-116
 titulo: Persistencia de sessao -- save.json e comportamento por tempo decorrido
 fase: 3
-estado: pronto
+estado: feito
 tipo: codigo
 depende_de: [T-113, T-115]
 ---

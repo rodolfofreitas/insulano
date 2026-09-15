@@ -2,7 +2,7 @@
 id: T-118
 titulo: Companheiro imaginario -- objecto e nome aleatorios, ciclo de vida, luto
 fase: 3
-estado: pronto
+estado: feito
 tipo: visual
 depende_de: [T-115, T-116]
 ---
@@ -38,3 +38,14 @@ por onda) com reaccoes distintas do naufrago em cada fase.
 
 - Screenshot do naufrago com o companheiro referenciado num balao de fala
 - Teste GUT: "Wilson" nao pode aparecer na lista de nomes
+
+## Relatório
+
+- `game/world/imaginary_companion.gd`: autoload Companion, estados ABSENT/ALIVE/MOURNING
+- `game/data/companion_names.json`: 12 nomes (nunca Wilson)
+- `game/data/companion_objects.json`: 12 objectos
+- `game/data/events.json`: evento `tide_takes_companion` (peso=1, MUITO_RARO)
+- `game/tests/unit/test_imaginary_companion.gd`: 7 testes GUT (todos passam)
+- NeedsManager integrado via sinais (SOLIDAO/TEDIO)
+- EventDirector integrado via `event_started`
+- Prova: `docs/proof/T-118-companheiro.png`
