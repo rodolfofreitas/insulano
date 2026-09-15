@@ -13,8 +13,8 @@
       "phrase_action":    "ver uma gaivota a passar"
     },
     {
-      "id":               "distant_ship",
-      "kind":             "ship",
+      "id":               "distant_boat",
+      "kind":             "boat",
       "weight":           8,
       "min_interval_s":   600,
       "duration_s":       12,
