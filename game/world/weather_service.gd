@@ -22,6 +22,10 @@ func _ready() -> void:
 	_enabled = ProjectSettings.get_setting("insulano/weather/enabled", false)
 	_location = ProjectSettings.get_setting("insulano/weather/location", "")
 	_load_codes()
+	var fake := OS.get_environment("INSULANO_FAKE_WEATHER")
+	if fake != "":
+		_current = fake
+		return  # nao faz pedidos HTTP
 	if not _enabled:
 		return
 	_http = HTTPRequest.new()

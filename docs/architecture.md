@@ -104,6 +104,7 @@ Estado a 2026-09-13: existem a cena principal e a behavior tree herdadas; os aut
 | `character/character.gd` | Character | CharacterBody2D | Personagem base: necessidades, navegação, animação por direcção e balão de fala. |
 | `character/need.gd` | Need | Resource | Um recurso de necessidade (fome, energia, ...) com valor actual e máximo. |
 | `events/event_director.gd` | EventDirector | Node | Director de eventos: agenda e dispara eventos aleatorios com seed. |
+| `events/seagull.gd` | SeagullEvent | Node2D | Gaivota que atravessa o ecra da esquerda para a direita (ou vice-versa) |
 | `fishing_spot.gd` | - | Node2D | Marcador visual de um ponto de pesca, com círculo vermelho só no editor. |
 | `guy/direction.gd` | Direction | Object | Uma das quatro direcções cardinais, usada para escolher animação (walk_up, |
 | `guy/guy.gd` | Guy | Character | O naufrago jogavel: um Character que perde fome e energia com o tempo. |
@@ -123,12 +124,14 @@ Estado a 2026-09-13: existem a cena principal e a behavior tree herdadas; os aut
 | `object/usable_object_container.gd` | UsableObjectContainer | UsableObject | Agrupa vários objectos utilizáveis num só nó (ex.: uma prateleira com comida). |
 | `tools/boot_smoke.gd` | - | SceneTree | Smoke de arranque: carrega a cena principal, simula tempo de jogo e verifica |
 | `tools/capture.gd` | - | SceneTree | Captura de prova visual: carrega uma cena com renderização real dentro de um |
+| `tools/fps_rain.gd` | - | SceneTree | Mede FPS durante 10s com chuva activa (T-305). |
 | `ui/speech_bubble.gd` | SpeechBubble | PanelContainer | Balão de fala do personagem: fundo opaco e legível sobre qualquer fundo da |
 | `world/arc_history.gd` | - | Node | Persistencia de arcos entre sessoes. Escrita atomica: tmp + rename. |
 | `world/day_night.gd` | DayNight | CanvasModulate | Aplica a cor da hora actual a toda a cena via CanvasModulate. |
 | `world/game_clock.gd` | GameClock | Node | Relogio do jogo: fonte unica da hora, com suporte a hora simulada para testes. |
 | `world/needs_manager.gd` | - | Node | Autoload NeedsManager: gere as necessidades SOLIDAO, TEDIO e ESPERANCA do naufrago. |
 | `world/night_sky.gd` | NightSky | Node2D | Estrelas e lua desenhadas com _draw(), sem assets novos. |
+| `world/rain.gd` | Rain | Node2D | Efeito de chuva com CPUParticles2D. |
 | `world/weather_service.gd` | WeatherService | Node | Servico de tempo: devolve condicao meteorologica actual. |
 <!-- gerado:componentes:fim -->
 

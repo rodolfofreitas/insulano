@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=4 uid="uid://v8dup1iis1nx"]
+[gd_scene load_steps=7 format=4 uid="uid://v8dup1iis1nx"]
 
 [ext_resource type="PackedScene" uid="uid://dhul5qg3kw2mv" path="res://guy/guy.tscn" id="1_uhqqe"]
 [ext_resource type="Script" uid="uid://j2g3xfich4ps" path="res://need_bar.gd" id="2_ia1lp"]
 [ext_resource type="TileSet" uid="uid://dtf8iskqsmmgd" path="res://world/world_tileset.tres" id="4_coq8p"]
 [ext_resource type="Script" path="res://world/day_night.gd" id="5_daynt"]
 [ext_resource type="Script" path="res://world/night_sky.gd" id="6_nsky"]
+[ext_resource type="Script" path="res://world/rain.gd" id="7_rain"]
 
 [node name="TestWorld" type="Node2D"]
 
@@ -80,3 +81,6 @@ position = Vector2(488, 214)
 
 [node name="Camera2D" type="Camera2D" parent="Guy"]
 zoom = Vector2(2, 2)
+
+[node name="Rain" type="Node2D" parent="."]
+script = ExtResource("7_rain")
