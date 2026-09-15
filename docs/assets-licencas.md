@@ -12,6 +12,7 @@ Inventário feito a 2026-09-13 com
 |---|---|---|---|---|---|
 | `events/seagull.gd` (visual desenhado em codigo) | Hermes/agente | CC0 | desenhada em codigo GDScript, sem assets externos (seagull_drawn: 2026-09-15) | nenhuma | confirmado |
 | `object/campfire_object.gd` (visual desenhado em codigo) | Hermes/agente | CC0 | desenhada em codigo GDScript, sem assets externos (campfire_drawn: 2026-09-15) | nenhuma | confirmado |
+| `object/companion_coco.png`, `companion_tabua.png`, `companion_destroco.png`, `companion_garrafa.png` (companion sprites lote 1) | Hermes/agente | CC0 | desenhados em Python/Pillow, sem assets externos (companion sprites: 2026-09-15) | nenhuma | confirmado |
 | `world/Tiny-Islands-by-Majadroid/tilemap.png`, `tilemap-separated.png` | Maik Hoffmann (Majadroid) | CC0 | [OpenGameArt](https://opengameart.org/content/tiny-islands-16x16-tilemap), confirmado em `INFO.txt` | nenhuma (atribuicao apreciada) | confirmado |
 | `world/Tiny-Islands-by-Majadroid/buttons.png`, `sample-scene.png` | Majadroid | CC0 | idem | nenhuma; não usados em jogo, candidatos a remover do export | confirmado |
 | `world/Tiny-Islands-by-Majadroid/Majadroid Brand Resources/*.png` | Majadroid | logótipos da marca do autor, fora do pacote CC0 | idem | não distribuir como parte do jogo | por confirmar: excluir do export |

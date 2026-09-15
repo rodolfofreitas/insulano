@@ -1,0 +1,12 @@
+{
+  "_comment": "Workflow de geracao dos sprites dos objectos do companheiro. Sprites gerados via Python/Pillow (nao ComfyUI) em scripts/generate_companion_sprites.py. CC0.",
+  "method": "python-pillow",
+  "script": "scripts/generate_companion_sprites.py",
+  "output_dir": "game/object",
+  "sprites": ["companion_coco.png", "companion_tabua.png", "companion_destroco.png", "companion_garrafa.png"],
+  "dimensions": "16x24",
+  "palette": "Stardew Valley / Graveyard Keeper (ADR-013)",
+  "license": "CC0",
+  "author": "Hermes/agente",
+  "date": "2026-09-15"
+}

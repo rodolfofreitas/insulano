@@ -1,0 +1,11 @@
+{
+  "_comment": "Workflow de geracao de sprites de efeitos de particulas para Insulano (T-608).",
+  "_note": "ComfyUI nao disponivel; sprites gerados via Pillow (scripts/generate_animal_sprites.py)",
+  "version": "0.4",
+  "workflow": "python_pillow_pixel_art",
+  "sprites": ["rain_particle.png", "shooting_star.png", "bioluminescence.png"],
+  "resolution_rain": "2x6",
+  "resolution_star": "16x4",
+  "resolution_bio": "8x8",
+  "script": "scripts/generate_animal_sprites.py"
+}

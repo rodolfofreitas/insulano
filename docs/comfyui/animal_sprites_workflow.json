@@ -1,0 +1,10 @@
+{
+  "_comment": "Workflow de geracao de sprites de animais visitantes para Insulano (T-607).",
+  "_note": "ComfyUI nao disponivel; sprites gerados via Pillow (scripts/generate_animal_sprites.py)",
+  "version": "0.4",
+  "workflow": "python_pillow_pixel_art",
+  "sprites": ["seagull.png", "dolphin.png", "turtle.png", "crab.png"],
+  "resolution": "16x16",
+  "upscale": "4x nearest-neighbour",
+  "script": "scripts/generate_animal_sprites.py"
+}
