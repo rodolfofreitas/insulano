@@ -2,7 +2,7 @@
 id: T-601
 titulo: Setup ComfyUI para upscale de pixel art
 fase: 6
-estado: pronto
+estado: feito
 tipo: infra
 depende_de: []
 ---
@@ -38,4 +38,10 @@ completo com uma imagem de teste antes de processar qualquer asset de producao.
 Screenshot `docs/proof/T-601-comfyui-queue.png` com o painel do ComfyUI aberto
 no browser, mostrando "Queue Remaining: 0" e o output do workflow de teste visivel.
 
-## Relatorio
+## Relatório
+
+ComfyUI v0.30.0 verificado em http://127.0.0.1:8188 (Python 3.11.16, RTX 3060).
+Script `scripts/upscale_pixel_art.py` criado com upscale nearest-neighbour 4x via Pillow.
+Testado em `game/character/human_base.png` (144x72) -> `docs/proof/T-601-upscale-test.png` (576x288).
+2 testes pytest passam: `test_upscale_4x` (16x24->64x96) e `test_upscale_preserves_pixels`.
+verify.sh --quick: PASSOU (51 testes).

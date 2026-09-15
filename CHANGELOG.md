@@ -6,6 +6,9 @@ Entradas em linguagem de utilizador, não de commit. Cada tarefa acrescenta a su
 ## [Não lançado]
 
 ### Adicionado
+- `scripts/upscale_pixel_art.py` (T-601): upscale de pixel art com nearest-neighbour 4x.
+  Uso: `python3 scripts/upscale_pixel_art.py input.png [output.png] [scale]`.
+  Preserva píxeis nítidos sem suavização. 2 testes pytest em `scripts/tests/test_upscale.py`.
 - `DrinkCoconutAction` (T-126): naufrago parte um coco e bebe a agua. FOME -10pts ao completar.
   Duracao 5s, cooldown 4h de jogo (240s acelerado). Trigger: SEDE >= 60 ou TEDIO >= 40.
   5 frases fallback categoria `beber_coco` em `game/data/phrases_fallback.json`.

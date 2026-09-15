@@ -66,7 +66,7 @@ else
 fi
 
 # 3. Testes dos scripts do harness
-if uvx --quiet pytest -q scripts/tests > reports/pytest.log 2>&1; then
+if uvx --quiet --with pillow pytest -q scripts/tests > reports/pytest.log 2>&1; then
   record pytest PASSOU "$(tail -1 reports/pytest.log)"
 else
   record pytest FALHOU "ver reports/pytest.log"; tail -15 reports/pytest.log
