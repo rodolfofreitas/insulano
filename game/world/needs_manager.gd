@@ -151,6 +151,18 @@ func increase(need_name: String, amount: float) -> void:
 	set_value(need_name, _values.get(need_name, 0.0) + amount)
 
 
+## Repoe uma necessidade no sentido "positivo": decrease para necessidades que
+## crescem passivamente (SOLIDAO, TEDIO), increase para as que decrescem (ESPERANCA).
+func replenish(need_name: String, amount: float) -> void:
+	if need_name not in _values:
+		return
+	var passive_rate: float = float(_config.get(need_name, {}).get("passive_rate", 1.0))
+	if passive_rate < 0.0:
+		increase(need_name, amount)
+	else:
+		decrease(need_name, amount)
+
+
 ## Devolve um snapshot das necessidades para contexto do LLM.
 func get_snapshot() -> Dictionary:
 	var snapshot: Dictionary = {}

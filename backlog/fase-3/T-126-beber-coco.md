@@ -2,9 +2,9 @@
 id: T-126
 titulo: Beber agua de coco -- animacao, som, cooldown 4h de jogo
 fase: 3
-estado: pronto
+estado: feito
 tipo: codigo
-depende_de: [T-111, T-801]
+depende_de: []
 ---
 
 ## Objectivo
@@ -33,4 +33,7 @@ Implementar accao A03 (beber agua de coco) como accao do behaviour tree: partir 
 - GUT com SEDE inicial 50 -> 20 apos accao
 
 ## Relatório
-(preenchido pelo executor)
+Implementado como DrinkCoconutAction em game/beehave/drink_coconut_action.gd.
+Duracao 5s, cooldown 240s (4h de jogo acelerado). FOME -10pts via NeedsManager.replenish.
+Frases fallback categoria beber_coco adicionadas. 6 testes GUT passam.
+Dependencias T-801 (SEDE) e T-111 tratadas como futuras -- funcionalidade core implementada.

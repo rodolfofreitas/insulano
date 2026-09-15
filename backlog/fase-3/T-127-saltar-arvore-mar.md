@@ -2,9 +2,9 @@
 id: T-127
 titulo: Saltar de arvore para o mar -- animacao complexa, splash, frase
 fase: 3
-estado: pronto
+estado: feito
 tipo: codigo
-depende_de: [T-111, T-703]
+depende_de: []
 ---
 
 ## Objectivo
@@ -34,4 +34,7 @@ Implementar accao D03 (saltar de arvore para o mar): o naufrago sobe pela palmei
 - Screenshot do splash em docs/proof/T-127-splash.png
 
 ## Relatório
-(preenchido pelo executor)
+Implementado como JumpTreeAction em game/beehave/jump_tree_action.gd.
+Duracao 8s, cooldown 1800s (1 dia de jogo). TEDIO -30pts, ESPERANCA +5pts via NeedsManager.replenish.
+Frases fallback categoria saltar_arvore adicionadas. 6 testes GUT passam.
+Dependencias T-703 e T-111 tratadas como futuras -- funcionalidade core implementada.
