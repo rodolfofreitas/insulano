@@ -17,13 +17,14 @@ var seconds_until_bite: float
 var in_use: bool = false
 
 
-## Faz o actor pescar: arranca a animação e a cana na 1ª chamada, faz nascer o peixe no fim.
+## Faz o actor pescar: arranca a animacao e a cana na 1a chamada, define has_fish no fim.
+## Nao repoe fome directamente: o CookFishAction faz isso apos assar o peixe.
 func tick(actor: Node, blackboard: Blackboard) -> int:
 	var character = actor as Character
 	var result: int = FAILURE
 	var spot: Node2D = blackboard.get_value(node_blackboard_key)
 	# Contexto para o LLMBridge (SayGeneratedAction, T-106): o que o
-	# náufrago está a fazer enquanto esta acção corre.
+	# naufrago esta a fazer enquanto esta accao corre.
 	blackboard.set_value("current_action", "pescar")
 
 	if !in_use:
@@ -37,6 +38,7 @@ func tick(actor: Node, blackboard: Blackboard) -> int:
 		seconds_until_bite -= get_delta()
 		if seconds_until_bite <= 0:
 			spawn_fish(character, spot.global_position)
+			blackboard.set_value("has_fish", true)
 			in_use = false
 			character.animated_sprite.stop()
 			if fishing_rod != null:

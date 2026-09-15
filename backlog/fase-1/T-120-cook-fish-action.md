@@ -2,7 +2,7 @@
 id: T-120
 titulo: CookFishAction -- naufrago assa e come o peixe
 fase: 1
-estado: pronto
+estado: feito
 tipo: codigo
 depende_de: [T-119]
 ---
@@ -62,6 +62,17 @@ Ver design completo em `docs/features/fogueira-assar-peixe.md` §3.3, §3.4, §3
 - Saida de `verify.sh` com gut: PASSOU e os dois novos testes visíveis
 - verify.sh PASSOU (lint + gut + docs)
 
-## Relatorio
+## Relatório
 
-_A preencher pelo agente apos implementacao._
+Implementado em 2026-09-15.
+
+Ficheiros criados:
+- `game/beehave/make_campfire_action.gd` -- MakeCampfireAction com fases GATHER_WOOD/LIGHT_FIRE
+- `game/beehave/cook_fish_action.gd` -- CookFishAction, repoe hunger.increase_percent(60)
+- `game/tests/integration/test_cook_fish.gd` -- 4 testes GUT (todos passam)
+- `docs/proof/T-120-assar-peixe.png` -- screenshot FAKE_TIME=2026-09-15T20:00
+
+Ficheiros modificados:
+- `game/beehave/fishing_action.gd` -- define blackboard["has_fish"]=true ao apanhar peixe
+
+verify.sh: PASSOU (238 testes, lint limpo, boot smoke PASSOU)

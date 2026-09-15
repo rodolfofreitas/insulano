@@ -77,6 +77,16 @@ const NUM_PREDICT: int = 100
 ## tipicamente 5-12 s com NUM_PREDICT=100; 25 s dá margem confortável sem
 ## deixar um ciclo preso indefinidamente.
 const REQUEST_TIMEOUT_S: float = 25.0
+## Tokens pedidos ao Ollama para geracao de arco: resposta JSON com titulo,
+## tipo e array de fases e mais longa do que uma directiva {arc, activity,
+## phrase}, logo precisa de mais margem para nao ser cortada a meio (T-117).
+const ARC_GEN_NUM_PREDICT: int = 300
+## Timeout para pedido de geracao de arco, mais alto do que REQUEST_TIMEOUT_S
+## porque o prompt de geracao e mais longo (mais tokens de avaliacao).
+const ARC_GEN_TIMEOUT_S: float = 40.0
+## Objectos fixos presentes na ilha enviados no prompt de geracao de arco
+## (narrative-design.md §3): fonte unica de verdade desta lista (T-117).
+const ISLAND_OBJECTS: Array[String] = ["palmeira", "pedras", "madeira", "coco", "peixe", "fogueira"]
 
 ## NeedsManager a usar; null usa o autoload "/root/NeedsManager" (mesma
 ## injecção de SimpleDirector.needs_manager).
@@ -129,6 +139,17 @@ var _last_event: String = ""
 ## Últimas decisões, mais recente no fim; carregadas de memory_path em
 ## _ready() e persistidas a cada ciclo resolvido.
 var _memory: Array = []
+## Definicoes de arcos em memoria: os 3 base de arc_definitions.json mais os
+## gerados pelo LLM nesta sessao (T-117). Chave: titulo normalizado.
+var _arc_definitions_extra: Array = []
+## request_id de um pedido de geracao de arco em curso, ou -1. Separado de
+## _awaiting_request_id para os dois fluxos (directiva e geracao) nao
+## colidirem quando correndo em momentos diferentes.
+var _arc_gen_request_id: int = -1
+## Dia do ultimo arco que entrou no historico (active ou completed); usado
+## pelo criterio dia_desde_ultimo_arco >= 1 de _should_generate_arc().
+## -1 significa que ainda nenhum arco foi registado nesta sessao.
+var _last_arc_day: int = -1
 
 
 ## Carrega o template do prompt e a memória de decisões do disco.
@@ -166,16 +187,138 @@ func set_last_event(event: String) -> void:
 	_last_event = event
 
 
+## Verifica se as condicoes para gerar um arco novo via LLM estao reunidas
+## (T-117): TEDIO >= 65, nenhum arco activo e pelo menos 1 dia desde o
+## ultimo arco registado. Devolve false se qualquer dependencia estiver
+## ausente (sem NeedsManager, sem ArcHistory ou sem Clock).
+func _should_generate_arc() -> bool:
+	var nm := _get_needs_manager()
+	var history := _get_arc_history()
+	var game_clock := _get_clock()
+	if nm == null or not nm.has_method("get_value"):
+		return false
+	if history == null or game_clock == null or not game_clock.has_method("now"):
+		return false
+	if nm.get_value("TEDIO") < 65.0:
+		return false
+	var active: Dictionary = history.active_arc if "active_arc" in history else {}
+	if not active.is_empty():
+		return false
+	var current_day: int = int(game_clock.now().get("day", 0))
+	return current_day >= 1 if _last_arc_day < 0 else (current_day - _last_arc_day) >= 1
+
+
+## Constroi o prompt de geracao de arco para o Ollama (T-117): inclui os
+## titulos dos arcos ja completados (para nao repetir), os objectos
+## disponiveis na ilha, o estado actual do naufrago (dias, needs, hora) e a
+## instrucao de formato JSON exacto esperado.
+func _generate_arc_prompt() -> String:
+	var history := _get_arc_history()
+	var completed_titles: Array = []
+	if history != null and history.has_method("get_recent_titles"):
+		completed_titles = history.get_recent_titles(50)
+
+	var nm := _get_needs_manager()
+	var needs_snapshot: Dictionary = {}
+	if nm != null and nm.has_method("get_snapshot"):
+		needs_snapshot = nm.get_snapshot()
+
+	var game_clock := _get_clock()
+	var day := 0
+	var hour_text := "12:00"
+	if game_clock != null and game_clock.has_method("now"):
+		var now: Dictionary = game_clock.now()
+		day = int(now.get("day", 0))
+		hour_text = "%02d:%02d" % [int(now.get("hour", 0)), int(now.get("minute", 0))]
+
+	var ctx := {
+		"arcos_completados": completed_titles,
+		"objectos_na_ilha": ISLAND_OBJECTS,
+		"dias_sobrevividos": day,
+		"necessidades": needs_snapshot,
+		"hora": hour_text,
+	}
+	var instrucao := (
+		"Inventa um arco narrativo original para um naufrago solitario. "
+		+ "Responde APENAS com JSON valido, sem markdown, com exactamente estes campos: "
+		+ '{"titulo": string, "tipo": string, "fases": [{"nome": string, '
+		+ '"actividade": string, "duracao_ciclos": int}], '
+		+ '"necessidade_que_sobe": string}. '
+		+ "O arco deve ter no minimo 2 fases. "
+		+ "Nao repitas nenhum dos arcos ja completados listados no contexto."
+	)
+	return instrucao + "\n\nContexto:\n" + JSON.stringify(ctx, "  ")
+
+
+## Valida o dicionario de um arco gerado pelo LLM (T-117):
+## - tem \"titulo\" (string nao vazia)
+## - tem \"fases\" (array com >= 2 entradas)
+## - titulo nao repete nenhum arco em ArcHistory (case-insensitive normalizado)
+## - cada fase tem \"nome\" e \"actividade\"
+## Devolve false em qualquer desvio.
+func _validate_arc(data: Dictionary) -> bool:
+	if not data.has("titulo"):
+		return false
+	if typeof(data["titulo"]) != TYPE_STRING:
+		return false
+	var titulo: String = String(data["titulo"]).strip_edges()
+	if titulo.is_empty():
+		return false
+	if not data.has("fases"):
+		return false
+	if typeof(data["fases"]) != TYPE_ARRAY:
+		return false
+	var fases: Array = data["fases"]
+	if fases.size() < 2:
+		return false
+	for fase in fases:
+		if typeof(fase) != TYPE_DICTIONARY:
+			return false
+		if not fase.has("nome") or not fase.has("actividade"):
+			return false
+	var titulo_norm: String = titulo.to_lower()
+	var history := _get_arc_history()
+	if history != null and "completed_arcs" in history:
+		for arc in history.completed_arcs:
+			var arc_titulo: String = String(arc.get("titulo", "")).strip_edges().to_lower()
+			if arc_titulo == titulo_norm:
+				return false
+	if "active_arc" in history and not history.active_arc.is_empty():
+		var active_titulo: String = (
+			String(history.active_arc.get("titulo", "")).strip_edges().to_lower()
+		)
+		if active_titulo == titulo_norm:
+			return false
+	return true
+
+
 ## Dispara um ciclo de decisão: monta o contexto, pede ao LLMBridge uma
 ## conclusão (LLM.request_completion, UMA única chamada) e fica à espera do
 ## sinal completion_ready para validar e aplicar a resposta. reason é um dos
 ## TRIGGER_*, só para contexto/log. Um ciclo já em curso ignora o pedido
 ## novo -- nunca duas chamadas simultâneas ao Ollama.
+## Se as condicoes de geracao de arco estiverem reunidas (_should_generate_arc),
+## dispara tambem um pedido de geracao em paralelo (T-117).
 func trigger_cycle(reason: String) -> void:
 	if _is_thinking:
 		return
 	_is_thinking = true
 	_has_result = false
+
+	# T-117: verificar condicao de geracao de arco antes do ciclo de directiva.
+	if _should_generate_arc() and _arc_gen_request_id == -1:
+		var current_bridge := _get_bridge()
+		if current_bridge != null:
+			var arc_prompt := _generate_arc_prompt()
+			if not arc_prompt.is_empty():
+				if not current_bridge.completion_ready.is_connected(_on_arc_gen_ready):
+					current_bridge.completion_ready.connect(_on_arc_gen_ready)
+				_arc_gen_request_id = current_bridge.request_completion(
+					arc_prompt, ARC_GEN_NUM_PREDICT, ARC_GEN_TIMEOUT_S
+				)
+				print(
+					LOG_PREFIX + " geracao de arco disparada (request_id=%d)" % _arc_gen_request_id
+				)
 
 	var context := _build_context(reason)
 	var prompt := build_prompt(_template, context)
@@ -219,6 +362,53 @@ func _on_completion_ready(request_id: int, raw_text: String, source: String) -> 
 		_result_source = source
 		return
 	_resolve(request_id, raw_text, source)
+
+
+## Recetor do sinal completion_ready para pedidos de geracao de arco (T-117).
+## Ignora request_ids que nao sejam o _arc_gen_request_id em curso.
+## Se o arco for valido: guarda em _arc_definitions_extra e em ArcHistory
+## com origem="llm". Se invalido (JSON inválido, schema, titulo repetido):
+## SimpleDirector escolhe um arco base como fallback.
+func _on_arc_gen_ready(request_id: int, raw_text: String, source: String) -> void:
+	if request_id != _arc_gen_request_id:
+		return
+	_arc_gen_request_id = -1
+	var current_bridge := _get_bridge()
+	if current_bridge != null and current_bridge.completion_ready.is_connected(_on_arc_gen_ready):
+		current_bridge.completion_ready.disconnect(_on_arc_gen_ready)
+	if source != "llm":
+		print(LOG_PREFIX + " geracao de arco: fallback (ponte nao respondeu)")
+		_get_fallback_director().get_directive()
+		return
+	var data := parse_directive(raw_text)
+	if _validate_arc(data):
+		var titulo: String = String(data["titulo"]).strip_edges()
+		data["origem"] = "llm"
+		_arc_definitions_extra.append(data)
+		var history := _get_arc_history()
+		if history != null and history.has_method("add_completed") == false:
+			# ArcHistory nao tem add_completed para arcos activos -- registar
+			# como active_arc para que o director o possa usar nos proximos ciclos.
+			history.active_arc = data
+			history.save_history()
+		elif history != null:
+			# Guardar directamente como active_arc (arco novo, ainda nao completado).
+			history.active_arc = data
+			if history.has_method("save_history"):
+				history.save_history()
+		var game_clock := _get_clock()
+		if game_clock != null and game_clock.has_method("now"):
+			_last_arc_day = int(game_clock.now().get("day", 0))
+		print(LOG_PREFIX + ' arco gerado pelo LLM: "' + titulo + '" (origem=llm)')
+	else:
+		print(
+			(
+				LOG_PREFIX
+				+ " arco gerado invalido, fallback para arco base: "
+				+ _truncated_for_log(raw_text)
+			)
+		)
+		_get_fallback_director().get_directive()
 
 
 ## Valida a resposta (quando source = "llm") e decide a directiva final:

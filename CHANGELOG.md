@@ -6,6 +6,37 @@ Entradas em linguagem de utilizador, não de commit. Cada tarefa acrescenta a su
 ## [Não lançado]
 
 ### Adicionado
+- `LLMDirector` gera arcos originais via Ollama (T-117): quando TEDIO >= 65,
+  nenhum arco activo e pelo menos 1 dia desde o ultimo arco, o director pede
+  ao Ollama um arco novo com prompt que inclui titulos de arcos ja completados
+  (para nao repetir), objectos na ilha (palmeira, pedras, madeira, coco, peixe,
+  fogueira), estado actual do naufrago (dias, needs, hora) e instrucao de
+  formato JSON `{titulo, tipo, fases: [{nome, actividade, duracao_ciclos}],
+  necessidade_que_sobe}`. O arco e validado (`_validate_arc`): titulo nao
+  vazio, >= 2 fases com `nome` e `actividade`, titulo nao repetido em
+  `ArcHistory` (case-insensitive). Se valido: entra em `_arc_definitions_extra`
+  e em `ArcHistory.active_arc` com `origem="llm"`. Se invalido: `SimpleDirector`
+  escolhe arco base como fallback. 7 testes GUT novos em
+  `game/tests/unit/test_llm_arc_generation.gd`.
+- `MakeCampfireAction` e `CookFishAction` (T-120): ritual completo de cozinhar o peixe.
+  O naufrago nunca come peixe cru: `FishingAction` define `blackboard["has_fish"]=true` em
+  vez de repor fome directamente; `MakeCampfireAction` recolhe lenha (~3s) e accende a
+  fogueira (~2s, instancia `CampfireObject`); `CookFishAction` assa (~8s) e come com
+  `hunger.increase_percent(60)` -- o dobro do comportamento anterior.
+  `SessionData.record_fish_caught()` e agora chamado pelo `CookFishAction` (so conta peixes
+  comidos, nao crus).
+- `CloudLayer` com parallax de 5 camadas (T-134): `ParallaxBackground` na cena principal com
+  `NightSky` (estrelas/lua, Z=0), `CloudLayer` (nuvens, Z=1), horizonte, ilha e naufrago.
+  As nuvens movem-se da direita para a esquerda a 15 px/s e fazem wrap ao sair do ecra.
+  Alpha 0.7 de dia (6h-20h) e 0.2 de noite, ligado ao sinal `Clock.hour_changed`.
+  Cada nuvem e desenhada com 3 circulos sobrepostos (sem dependencias de sprites).
+  3 testes de integracao novos: movimento, wrap-around e alpha dia/noite.
+- `GameClock` modo acelerado (T-123): em modo screensaver, o ciclo de dia dura 30 minutos
+  reais (48x mais rapido), ancorado na hora real de arranque -- abrir as 22h coloca o jogo
+  na hora de jogo 22h, e 15 minutos depois (real) e meia-noite de jogo. Em modo janela o
+  comportamento anterior e mantido (hora real directa). `INSULANO_FAKE_TIME` continua a
+  funcionar. Constante `GAME_DAY_DURATION_S = 1800.0` e metodo `_activate_accelerated_mode()`
+  adicionados ao autoload `Clock`.
 - `CampfireObject` (T-119): fogueira visual com `CPUParticles2D` para chamas (laranja/amarelo)
   e fumo (cinzento), e `PointLight2D` nocturno. `ignite()` acende e emite sinal `lit`;
   `extinguish()` apaga e emite `extinguished`. Luz activa apenas de noite (via `Clock.period()`
