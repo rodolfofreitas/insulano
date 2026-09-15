@@ -1,0 +1,24 @@
+{
+  "current_condition": [
+    {
+      "FeelsLikeC": "20",
+      "FeelsLikeF": "68",
+      "cloudcover": "100",
+      "humidity": "92",
+      "localObsDateTime": "2026-09-15 06:00 PM",
+      "observation_time": "05:00 PM",
+      "precipMM": "12.5",
+      "pressure": "990",
+      "temp_C": "22",
+      "temp_F": "72",
+      "uvIndex": "0",
+      "visibility": "3",
+      "weatherCode": "389",
+      "weatherDesc": [{"value": "Moderate or heavy rain with thunder"}],
+      "winddir16Point": "W",
+      "winddirDegree": "270",
+      "windspeedKmph": "55",
+      "windspeedMiles": "34"
+    }
+  ]
+}

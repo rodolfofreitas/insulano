@@ -1,0 +1,24 @@
+{
+  "current_condition": [
+    {
+      "FeelsLikeC": "16",
+      "FeelsLikeF": "61",
+      "cloudcover": "95",
+      "humidity": "88",
+      "localObsDateTime": "2026-09-15 03:00 PM",
+      "observation_time": "02:00 PM",
+      "precipMM": "4.2",
+      "pressure": "998",
+      "temp_C": "18",
+      "temp_F": "64",
+      "uvIndex": "1",
+      "visibility": "6",
+      "weatherCode": "302",
+      "weatherDesc": [{"value": "Moderate rain"}],
+      "winddir16Point": "SW",
+      "winddirDegree": "225",
+      "windspeedKmph": "28",
+      "windspeedMiles": "17"
+    }
+  ]
+}
